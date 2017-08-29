@@ -1,0 +1,25 @@
+project("TDBoltzmann")
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+
+# include stuff for HDF5
+#find_package(HDF5 "1.8.14" REQUIRED COMPONENTS C HL)
+#include_directories(${HDF5_INCLUDE_DIRS})
+#link_directories(${HDF5_LIBRARY_DIRS})
+include_directories($ENV{HDF5_HOME}/include)
+link_directories($ENV{HDF5_HOME}/lib)
+
+# include mpi stuff
+find_package(MPI REQUIRED)
+include_directories(${MPI_INCLUDE_PATH})
+#include_directories($ENV{MPI_HOME}/include)
+#link_directories($ENV{MPI_HOME}/lib)
+
+add_definitions(-std=c++0x)
+set(CMAKE_CXX_FLAGS "${CMAXE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_COMPILER mpicxx)
+
+set(sources 
+   main.cpp
+   jsoncpp.cpp)
+add_executable(mhd ${sources})
+target_link_libraries(mhd mpi hdf5 hdf5_cpp)

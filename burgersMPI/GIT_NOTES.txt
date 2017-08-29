@@ -1,0 +1,16 @@
+1) To dl repository from gitlab or git hub use the following command:
+
+"git clone 'SSH address' "
+
+where 'SSH address' is the ssh address found on the project home page.
+If there are multiple branches, then you can use the following command
+to switch between branches once cloned
+
+"git checkout 'branch name' "
+
+2) To commit changes do the following
+"git add -A"
+"git commit -m "say something" "
+"git push"
+
+

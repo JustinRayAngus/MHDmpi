@@ -1,0 +1,20 @@
+{
+"Xgrid":{
+         "Xmin":0,
+         "Xmax":1,
+         "nX":1000,
+         "nXg":2 // number of guard cells each end
+        },
+"Time" :{
+         "dtOut":0.01,     // output time intervals
+         "tOutSteps":20,   // number of output setps
+         "dtFrac":10.0     // dtSim = dtMax/dtFrac
+       },
+"EEDF" :{
+         "type":"Gaussian",
+         "a":1.0,  // amplitude
+         "b":0.5,  // center
+         "c":0.1   // width
+       }
+}
+
