@@ -20,6 +20,7 @@ class EEDF
 public:
    double a, b, c;       // zero moment
    string type0;         // initial type of EEDF
+   string advScheme0;    // advection differencing scheme
    vector<double> F0, F0old, F0half; // EEDF
    vector<double> Flux;  // Energy space adv, diff, and flux at cell-edge
    
@@ -37,6 +38,9 @@ private:
 
 void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
 {
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+
    double Xshift;
    const int nXcc = Xgrid.Xcc.size();
    const int nXce = Xgrid.Xce.size();
@@ -45,15 +49,17 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
    const Json::Value defValue; // used for default reference
    const Json::Value EEDF = root.get("EEDF",defValue);
    if(EEDF.isObject()) {
-      printf("Initializing EEDF ...\n");
+      if(procID==0) printf("\nInitializing EEDF ...\n");
       Json::Value aVal = EEDF.get("a",defValue);
       Json::Value bVal = EEDF.get("b",defValue);
       Json::Value cVal = EEDF.get("c",defValue);
       Json::Value type = EEDF.get("type",defValue);
+      Json::Value advScheme = EEDF.get("advScheme",defValue);
       if(aVal == defValue || bVal == defValue || 
-         cVal == defValue || type == defValue) {
-         cout << "ERROR: amplitude, center, width," << endl;
-         cout << "or type not declared in input file" << endl;
+         cVal == defValue || type == defValue || 
+         advScheme == defValue) {
+         cout << "ERROR: at least 1 EEDF value is " << endl;
+         cout << "not declared in input file" << endl;
          exit (EXIT_FAILURE);
       } 
       a = aVal.asDouble();
@@ -63,11 +69,10 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
          printf("ERROR: gaussian width c is not a positive value in input file\n");
          exit (EXIT_FAILURE);
       }
+
       type0 = type.asString();
       if(type0=="gaussian" || type0=="Gaussian") {
-         cout << "Initial F0 is Gaussian with amplitude = " << a << endl;
-         cout << "center at x = " << b << endl;
-         cout << "and width = " << c << endl;
+         
          for (auto n=0; n<Xgrid.nXsub+2; n++) {
             //F0[n] = 1.0-0.25*Xgrid.Xcc[n]*Xgrid.Xcc[n];
             Xshift = (Xgrid.Xcc[n]-b)/c;
@@ -75,9 +80,28 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
          }
          //transform(F0.begin(), F0.end(), F0.begin(), 
          //bind1st(multiplies<double>(),1.0/zeroMom)); 
+         if(procID==0) {
+            cout << "Initial F0 is Gaussian with amplitude = " << a << endl;
+            cout << "center at x = " << b << endl;
+            cout << "and width = " << c << endl;
+         }
+
       }
       else {
          cout << "Initial EEDF type = " << type0 << " is not valid " << endl;
+         exit (EXIT_FAILURE);
+      }
+
+      advScheme0 = advScheme.asString();
+      if(advScheme0=="C2" || advScheme0=="U1" || advScheme0=="QUICK") {
+         if(procID==0) {
+            cout << "advection diff/interp scheme is " << advScheme0 << endl;
+            //cout << endl;
+         }
+      }
+      else {
+         cout << "advection scheme " << advScheme0 << " is not valid " << endl;
+         cout << "valid types are C2, U1, and QUICK " << endl;
          exit (EXIT_FAILURE);
       }
    }
@@ -98,37 +122,73 @@ void EEDF::computeFluxes(const domainGrid& Xgrid, const double& Kappa)
    const double dX = Xgrid.dX;
    const int iMax = Flux.size();
 
+
    // compute Flux = F0^2/2 - K*dF0/dX
    //
 
-   // Use central differencing
-   //
-   //for (auto i=0; i<iMax; i++) {
-   //   Flux.at(i) = (F0.at(i+1)+F0.at(i))*(F0.at(i+1)+F0.at(i))/2.0 
-   //              - Kappa*(F0.at(i+1)-F0.at(i))/dX;
-   //}
-   
-
-   // Use first order upwinding
-   //
-   double Ui, ap, am;
-   for (auto i=0; i<iMax; i++) {
-      
-      //if(i==0) { cout << "F0[0] =" << F0.at(0) << endl; }
-      //if(i==0) { cout << "F0[-1] =" << F0.at(-1) << endl; }
-      //if(i==0) { cout << "F0[iMax+2] =" << F0.at(iMax+2) << endl; }
-      Ui = F0.at(i)/2.0;
-      ap = 1.0;
-      am = 0.0;
-      if(Ui<0.0) {
-         ap = 0.0;
-         am = 1.0; 
+   if(advScheme0 == "C2") {
+      // Use second order central differencing/interpolation
+      //
+      for (auto i=0; i<iMax; i++) {
+         Flux.at(i) = (F0.at(i+1)+F0.at(i))/2.0*(F0.at(i+1)+F0.at(i))/2.0/2.0 
+                    - Kappa*(F0.at(i+1)-F0.at(i))/dX;
       }
+   } 
+   else if(advScheme0 == "U1") {
+      // Use first order upwinding
+      //
+      double Ui, ap, am;
+      for (auto i=0; i<iMax; i++) {
+      
+         Ui = F0.at(i)/2.0;
+         ap = 1.0;
+         am = 0.0;
+         if(Ui<0.0) {
+            ap = 0.0;
+            am = 1.0; 
+         }
 
-      Flux.at(i) = ap*F0.at(i)*F0.at(i)/2.0 
-                 + am*F0.at(i+1)*F0.at(i+1)/2.0 
-                 - Kappa*(F0.at(i+1)-F0.at(i))/dX;
+         Flux.at(i) = ap*F0.at(i)*F0.at(i)/2.0 
+                    + am*F0.at(i+1)*F0.at(i+1)/2.0 
+                    - Kappa*(F0.at(i+1)-F0.at(i))/dX;
    
+      } // end for loop
+   }
+   else if(advScheme0 == "QUICK") {   
+      // Use 2nd order QUICK upwinding
+      //
+      double Ui, ap, am;
+      double a0 = 3.0/4.0, a1 = 3.0/8.0, a2 = 1.0/8.0;
+      for (auto i=0; i<iMax; i++) {
+      
+         Ui = F0.at(i)/2.0;
+         ap = 1.0;
+         am = 0.0;
+         if(Ui<0.0) {
+            ap = 0.0;
+            am = 1.0; 
+         }
+
+         if(i==0 || i==iMax-1) {
+            Flux.at(i) = ap*F0.at(i)*F0.at(i)/2.0 
+                       + am*F0.at(i+1)*F0.at(i+1)/2.0 
+                       - Kappa*(F0.at(i+1)-F0.at(i))/dX;
+   
+         } else {
+            Flux.at(i) = ap*( a0*F0.at(i)*F0.at(i) 
+                           +  a1*F0.at(i+1)*F0.at(i+1) 
+                           -  a2*F0.at(i-1)*F0.at(i-1) )/2.0 
+                       + am*( a0*F0.at(i+1)*F0.at(i+1) 
+                           +  a1*F0.at(i)*F0.at(i)
+                           -  a2*F0.at(i+2)*F0.at(i+2) )/2.0 
+                       - Kappa*(F0.at(i+1)-F0.at(i))/dX;
+         }
+
+      } // end for loop
+   } else {
+      cout << "advection scheme not valid," << endl;
+      cout << "should be caught on initilization!" << endl;
+      exit (EXIT_FAILURE);
    }
 
 }

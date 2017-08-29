@@ -52,10 +52,15 @@ private:
 
 void HDF5dataFile::setOutputFile(const string& thisOutputFile)
 {
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+
    outputFile = thisOutputFile;
    H5File file(outputFile.c_str(), H5F_ACC_TRUNC); // overwrites old
    file.close();
-   cout << "\nOutput file " << outputFile.c_str() << " created " << endl;
+   if(procID==0) {
+      cout << "\nOutput file " << outputFile.c_str() << " created " << endl;
+   }
 }
 
 void HDF5dataFile::add(double &varData, const char *varName, int grow) 
@@ -165,6 +170,9 @@ bool HDF5dataFile::varAdded(const string &name)
 
 void HDF5dataFile::writeScl(const double& varData, const char* varName, const bool& growVar)
 {     
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+
    // Open file and check to see if output variable already exists
    //
    H5File file(outputFile.c_str(), H5F_ACC_RDWR);
@@ -201,8 +209,10 @@ void HDF5dataFile::writeScl(const double& varData, const char* varName, const bo
       dataspace.selectHyperslab(H5S_SELECT_SET,dims,offset); // data dataspace
                
       dataset.write(&varData, varType, mdataspace, dataspace);
-      cout << "Extendable scalar " << varName << " added to " << outputFile << endl;    
-           
+      if(procID==0) {
+         cout << "Extendable scalar " << varName << " added to " << outputFile << endl;    
+      }
+     
       // close opened stuff
       //
       dataset.close();  
@@ -221,8 +231,10 @@ void HDF5dataFile::writeScl(const double& varData, const char* varName, const bo
       DataType datatype(varType);
       DataSet dataset = file.createDataSet(varName, datatype, dataspace);
       dataset.write(&varData, varType); 
-      cout << "Non-extendable scalar " << varName << " written to " << outputFile << endl; 
-   
+      if(procID==0) {
+         cout << "Non-extendable scalar " << varName << " written to " 
+              << outputFile << endl; 
+      }
       // close opened stuff
       //
       dataset.close();      
@@ -233,6 +245,9 @@ void HDF5dataFile::writeScl(const double& varData, const char* varName, const bo
 
 void HDF5dataFile::writeVec(const vector<double>& varData, const char* varName, const bool& growVar)
 {     
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+
    // Open file and check to see if output variable already exists
    //
    H5File file(outputFile.c_str(), H5F_ACC_RDWR);
@@ -275,8 +290,10 @@ void HDF5dataFile::writeVec(const vector<double>& varData, const char* varName, 
       dataspace.selectHyperslab(H5S_SELECT_SET,dims,offset); // data dataspace
                
       dataset.write(data, varType, mdataspace, dataspace);
-      cout << "Extendable vector " << varName << " added to " << outputFile << endl;    
-           
+      if(procID==0) {
+         cout << "Extendable vector " << varName 
+              << " added to " << outputFile << endl;    
+      }   
       // close opened stuff
       //
       dataset.close();
@@ -293,8 +310,11 @@ void HDF5dataFile::writeVec(const vector<double>& varData, const char* varName, 
       DataType datatype(varType);
       DataSet dataset = file.createDataSet(varName, datatype, dataspace);
       dataset.write(data, varType);
-      cout << "Non-extendable vector " << varName << " added to " << outputFile << endl;   
-           
+      if(procID==0) {
+         cout << "Non-extendable vector " << varName 
+              << " added to " << outputFile << endl;   
+      }
+     
       // close opened stuff
       //
       dataset.close();      

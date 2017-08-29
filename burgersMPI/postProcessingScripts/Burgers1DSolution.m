@@ -25,7 +25,7 @@ F0 = a*exp(-xshift.^2/2);
 
 %%%   set time domain
 %
-time = 0:0.01:0.2;
+time = 0:0.02:0.4;
 
 
 %%%   initialize solution matrix and BC's
@@ -69,10 +69,10 @@ end
 %%%   plot solution
 %
 figure(2);
-plot(x+0.5,F(:,1));
-hold on; plot(x+0.5,F(:,round(end/2)));
-hold on; plot(x+0.5,F(:,end));
-xlim([0 1]);
+plot(x,F(:,1));
+hold on; plot(x,F(:,round(end/2)));
+hold on; plot(x,F(:,end));
+xlim([-0.5 0.5]);
 
 
 

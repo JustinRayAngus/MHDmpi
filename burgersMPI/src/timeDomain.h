@@ -31,10 +31,13 @@ public:
 
 void timeDomain::initialize(const Json::Value& root)
 {
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+
    const Json::Value defValue; // used for default reference
    const Json::Value Time = root.get("Time",defValue);
    if(Time.isObject()) {
-      printf("Initializing time domain ...\n");
+      if(procID==0) printf("\nInitializing time domain ...\n");
       Json::Value dtOutVal      = Time.get("dtOut",defValue);
       Json::Value tOutStepsVal  = Time.get("tOutSteps",defValue);
       Json::Value dtFracVal     = Time.get("dtFrac",defValue);
@@ -47,9 +50,12 @@ void timeDomain::initialize(const Json::Value& root)
       dtFrac = dtFracVal.asDouble();
       tmax = dtOut*tOutSteps;
       //
-      cout << "tmax = " << dtOut*tOutSteps << endl;
-      cout << "tOut intervals = " << dtOut << endl;
-      cout << "dtFrac = " << dtFrac << endl;
+      if(procID==0) {
+         cout << "tmax = " << dtOut*tOutSteps << endl;
+         cout << "tOut intervals = " << dtOut << endl;
+         cout << "dtFrac = " << dtFrac << endl;
+         cout << endl;
+      }
    }
    else {
       cout << "value for key \"Time\" is not object type !" << endl;
@@ -62,7 +68,6 @@ void timeDomain::initialize(const Json::Value& root)
    }
    
    tOut = 0.0; // first output is always at t=0
-   cout << endl;
 }
 
 void timeDomain::updatetOut(const double thistOut)
@@ -72,10 +77,17 @@ void timeDomain::updatetOut(const double thistOut)
 
 void timeDomain::setdtSim(const EEDF& eedf, const domainGrid& Xgrid, const double& K)
 {
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+
    const double dX = Xgrid.dX;
    double dtmax = 0.5*dX*dX/K;
    dtSim = min(dtmax/dtFrac,dtOut);
-   cout << "max stable time step is " << dtmax << endl;
+   if(procID==0) {
+      cout << endl; 
+      cout << "max stable time step is " << dtmax << endl;
+      cout << endl; 
+   }
 }
 
 #endif

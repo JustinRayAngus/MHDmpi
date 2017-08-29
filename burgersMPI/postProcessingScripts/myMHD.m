@@ -2,6 +2,8 @@
 %%%
 %%%   look at output variables from MHD1D simulation
 %%%
+%%%   compare results with analytical solution from Burgers1DSolution.m
+%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
@@ -23,7 +25,7 @@ tout= hdf5read(thisFile,'tout');
 %%%
 %
 %close(figure(1));
-f1=figure(2); set(f1,'position',[646     1  1100   420]);
+f1=figure(3); set(f1,'position',[646     1  1100   420]);
 %
 subplot(1,2,1);
 hold on; plot(Xcc,F0(:,1)); box on;

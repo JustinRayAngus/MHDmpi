@@ -62,7 +62,7 @@ void domainGrid::initialize(const Json::Value& root)
       if(procID==0) {
          double nXsubTest = nX/(double)numProcs;
          if(floor(nXsubTest)==ceil(nXsubTest)) {
-            cout << "nXsub = " << nXsub << endl;
+            //cout << "nXsub = " << nXsub << endl;
          }
          else {
             printf("ERROR: nXsub=nX/numProcs is not an integer!!!!\n");

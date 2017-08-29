@@ -23,23 +23,23 @@ using namespace std;
 #endif
 
 int main(int argc, char** argv) {   
-   cout << endl << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl;
-   cout << "" << endl;
-   cout << "Initiating simulation" << endl;
-
 
    // start MPI stuff
    //
    int procID, numProcs;
-   double wtime;
+   //double wtime;
    
-   MPI_Status status;
+   //MPI_Status status;
    MPI_Init (&argc, &argv);
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
    double time_start = MPI_Wtime();
    if(procID==0) {
-      cout << "mpi job with " << numProcs << "processors" << endl;
+      cout << endl << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl;
+      cout << "" << endl;
+      cout << "Initiating simulation" << endl;
+      cout << "mpi job with " << numProcs << " processors" << endl;
+      cout << endl;
    }
 
 
@@ -52,7 +52,9 @@ int main(int argc, char** argv) {
    //bool isJsonOK = (ifile != NULL && reader.parse(ifile, inputRoot));
    bool isJsonOK = (reader.parse(ifile, inputRoot));
    if(isJsonOK) {
-      cout << "Input " << inputFile << " parsed successfully" << endl;   
+      if(procID==0) {
+         cout << "Input file " << inputFile << " parsed successfully" << endl;   
+      }
    }
    else {
       cout << "ERROR: json input file not found or cannot be parsed due to errors" << endl;
@@ -64,17 +66,6 @@ int main(int argc, char** argv) {
    HDF5dataFile dataFile;
    const string outputFile = "output" + to_string(procID) + ".h5";
    dataFile.setOutputFile(outputFile);
-   /*
-   if(procID==0) {
-      //const string outputFile = "output0.h5";
-      const string outputFile = "output" + to_string(procID) + ".h5";
-      cout << outputFile << endl;
-      dataFile.setOutputFile(outputFile);
-   } else {
-      const string outputFile = "output1.h5";
-      dataFile.setOutputFile(outputFile);
-   }
-   */
 
    // initialize spatial grid, time domain, and EEDF
    //
@@ -125,6 +116,9 @@ int main(int argc, char** argv) {
       eedf.communicate(Xgrid); // communicate F0
       eedf.computeFluxes(Xgrid, K);
 
+      //tDom.setdtSim(eedf, Xgrid, K); // set initial time step
+      //dtSim = tDom.dtSim;
+
       // check if thist is an output time
       //
       if(thist >= tDom.tOutVec[thistOutInt]) {
@@ -134,7 +128,7 @@ int main(int argc, char** argv) {
          if(procID==0) {
             cout << "Output variables dumped at t = " 
                  << thist << " units?" << endl;
-            cout << "Simulation time step = " << dtSim << endl;
+            //cout << "Simulation time step = " << dtSim << endl;
          }
       }
    }
@@ -142,7 +136,7 @@ int main(int argc, char** argv) {
    if(procID==0) {
       double time_end = MPI_Wtime();
       cout << endl << "Final simulation time step = " << dtSim << endl;
-      cout << endl << "Ending simulation: delta time = "<< time_end-time_start << endl;
+      cout << endl << "Ending simulation: wall time = "<< time_end-time_start << endl;
       cout << endl << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl << endl;
    }
 
