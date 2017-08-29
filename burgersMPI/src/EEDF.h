@@ -38,8 +38,10 @@ private:
 void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
 {
    double Xshift;
-   F0.assign(Xgrid.nXsub+2,0.0);
-   Flux.assign(Xgrid.nXsub+1,0.0);
+   const int nXcc = Xgrid.Xcc.size();
+   const int nXce = Xgrid.Xce.size();
+   F0.assign(nXcc,0.0);
+   Flux.assign(nXce,0.0);
    const Json::Value defValue; // used for default reference
    const Json::Value EEDF = root.get("EEDF",defValue);
    if(EEDF.isObject()) {
@@ -134,39 +136,58 @@ void EEDF::computeFluxes(const domainGrid& Xgrid, const double& Kappa)
 
 void EEDF::communicate(const domainGrid& Xgrid)
 {
-   const int nXsub = Xgrid.nXsub; // number of cell-center points
+   const int nMax = F0.size(); // number of cell-center points
+   const int nXg = Xgrid.nXg; // number of guard cells each end
    int procID, numProcs;
+   double Fsend[nXg], Frecv[nXg];
    
    MPI_Status status;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
 
-   //  send F0[1] for ID>0 to proc ID-1
+   //  send F0[nXg+i], i<nXg for ID>0 to proc ID-1
    //
    if (procID>0) {
       int tag = 1;
-      MPI_Send(&F0[1], 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
+      for (auto i=0; i<nXg; i++) {
+         Fsend[i] = F0[nXg+i];
+      }
+      MPI_Send(Fsend, nXg, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
+      //MPI_Send(&F0.at(nXg), 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
    }  
   
-   // receive: F0[1,ID+1] => F0[nXsub+1,ID]
+   // receive: F0[nXg+i,ID+1] => F0[nMax-nXg+i,ID]
    //
    if (procID<numProcs-1) {
       int tag = 1;
-      MPI_Recv(&F0[nXsub+1], 1, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(Frecv, nXg, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD, &status);
+      //MPI_Recv(&F0[nXsub+1], 1, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD, &status);
+      for (auto i=0; i<nXg; i++) {
+         F0.at(nMax-nXg+i) = Frecv[i];
+      }
    }
 
-   // send: F0[nXsub,ID] => ID+1
+   // send: F0[nMax-2*nXg+i,ID] => ID+1
    //
    if (procID<numProcs-1) {
       int tag = 2;
-      MPI_Send(&F0[nXsub], 1, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
+      for (auto i=0; i<nXg; i++) {
+         Fsend[i] = F0.at(nMax-2*nXg+i);
+      }
+      MPI_Send(Fsend, nXg, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
+      //MPI_Send(&F0[nXsub], 1, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
    }  
 
-   // receive: F0[nXsub,ID] => F0[0,ID+1]
+   // receive: F0[nMax-2*nXg+i,ID] => F0[i,ID+1]
    //
    if (procID>0) {
       int tag = 2;
-      MPI_Recv(&F0[0], 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(Frecv, nXg, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD, &status);
+      //MPI_Recv(&F0[0], 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD, &status);
+      for (auto i=0; i<nXg; i++) {
+         F0.at(i) = Frecv[i];
+      }
+
    }
 
 }
@@ -196,10 +217,11 @@ void EEDF::advanceF0(const domainGrid& Xgrid, const double& dt)
 {
    //const int nXsub = Xgrid.nXsub;
    const int nMax = F0.size();
+   const int nXg = Xgrid.nXg;
    
    // Explicit forward advance
    //
-   for (auto n=1; n<nMax-1; n++) {
+   for (auto n=nXg; n<nMax-nXg; n++) {
       F0.at(n) = F0.at(n) - dt*(Flux.at(n)-Flux.at(n-1))/Xgrid.dX;
    }
 

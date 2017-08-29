@@ -1,7 +1,7 @@
 {
 "Xgrid":{
-         "Xmin":0,
-         "Xmax":1,
+         "Xmin":-0.5,
+         "Xmax":0.5,
          "nX":1000,
          "nXg":2 // number of guard cells each end
         },
@@ -13,7 +13,7 @@
 "EEDF" :{
          "type":"Gaussian",
          "a":1.0,  // amplitude
-         "b":0.5,  // center
+         "b":0.0,  // center
          "c":0.1   // width
        }
 }

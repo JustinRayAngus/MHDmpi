@@ -85,16 +85,14 @@ void domainGrid::initialize(const Json::Value& root)
       cout << "value for key \"Xgrid\" is not object type !" << endl;
    }
   
-   Xcc.assign(nXsub+2*nXg,0.0);
-   Xce.assign(nXsub+2*nXg-1,0.0);
-   double offset = procID*(Xmax-Xmin)/numProcs-(0.5+nXg-1.0)*dX;
-   const int nMax = Xce.size();
-   for (auto n=0; n<nMax; n++) {
-      Xcc.at(n) = Xmin + offset + n*dX;
-      Xce.at(n) = Xmin + offset + n*dX + 0.5*dX;
+   Xcc.assign(nXsub+2,0.0);
+   Xce.assign(nXsub+1,0.0);
+   double offset = procID*(Xmax-Xmin)/numProcs-0.5*dX;
+   for (auto n=0; n<nXsub+1; n++) {
+      Xcc[n] = Xmin + offset + n*dX;
+      Xce[n] = Xmin + offset + n*dX + 0.5*dX;
    }
-   Xcc.at(nMax) = Xcc.at(nMax-1)+dX;
-   //Xcc[nX/numProcs+1] = Xmin + offset + (nXsub+1)*dX;
+   Xcc[nX/numProcs+1] = Xmin + offset + (nXsub+1)*dX;
 
 }
 

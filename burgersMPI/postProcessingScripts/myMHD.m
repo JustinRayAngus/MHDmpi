@@ -5,7 +5,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-numProcs = 2;
+numProcs = 4;
 filePath = '../build/';
 %filePath = '../../MHD1D_MPI_save/buildMPI/';
 
@@ -23,19 +23,19 @@ tout= hdf5read(thisFile,'tout');
 %%%
 %
 %close(figure(1));
-f1=figure(1); set(f1,'position',[646     1  1100   420]);
+f1=figure(2); set(f1,'position',[646     1  1100   420]);
 %
 subplot(1,2,1);
 hold on; plot(Xcc,F0(:,1)); box on;
 hold on; plot(Xcc,F0(:,round(end/2)));
 hold on; plot(Xcc,F0(:,end)); grid on;
-xlim([0 1]);
+xlim([-0.5 0.5]);
 %
 subplot(1,2,2);
 hold on; plot(Xce,Flux(:,1)); box on;
 hold on; plot(Xce,Flux(:,round(end/2)));
 hold on; plot(Xce,Flux(:,round(end))); grid on;
-xlim([0 1]);
+xlim([-0.5 0.5]);
 end
 
 
