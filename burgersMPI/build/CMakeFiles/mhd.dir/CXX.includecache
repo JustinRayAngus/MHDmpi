@@ -389,6 +389,8 @@ H5FDwindows.h
 /Users/angus1/Programs/MHDmpi/burgersMPI/src/EEDF.h
 domainGrid.h
 /Users/angus1/Programs/MHDmpi/burgersMPI/src/domainGrid.h
+timeDomain.h
+/Users/angus1/Programs/MHDmpi/burgersMPI/src/timeDomain.h
 
 /Users/angus1/Programs/MHDmpi/burgersMPI/src/HDF5dataFile.h
 H5Cpp.h
@@ -571,10 +573,6 @@ EEDF.h
 /Users/angus1/Programs/MHDmpi/burgersMPI/src/EEDF.h
 
 /Users/angus1/Programs/MHDmpi/burgersMPI/src/timeDomain.h
-EEDF.h
-/Users/angus1/Programs/MHDmpi/burgersMPI/src/EEDF.h
-domainGrid.h
-/Users/angus1/Programs/MHDmpi/burgersMPI/src/domainGrid.h
 
 /opt/local/include/openmpi-gcc5/mpi.h
 stddef.h

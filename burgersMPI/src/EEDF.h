@@ -11,28 +11,29 @@
 
 
 #include "domainGrid.h"
-
+#include "timeDomain.h"
 
 using namespace std;
 
 class EEDF
 {
 public:
-   double a, b, c;       // zero moment
-   string type0;         // initial type of EEDF
    string advScheme0;    // advection differencing scheme
-   vector<double> F0, F0old, F0half; // EEDF
-   vector<double> Flux;  // Energy space adv, diff, and flux at cell-edge
+   double K;             // diffusion coefficient
+   vector<double> F0;    // function
+   vector<double> Flux;  // flux at cell-edges
    
    void initialize(const domainGrid&, const Json::Value&);
-   void computeFluxes(const domainGrid&, const double&);
+   void computeFluxes(const domainGrid&);
    void communicate(const domainGrid&);
    void advanceF0(const domainGrid&, const double&);
    void setXminBoundary(const domainGrid&, const double&);
    void setXmaxBoundary(const domainGrid&, const double&);
+   void setdtSim(double&, const timeDomain&, const domainGrid&);
 
 private:
-   //double Te;
+   string type0;    // initial function type
+   double a, b, c;  // initial function params
 };
 
 
@@ -55,9 +56,10 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
       Json::Value cVal = EEDF.get("c",defValue);
       Json::Value type = EEDF.get("type",defValue);
       Json::Value advScheme = EEDF.get("advScheme",defValue);
+      Json::Value KVal = EEDF.get("diffC",defValue);
       if(aVal == defValue || bVal == defValue || 
          cVal == defValue || type == defValue || 
-         advScheme == defValue) {
+         advScheme == defValue || KVal == defValue) {
          cout << "ERROR: at least 1 EEDF value is " << endl;
          cout << "not declared in input file" << endl;
          exit (EXIT_FAILURE);
@@ -69,7 +71,7 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
          printf("ERROR: gaussian width c is not a positive value in input file\n");
          exit (EXIT_FAILURE);
       }
-
+      
       type0 = type.asString();
       if(type0=="gaussian" || type0=="Gaussian") {
          
@@ -104,21 +106,26 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
          cout << "valid types are C2, U1, and QUICK " << endl;
          exit (EXIT_FAILURE);
       }
+
+      K = KVal.asDouble();
+      if(procID==0) cout << "diffusion coefficent = " << K << endl;
+      if(K < 0.0) {
+         printf("ERROR: diffusion coefficient can't be < 0\n");
+         exit (EXIT_FAILURE);
+      }
+
    }
    else {
       cout << "value for key \"Xgrid\" is not object type !" << endl;
       exit (EXIT_FAILURE);
    }
-   F0old = F0;
-   F0half = F0;
   
    cout << endl;  
 }
 
 
-void EEDF::computeFluxes(const domainGrid& Xgrid, const double& Kappa)
+void EEDF::computeFluxes(const domainGrid& Xgrid)
 {
-   //const vector<double> Xcempi = Xgrid.Xcempi;
    const double dX = Xgrid.dX;
    const int iMax = Flux.size();
 
@@ -131,7 +138,7 @@ void EEDF::computeFluxes(const domainGrid& Xgrid, const double& Kappa)
       //
       for (auto i=0; i<iMax; i++) {
          Flux.at(i) = (F0.at(i+1)+F0.at(i))/2.0*(F0.at(i+1)+F0.at(i))/2.0/2.0 
-                    - Kappa*(F0.at(i+1)-F0.at(i))/dX;
+                    - K*(F0.at(i+1)-F0.at(i))/dX;
       }
    } 
    else if(advScheme0 == "U1") {
@@ -150,7 +157,7 @@ void EEDF::computeFluxes(const domainGrid& Xgrid, const double& Kappa)
 
          Flux.at(i) = ap*F0.at(i)*F0.at(i)/2.0 
                     + am*F0.at(i+1)*F0.at(i+1)/2.0 
-                    - Kappa*(F0.at(i+1)-F0.at(i))/dX;
+                    - K*(F0.at(i+1)-F0.at(i))/dX;
    
       } // end for loop
    }
@@ -172,7 +179,7 @@ void EEDF::computeFluxes(const domainGrid& Xgrid, const double& Kappa)
          if(i==0 || i==iMax-1) {
             Flux.at(i) = ap*F0.at(i)*F0.at(i)/2.0 
                        + am*F0.at(i+1)*F0.at(i+1)/2.0 
-                       - Kappa*(F0.at(i+1)-F0.at(i))/dX;
+                       - K*(F0.at(i+1)-F0.at(i))/dX;
    
          } else {
             Flux.at(i) = ap*( a0*F0.at(i)*F0.at(i) 
@@ -181,7 +188,7 @@ void EEDF::computeFluxes(const domainGrid& Xgrid, const double& Kappa)
                        + am*( a0*F0.at(i+1)*F0.at(i+1) 
                            +  a1*F0.at(i)*F0.at(i)
                            -  a2*F0.at(i+2)*F0.at(i+2) )/2.0 
-                       - Kappa*(F0.at(i+1)-F0.at(i))/dX;
+                       - K*(F0.at(i+1)-F0.at(i))/dX;
          }
 
       } // end for loop
@@ -285,6 +292,21 @@ void EEDF::advanceF0(const domainGrid& Xgrid, const double& dt)
       F0.at(n) = F0.at(n) - dt*(Flux.at(n)-Flux.at(n-1))/Xgrid.dX;
    }
 
+}
+
+void EEDF::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
+{
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+   
+   const double dX = Xgrid.dX;
+   double dtmax = 0.5*dX*dX/K;
+   dtSim = min(dtmax/tDom.dtFrac,tDom.dtOut);
+   if(procID==0) {
+      cout << endl; 
+      cout << "max stable time step is " << dtmax << endl;
+      cout << endl; 
+   }
 }
 
 

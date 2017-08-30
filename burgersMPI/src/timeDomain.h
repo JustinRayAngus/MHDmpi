@@ -7,8 +7,7 @@
 #ifndef timeDomain_h
 #define timeDomain_h
 
-#include "EEDF.h"
-#include "domainGrid.h"
+//#include "domainGrid.h"
 
 using namespace std;
 
@@ -25,7 +24,6 @@ public:
   
   void initialize(const Json::Value&);
   void updatetOut(double thistOut);
-  void setdtSim(const EEDF&, const domainGrid&, const double&);
 
 };
 
@@ -75,19 +73,5 @@ void timeDomain::updatetOut(const double thistOut)
    tOut = thistOut;
 }
 
-void timeDomain::setdtSim(const EEDF& eedf, const domainGrid& Xgrid, const double& K)
-{
-   int procID;
-   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
-
-   const double dX = Xgrid.dX;
-   double dtmax = 0.5*dX*dX/K;
-   dtSim = min(dtmax/dtFrac,dtOut);
-   if(procID==0) {
-      cout << endl; 
-      cout << "max stable time step is " << dtmax << endl;
-      cout << endl; 
-   }
-}
 
 #endif

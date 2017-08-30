@@ -86,20 +86,18 @@ int main(int argc, char** argv) {
    if(procID==0) eedf.setXminBoundary(Xgrid, 0.0);   
    if(procID==numProcs-1) eedf.setXmaxBoundary(Xgrid, 0.0);   
    eedf.communicate(Xgrid); // communicate F0
-   double K = 0.002; // normalized diffusion coefficient
-   eedf.computeFluxes(Xgrid, K);   
+   eedf.computeFluxes(Xgrid);   
    dataFile.add(eedf.F0, "F0", 1); // function   
    dataFile.add(eedf.Flux, "Flux", 1); // function   
 
 
    // march forward in time
    //
-   //double dtSim = tDom.dtSim;
-   tDom.setdtSim(eedf, Xgrid, K); // set initial time step
-   double dtSim = tDom.dtSim;
+   double dtSim;
+   eedf.setdtSim(dtSim, tDom, Xgrid); // set initial time step
+   tDom.dtSim = dtSim;
    if(procID==0) {
       cout << "Initial simulation time step: " << dtSim << endl << endl;
-      cout << "diffusion coefficient: " << K << endl << endl;
    }
    double thist = 0;
    int thistOutInt = 1;
@@ -114,10 +112,7 @@ int main(int argc, char** argv) {
       if(procID==0) eedf.setXminBoundary(Xgrid, 0.0);   
       if(procID==numProcs-1) eedf.setXmaxBoundary(Xgrid, 0.0);   
       eedf.communicate(Xgrid); // communicate F0
-      eedf.computeFluxes(Xgrid, K);
-
-      //tDom.setdtSim(eedf, Xgrid, K); // set initial time step
-      //dtSim = tDom.dtSim;
+      eedf.computeFluxes(Xgrid);
 
       // check if thist is an output time
       //
