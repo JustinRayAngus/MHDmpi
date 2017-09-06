@@ -97,10 +97,10 @@ int main(int argc, char** argv) {
    dataFile.add(eedf.FluxL, "FluxL", 1); // left going flux
 
 
-   // march forward in time
+   // set initial time-step
    //
    double dtSim;
-   eedf.setdtSim(dtSim, tDom, Xgrid); // set initial time step
+   eedf.setdtSim(dtSim, tDom, Xgrid);
    tDom.dtSim = dtSim;
    if(procID==0) {
       cout << "Initial simulation time step: " << dtSim << endl << endl;
@@ -110,12 +110,12 @@ int main(int argc, char** argv) {
    vector<double> F0m(Xgrid.nX,0.0), errorVec(Xgrid.nX,0.0);
 
   
-   // create flux vector and apply boundary conditions
+   // advance variables in time
    //
    while(thist<tDom.tmax) {
       thist = thist + dtSim; // new time at end of this time step
       
-      // half time step for predictor
+      // advance from n => n+1/2 using fluxes computed with F0 at n
       //
       eedf.advanceF0(Xgrid, dtSim/2.0);
       if(procID==0) eedf.setXminBoundary(Xgrid, 0.0);   
@@ -123,7 +123,7 @@ int main(int argc, char** argv) {
       Xgrid.communicate(eedf.F0);
       eedf.computeFluxes(Xgrid);
 
-      // full step for corrector
+      // advance from n => n+1 using fluxes computed with F0 at n+1/2
       //
       eedf.advanceF0(Xgrid, dtSim);
       if(procID==0) eedf.setXminBoundary(Xgrid, 0.0);   

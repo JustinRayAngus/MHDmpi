@@ -156,11 +156,19 @@ void EEDF::computeFluxes(const domainGrid& Xgrid)
    DeltaFluxR.assign(nCE,0.0);
    FluxL1st.assign(nCE,0.0);
    FluxR1st.assign(nCE,0.0);
-   FluxDif.assign(nCE,0.0);
    Cspeed = U; // Local flux freezing speed 
    for (auto i=0; i<nCC; i++) {
       FluxAdvCC.at(i) = U.at(i)*U.at(i)/2.0;
    }
+
+
+   // compute diffusive flux using standard centered scheme
+   //
+   FluxDif.assign(nCE,0.0);
+   //domainGrid domGrid;
+   Xgrid.DDX(FluxDif,U);
+   transform(FluxDif.begin(), FluxDif.end(), FluxDif.begin(), 
+             bind1st(multiplies<double>(),-K)); 
 
 
    // Step 2: compute first order upwind fluxes
@@ -175,7 +183,7 @@ void EEDF::computeFluxes(const domainGrid& Xgrid)
       for (auto i=0; i<nCE; i++) {
          FluxR1st.at(i) = FluxAdvCC.at(i)   + Cspeed.at(i)*U.at(i);
          FluxL1st.at(i) = FluxAdvCC.at(i+1) - Cspeed.at(i+1)*U.at(i+1);
-         FluxDif.at(i) = -K*(U.at(i+1)-U.at(i))/dX;
+         //FluxDif.at(i) = -K*(U.at(i+1)-U.at(i))/dX;
       }
 
       // Step 3: compute 2nd order corrections to FluxR and FluxL

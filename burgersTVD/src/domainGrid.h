@@ -15,13 +15,14 @@ class domainGrid
 {
 
 public:
-  int nX, nXsub, nXg;
+  int nX, nXsub, nXg, nXcc, nXce;
   int numProcs, procID;
   double Xmax, Xmin, dX;
   vector<double> Xcc, Xce; // spatial grid at cell-center and at cell-edge 
 
   void initialize(const Json::Value&);
   void communicate(vector<double>&);
+  void DDX(vector<double>&, const vector<double>&) const;
 
 };
 
@@ -89,7 +90,9 @@ void domainGrid::initialize(const Json::Value& root)
    }
   
    Xcc.assign(nXsub+2*nXg,0.0);
+   nXcc = Xcc.size();
    Xce.assign(nXsub+2*nXg-1,0.0);
+   nXce = Xce.size();
    double offset = procID*(Xmax-Xmin)/numProcs-(0.5+nXg-1.0)*dX;
    const int nMax = Xce.size();
    for (auto n=0; n<nMax; n++) {
@@ -307,5 +310,33 @@ void domainGrid::communicate(vector<double> &F0)
 
 }
 
+
+void domainGrid::DDX(vector<double> &Fout, const vector<double> &Fin) const {
+
+   // check that Fin (at cell center)  and Fout (cell edges) are proper size
+   
+   const int Nout = Fout.size();
+   const int Nin  = Fin.size();
+   if(Nout != nXce) {  
+         cout << "ERROR: output vector in call to domainGrid::DDX " << endl;
+         cout << "is not proper size" << endl;
+         cout << "Nout = " << Nout << endl;
+         cout << "nXce = " << nXce << endl;
+         exit (EXIT_FAILURE);
+   }
+   if(Nin != nXcc) {
+         cout << "ERROR: input vector in call to domainGrid::DDX " << endl;
+         cout << "is not proper size" << endl;
+         exit (EXIT_FAILURE);
+
+   } 
+
+
+   for (auto i=0; i<Nout; i++) {
+      Fout.at(i) = (Fin.at(i+1)-Fin.at(i))/dX;
+   }
+
+
+}
 
 #endif
