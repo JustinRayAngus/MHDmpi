@@ -7,13 +7,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-numProcs = 4;
+numProcs = 1;
 filePath = '../build/';
 %filePath = '../../MHD1D_MPI_save/buildMPI/';
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
 thisFile = [filePath,fileName];
+procID  = hdf5read(thisFile,'procID');
 fileinfo = hdf5info(thisFile);
 Xcc = hdf5read(thisFile,'Xcc');
 Xce = hdf5read(thisFile,'Xce');

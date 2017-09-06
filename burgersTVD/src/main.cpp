@@ -66,6 +66,8 @@ int main(int argc, char** argv) {
    HDF5dataFile dataFile;
    const string outputFile = "output" + to_string(procID) + ".h5";
    dataFile.setOutputFile(outputFile);
+   double procID2 = (double)procID;
+   dataFile.add(procID2,"procID",0);
 
    // initialize spatial grid and time domain
    //
@@ -82,19 +84,7 @@ int main(int argc, char** argv) {
    // initialize variables
    //  
    EEDF eedf;
-   eedf.initialize(Xgrid, inputRoot);   
-   if(procID==0) eedf.setXminBoundary(Xgrid, 0.0);   
-   if(procID==numProcs-1) eedf.setXmaxBoundary(Xgrid, 0.0);   
-   Xgrid.communicate(eedf.F0);
-   eedf.F0old  = eedf.F0;
-   eedf.computeFluxes(Xgrid);   
-   //Xgrid.communicate(eedf.Flux);
-   dataFile.add(eedf.F0, "F0", 1); // function   
-   dataFile.add(eedf.FluxRatio, "FluxRatio", 1); // function   
-   dataFile.add(eedf.FluxLim, "FluxLim", 1); // function   
-   dataFile.add(eedf.Flux, "Flux", 1); // total flux function   
-   dataFile.add(eedf.FluxR, "FluxR", 1); // right going flux
-   dataFile.add(eedf.FluxL, "FluxL", 1); // left going flux
+   eedf.initialize(Xgrid, inputRoot, dataFile);   
 
 
    // set initial time-step
@@ -115,23 +105,9 @@ int main(int argc, char** argv) {
    while(thist<tDom.tmax) {
       thist = thist + dtSim; // new time at end of this time step
       
-      // advance from n => n+1/2 using fluxes computed with F0 at n
-      //
-      eedf.advanceF0(Xgrid, dtSim/2.0);
-      if(procID==0) eedf.setXminBoundary(Xgrid, 0.0);   
-      if(procID==numProcs-1) eedf.setXmaxBoundary(Xgrid, 0.0);   
-      Xgrid.communicate(eedf.F0);
-      eedf.computeFluxes(Xgrid);
-
-      // advance from n => n+1 using fluxes computed with F0 at n+1/2
+      // advance variables from n => n+1
       //
       eedf.advanceF0(Xgrid, dtSim);
-      if(procID==0) eedf.setXminBoundary(Xgrid, 0.0);   
-      if(procID==numProcs-1) eedf.setXmaxBoundary(Xgrid, 0.0);   
-      Xgrid.communicate(eedf.F0);
-      eedf.computeFluxes(Xgrid);
-      eedf.F0old = eedf.F0;
-      
 
       // check if thist is an output time
       //
@@ -150,7 +126,8 @@ int main(int argc, char** argv) {
    if(procID==0) {
       double time_end = MPI_Wtime();
       cout << endl << "Final simulation time step = " << dtSim << endl;
-      cout << endl << "Ending simulation: wall time = "<< time_end-time_start << endl;
+      cout << endl << "Ending simulation: wall time = " 
+           << time_end-time_start << endl;
       cout << endl << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%" << endl << endl;
    }
 

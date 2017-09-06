@@ -21,7 +21,7 @@ public:
   vector<double> Xcc, Xce; // spatial grid at cell-center and at cell-edge 
 
   void initialize(const Json::Value&);
-  void communicate(vector<double>&);
+  void communicate(vector<double>&) const;
   void DDX(vector<double>&, const vector<double>&) const;
 
 };
@@ -56,6 +56,7 @@ void domainGrid::initialize(const Json::Value& root)
          exit (EXIT_FAILURE);
       }
       Xmin = XminVal.asDouble();
+      cout << "Xmin = " << Xmin << endl;
       Xmax = XmaxVal.asDouble();
       if(Xmin >= Xmax) {
          cout << "ERROR: Xmin > Xmax in input file" << endl;
@@ -246,8 +247,8 @@ void domainGrid::computeFluxes(EEDF& eedf)
 }
 */
 
-void domainGrid::communicate(vector<double> &F0)
-{
+void domainGrid::communicate(vector<double> &F0) const {
+
    const int nMax = F0.size(); // number of cell-center points
    const int nXce = Xce.size(); // number of cell-center points
    int thisnXg = nXg;

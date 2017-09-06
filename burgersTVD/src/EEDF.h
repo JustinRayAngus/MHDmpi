@@ -24,7 +24,7 @@ public:
    vector<double> FluxRatio, FluxLim;
    vector<double> Flux, FluxR, FluxL;  // flux at cell-edges
    
-   void initialize(const domainGrid&, const Json::Value&);
+   void initialize(const domainGrid&, const Json::Value&, HDF5dataFile&);
    void computeFluxes(const domainGrid&);
    void advanceF0(const domainGrid&, const double&);
    void setXminBoundary(const domainGrid&, const double&);
@@ -37,10 +37,12 @@ private:
 };
 
 
-void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
+void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root, 
+                      HDF5dataFile& dataFile)
 {
-   int procID;
+   int procID, numProcs;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+   MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
 
    double Xshift;
    const int nXcc = Xgrid.Xcc.size();
@@ -73,7 +75,8 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
       b = bVal.asDouble();
       c = cVal.asDouble();
       if(c < 0.0) {
-         printf("ERROR: gaussian width c is not a positive value in input file\n");
+         cout << "ERROR: gaussian width c is not a positive" << endl; 
+         cout << "value in input file" << endl;
          exit (EXIT_FAILURE);
       }
       
@@ -122,11 +125,27 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root)
 
    }
    else {
-      cout << "value for key \"Xgrid\" is not object type !" << endl;
+      cout << "value for key \"EEDF\" is not object type !" << endl;
       exit (EXIT_FAILURE);
    }
   
    cout << endl;  
+
+
+   if(procID==0) setXminBoundary(Xgrid, 0.0);   
+   if(procID==numProcs-1) setXmaxBoundary(Xgrid, 0.0);   
+   Xgrid.communicate(F0);
+   F0old  = F0;
+   computeFluxes(Xgrid); // inital calculation before add to output   
+   dataFile.add(F0, "F0", 1); // function   
+   dataFile.add(FluxRatio, "FluxRatio", 1); // function   
+   dataFile.add(FluxLim, "FluxLim", 1); // function   
+   dataFile.add(Flux, "Flux", 1); // total flux function   
+   dataFile.add(FluxR, "FluxR", 1); // right going flux
+   dataFile.add(FluxL, "FluxL", 1); // left going flux
+
+
+
 }
 
 
@@ -302,15 +321,45 @@ void EEDF::setXmaxBoundary(const domainGrid& Xgrid, const double& C)
 
 void EEDF::advanceF0(const domainGrid& Xgrid, const double& dt)
 {
-   //const int nXsub = Xgrid.nXsub;
    const int nMax = F0.size();
    const int nXg = Xgrid.nXg;
-   
-   // Explicit forward advance
+   int procID, numProcs;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+   MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
+
+   // Explicit forward advance from n to n+1/2 using Flux(n)
+   // (calc of Flux(t=0) is done during initilization)
+   //
+   for (auto n=nXg; n<nMax-nXg; n++) {
+      F0.at(n) = F0old.at(n) - dt/2.0*(Flux.at(n)-Flux.at(n-1))/Xgrid.dX;
+   }
+
+   // apply boundary conditions and communicate
+   //
+   if(procID==0) setXminBoundary(Xgrid, 0.0);   
+   if(procID==numProcs-1) setXmaxBoundary(Xgrid, 0.0);   
+   Xgrid.communicate(F0);
+
+   // compute RHS using F0(n+1/2)
+   //
+   computeFluxes(Xgrid);
+
+   // Explicit forward advance from n to n+1 using Flux(n+1/2)
    //
    for (auto n=nXg; n<nMax-nXg; n++) {
       F0.at(n) = F0old.at(n) - dt*(Flux.at(n)-Flux.at(n-1))/Xgrid.dX;
    }
+   
+   // apply boundary conditions and communicate
+   //
+   if(procID==0) setXminBoundary(Xgrid, 0.0);   
+   if(procID==numProcs-1) setXmaxBoundary(Xgrid, 0.0);   
+   Xgrid.communicate(F0);
+   computeFluxes(Xgrid);
+   
+   //  update F0old
+   //
+   F0old = F0;
 
 }
 
