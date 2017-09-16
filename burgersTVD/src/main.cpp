@@ -69,6 +69,13 @@ int main(int argc, char** argv) {
    //double procID2 = (double)procID;
    dataFile.add(procID,"procID",0);
 
+
+   // the following are for testing appending matrix to data file
+   //
+   vector<vector<double>> Matrix;
+   Matrix.resize(3,vector<double>(11,0.0));
+   dataFile.add(Matrix,"Matrix",1);
+
    // initialize spatial grid and time domain
    //
    domainGrid Xgrid;
