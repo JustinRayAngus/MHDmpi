@@ -66,8 +66,8 @@ int main(int argc, char** argv) {
    HDF5dataFile dataFile;
    const string outputFile = "output" + to_string(procID) + ".h5";
    dataFile.setOutputFile(outputFile);
-   double procID2 = (double)procID;
-   dataFile.add(procID2,"procID",0);
+   //double procID2 = (double)procID;
+   dataFile.add(procID,"procID",0);
 
    // initialize spatial grid and time domain
    //

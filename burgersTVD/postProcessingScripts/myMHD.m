@@ -7,7 +7,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-numProcs = 1;
+numProcs = 4;
 filePath = '../build/';
 %filePath = '../../MHD1D_MPI_save/buildMPI/';
 
