@@ -12,7 +12,8 @@
 #include "HDF5dataFile.h"
 #include "domainGrid.h"
 #include "timeDomain.h"
-#include "EEDF.h"
+#include "variables.h"
+#include "physicsMods/burgers1D.cpp" // physics module
 
 using namespace std;
 
@@ -69,12 +70,14 @@ int main(int argc, char** argv) {
    //double procID2 = (double)procID;
    dataFile.add(procID,"procID",0);
 
-
+   /*
    // the following are for testing appending matrix to data file
    //
    vector<vector<double>> Matrix;
    Matrix.resize(3,vector<double>(11,0.0));
    dataFile.add(Matrix,"Matrix",1);
+   */
+
 
    // initialize spatial grid and time domain
    //
@@ -90,14 +93,14 @@ int main(int argc, char** argv) {
 
    // initialize variables
    //  
-   EEDF eedf;
-   eedf.initialize(Xgrid, inputRoot, dataFile);   
+   variables vars;
+   vars.initialize(Xgrid, inputRoot, dataFile);   
 
 
    // set initial time-step
    //
    double dtSim;
-   eedf.setdtSim(dtSim, tDom, Xgrid);
+   vars.setdtSim(dtSim, tDom, Xgrid);
    tDom.dtSim = dtSim;
    if(procID==0) {
       cout << "Initial simulation time step: " << dtSim << endl << endl;
@@ -114,7 +117,7 @@ int main(int argc, char** argv) {
       
       // advance variables from n => n+1
       //
-      eedf.advanceF0(Xgrid, dtSim);
+      vars.advanceF0(Xgrid, dtSim);
 
       // check if thist is an output time
       //

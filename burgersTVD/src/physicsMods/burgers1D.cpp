@@ -1,43 +1,34 @@
 /***
  * 
- * electron-energy-distribution function class
+ * physics module for 1D burgers equation
+ *
+ * Right now you have to manually include
+ * this file in main.cpp...
  *
 ***/
 
-#ifndef EEDF_h
-#define EEDF_h
-//#ifndef __EEDF_H_INCLUDED__
-//#define __EEDF_H_INCLUDED__
 
-
-#include "domainGrid.h"
-#include "timeDomain.h"
+#include "../domainGrid.h"
+#include "../timeDomain.h"
+#include "../variables.h"
 
 using namespace std;
 
-class EEDF
-{
-public:
-   string advScheme0;    // advection differencing scheme
-   double K;             // diffusion coefficient
-   vector<double> F0, F0old;    // function
-   vector<double> FluxRatio, FluxLim;
-   vector<double> Flux, FluxR, FluxL;  // flux at cell-edges
+string advScheme0;    // advection differencing scheme
+double K;             // diffusion coefficient
+vector<double> F0, F0old;    // function
+vector<double> FluxRatio, FluxLim;
+vector<double> Flux, FluxR, FluxL;  // flux at cell-edges   
+
+string type0;    // initial function type
+double a, b, c;  // initial function params
    
-   void initialize(const domainGrid&, const Json::Value&, HDF5dataFile&);
-   void computeFluxes(const domainGrid&);
-   void advanceF0(const domainGrid&, const double&);
-   void setXminBoundary(const domainGrid&, const double&);
-   void setXmaxBoundary(const domainGrid&, const double&);
-   void setdtSim(double&, const timeDomain&, const domainGrid&);
-
-private:
-   string type0;    // initial function type
-   double a, b, c;  // initial function params
-};
+void computeFluxes(const domainGrid&);
+void setXminBoundary(const domainGrid&, const double&);
+void setXmaxBoundary(const domainGrid&, const double&);
 
 
-void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root, 
+void variables::initialize(const domainGrid& Xgrid, const Json::Value& root, 
                       HDF5dataFile& dataFile)
 {
    int procID, numProcs;
@@ -55,19 +46,19 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root,
    FluxR.assign(nXce,0.0);
    FluxL.assign(nXce,0.0);
    const Json::Value defValue; // used for default reference
-   const Json::Value EEDF = root.get("EEDF",defValue);
-   if(EEDF.isObject()) {
-      if(procID==0) printf("\nInitializing EEDF ...\n");
-      Json::Value aVal = EEDF.get("a",defValue);
-      Json::Value bVal = EEDF.get("b",defValue);
-      Json::Value cVal = EEDF.get("c",defValue);
-      Json::Value type = EEDF.get("type",defValue);
-      Json::Value advScheme = EEDF.get("advScheme",defValue);
-      Json::Value KVal = EEDF.get("diffC",defValue);
+   const Json::Value Vars = root.get("Variables",defValue);
+   if(Vars.isObject()) {
+      if(procID==0) printf("\nInitializing Variables ...\n");
+      Json::Value aVal = Vars.get("a",defValue);
+      Json::Value bVal = Vars.get("b",defValue);
+      Json::Value cVal = Vars.get("c",defValue);
+      Json::Value type = Vars.get("type",defValue);
+      Json::Value advScheme = Vars.get("advScheme",defValue);
+      Json::Value KVal = Vars.get("diffC",defValue);
       if(aVal == defValue || bVal == defValue || 
          cVal == defValue || type == defValue || 
          advScheme == defValue || KVal == defValue) {
-         cout << "ERROR: at least 1 EEDF value is " << endl;
+         cout << "ERROR: at least 1 Variables value is " << endl;
          cout << "not declared in input file" << endl;
          exit (EXIT_FAILURE);
       } 
@@ -98,7 +89,7 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root,
 
       }
       else {
-         cout << "Initial EEDF type = " << type0 << " is not valid " << endl;
+         cout << "Initial Variable type = " << type0 << " is not valid " << endl;
          exit (EXIT_FAILURE);
       }
 
@@ -125,7 +116,7 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root,
 
    }
    else {
-      cout << "value for key \"EEDF\" is not object type !" << endl;
+      cout << "value for key \"Variables\" is not object type !" << endl;
       exit (EXIT_FAILURE);
    }
   
@@ -149,7 +140,7 @@ void EEDF::initialize(const domainGrid& Xgrid, const Json::Value& root,
 }
 
 
-void EEDF::computeFluxes(const domainGrid& Xgrid)
+void computeFluxes(const domainGrid& Xgrid)
 {
    const double dX = Xgrid.dX;
    const int nCE = Flux.size();
@@ -299,7 +290,7 @@ void EEDF::computeFluxes(const domainGrid& Xgrid)
 }
 
 
-void EEDF::setXminBoundary(const domainGrid& Xgrid, const double& C)
+void setXminBoundary(const domainGrid& Xgrid, const double& C)
 {
    
    //F0.front() = 2.0*C-F0.at(1); 
@@ -308,7 +299,7 @@ void EEDF::setXminBoundary(const domainGrid& Xgrid, const double& C)
 }
 
 
-void EEDF::setXmaxBoundary(const domainGrid& Xgrid, const double& C)
+void setXmaxBoundary(const domainGrid& Xgrid, const double& C)
 {
    
    //F0[nXsub+1] = 2.0*C-F0[nXsub]; 
@@ -319,7 +310,7 @@ void EEDF::setXmaxBoundary(const domainGrid& Xgrid, const double& C)
 }
 
 
-void EEDF::advanceF0(const domainGrid& Xgrid, const double& dt)
+void variables::advanceF0(const domainGrid& Xgrid, const double& dt)
 {
    const int nMax = F0.size();
    const int nXg = Xgrid.nXg;
@@ -363,7 +354,7 @@ void EEDF::advanceF0(const domainGrid& Xgrid, const double& dt)
 
 }
 
-void EEDF::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
+void variables::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
 {
    int procID;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
@@ -380,5 +371,3 @@ void EEDF::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgr
    }
 }
 
-
-#endif
