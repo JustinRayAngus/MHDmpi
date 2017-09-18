@@ -1,5 +1,5 @@
 /***
- * 
+ *
  * domain grid class
  *
 ***/
@@ -10,6 +10,10 @@
 //#include "EEDF.h"
 
 using namespace std;
+
+//vector<double> DDX(const vector<double> &Fin, const double &dx);
+// above funtion doesn't use anything from grid and doesn't
+// belong defined here
 
 class domainGrid
 {
@@ -22,6 +26,12 @@ public:
 
   void initialize(const Json::Value&);
   void communicate(vector<double>&) const;
+  void InterpToCellEdges(vector<double>&, const vector<double>&,
+                         const vector<double>&, const string&) const;
+  void computeFluxTVD(vector<double>&, vector<double>&, vector<double>&,
+                      vector<double>&, vector<double>&,
+                      const vector<double>&, const vector<double>&,
+                      const vector<double>&) const;
   void DDX(vector<double>&, const vector<double>&) const;
 
 };
@@ -105,148 +115,6 @@ void domainGrid::initialize(const Json::Value& root)
 
 }
 
-/*
-void domainGrid::computeFluxes(EEDF& eedf)
-{
-   const double dX = Xgrid.dX;
-   const int nCE = Flux.size();
-   const int nCC = F0.size();
-
-   // compute Flux = F0^2/2 - K*dF0/dX
-   //              = FluxAdv + FluxDif
-   //
-   // FluxAdv = (FluxR+FluxL)/2 is computed using upwinding schemes
-   // FluxDif is computed using standard centered scheme
-
-
-   // Step 1: set flux freezing speed and 
-   // compute advection flux at cell center
-   
-   vector<double> Cspeed, FluxAdvCC, FluxAdv, FluxDif;
-   vector<double> DeltaFluxR, DeltaFluxL, FluxRatio, FluxLim;
-   FluxAdvCC.assign(nCC,0.0);
-   FluxAdv.assign(nCE,0.0);
-   DeltaFluxL.assign(nCE,0.0);
-   DeltaFluxR.assign(nCE,0.0);
-   FluxRatio.assign(nCE,0.0);
-   FluxLim.assign(nCE,0.0);
-   FluxDif.assign(nCE,0.0);
-   //Cspeed.swap(F0); // Local flux freezing speed
-   //copy(F0.begin(), F0.end(), Cspeed.begin()); 
-   Cspeed = F0; // Local flux freezing speed 
-   for (auto i=0; i<nCC; i++) {
-      FluxAdvCC.at(i) = F0.at(i)*F0.at(i)/2.0;
-   }
-
-
-   // Step 2: compute first order upwind fluxes
-   // for FluxL and FluxR at cell edges
-   
-
-   if(advScheme0 == "TVD") {
-      
-      // Step 2: compute first order upwind fluxes
-      // for FluxL and FluxR at cell edges
-      //
-      for (auto i=0; i<nCE; i++) {
-         FluxR.at(i) = FluxAdvCC.at(i)   + Cspeed.at(i)*F0.at(i);
-         FluxL.at(i) = FluxAdvCC.at(i+1) - Cspeed.at(i+1)*F0.at(i+1);
-         FluxDif.at(i) = -K*(F0.at(i+1)-F0.at(i))/dX;
-      }
-
-      // Step 3: compute 2nd order corrections to FluxR and FluxL
-      //
-      for (auto i=1; i<nCE-1; i++) {
-         DeltaFluxR.at(i) = 0.5*(FluxR.at(i+1)-FluxR.at(i)); 
-         DeltaFluxL.at(i) = 0.5*(FluxL.at(i)-FluxL.at(i-1)); 
-         //FluxRatio.at(i) = DeltaFluxL.at(i)/DeltaFluxR.at(i);
-         FluxRatio.at(i) = (F0.at(i) - F0.at(i-1))/(F0.at(i+1) - F0.at(i)); // divide by zero?
-         //FluxLim.at(i) = (abs(FluxRatio.at(i))+FluxRatio.at(i))/(abs(FluxRatio.at(i)) + 1.0); // van Leer
-         FluxLim.at(i) = 2.0;
-         if(FluxRatio.at(i)<=2.0) FluxLim.at(i) = FluxRatio.at(i);
-         if(FluxRatio.at(i)<=1.0) FluxLim.at(i) = 1.0;
-         if(FluxRatio.at(i)<=0.5) FluxLim.at(i) = 2.0*FluxRatio.at(i);
-         
-         FluxR.at(i) += FluxLim.at(i)*DeltaFluxR.at(i);
-         FluxL.at(i) += FluxLim.at(i)*DeltaFluxL.at(i);
-         FluxAdv.at(i) = (FluxR.at(i) + FluxL.at(i))/2.0;
-         Flux.at(i) = FluxAdv.at(i) + FluxDif.at(i);
-      }
-      FluxAdv.at(0) = (FluxR.at(0) + FluxL.at(0))/2.0;
-      Flux.at(0) = FluxAdv.at(0) + FluxDif.at(0);
-      FluxAdv.at(nCE-1) = (FluxR.at(nCE-1) + FluxL.at(nCE-1))/2.0;
-      Flux.at(nCE-1) = FluxAdv.at(nCE-1) + FluxDif.at(nCE-1);
-      
-
-   }      
-   else if(advScheme0 == "C2") {
-      // Use second order central differencing/interpolation
-      //
-      for (auto i=0; i<nCE; i++) {
-         Flux.at(i) = (F0.at(i+1)+F0.at(i))/2.0*(F0.at(i+1)+F0.at(i))/2.0/2.0 
-                    - K*(F0.at(i+1)-F0.at(i))/dX;
-      }
-   } 
-   else if(advScheme0 == "U1") {
-      // Use first order upwinding
-      //
-      double Ui, ap, am;
-      for (auto i=0; i<nCE; i++) {
-      
-         Ui = F0.at(i)/2.0;
-         ap = 1.0;
-         am = 0.0;
-         if(Ui<0.0) {
-            ap = 0.0;
-            am = 1.0; 
-         }
-
-         Flux.at(i) = ap*F0.at(i)*F0.at(i)/2.0 
-                    + am*F0.at(i+1)*F0.at(i+1)/2.0 
-                    - K*(F0.at(i+1)-F0.at(i))/dX;
-   
-      } // end for loop
-   }
-   else if(advScheme0 == "QUICK") {   
-      // Use 2nd order QUICK upwinding
-      //
-      double Ui, ap, am;
-      double a0 = 3.0/4.0, a1 = 3.0/8.0, a2 = 1.0/8.0;
-      for (auto i=0; i<nCE; i++) {
-      
-         Ui = F0.at(i)/2.0;
-         ap = 1.0;
-         am = 0.0;
-         if(Ui<0.0) {
-            ap = 0.0;
-            am = 1.0; 
-         }
-
-         if(i==0 || i==nCE-1) {
-            Flux.at(i) = ap*F0.at(i)*F0.at(i)/2.0 
-                       + am*F0.at(i+1)*F0.at(i+1)/2.0 
-                       - K*(F0.at(i+1)-F0.at(i))/dX;
-   
-         } else {
-            Flux.at(i) = ap*( a0*F0.at(i)*F0.at(i) 
-                           +  a1*F0.at(i+1)*F0.at(i+1) 
-                           -  a2*F0.at(i-1)*F0.at(i-1) )/2.0 
-                       + am*( a0*F0.at(i+1)*F0.at(i+1) 
-                           +  a1*F0.at(i)*F0.at(i)
-                           -  a2*F0.at(i+2)*F0.at(i+2) )/2.0 
-                       - K*(F0.at(i+1)-F0.at(i))/dX;
-         }
-
-      } // end for loop
-   } else {
-      cout << "advection scheme not valid," << endl;
-      cout << "should be caught on initilization!" << endl;
-      exit (EXIT_FAILURE);
-   }
-
-}
-*/
-
 void domainGrid::communicate(vector<double> &F0) const {
 
    const int nMax = F0.size(); // number of cell-center points
@@ -311,10 +179,9 @@ void domainGrid::communicate(vector<double> &F0) const {
 
 }
 
-
 void domainGrid::DDX(vector<double> &Fout, const vector<double> &Fin) const {
 
-   // check that Fin (at cell center)  and Fout (cell edges) are proper size
+   // check that Fin (at cell center) and Fout (cell edges) are proper size
    
    const int Nout = Fout.size();
    const int Nin  = Fin.size();
@@ -332,12 +199,175 @@ void domainGrid::DDX(vector<double> &Fout, const vector<double> &Fin) const {
 
    } 
 
-
    for (auto i=0; i<Nout; i++) {
       Fout.at(i) = (Fin.at(i+1)-Fin.at(i))/dX;
    }
 
+}
+
+void domainGrid::InterpToCellEdges(vector<double> &Fout, 
+                                   const vector<double> &Fin,
+                                   const vector<double> &upC,
+                                   const string& METHOD) const {
+
+   // this function interpolates cell-center Fin to cell
+   // to Fout, defined at cell edges
+   // upC is the local maximum characteristic speed
+   // METHOD referes to interpolation scheme
+
+
+   // check that vectors in call are proper size
+   //
+   const int Nout = Fout.size();
+   const int Nin  = Fin.size();
+   const int NupC = upC.size();
+   if(Nout != nXce) {  
+         cout << "ERROR: output vector in call to " << endl;
+         cout << "domainGrid::InterpToCellCenter is not proper size" << endl;
+         exit (EXIT_FAILURE);
+   }
+   if(Nin != nXcc) {
+         cout << "ERROR: input vector in call to " << endl;
+         cout << "domainGrid::InterpToCellCenter is not proper size" << endl;
+         exit (EXIT_FAILURE);
+   } 
+   if(NupC != nXcc) {
+         cout << "ERROR: upwind speed vector in call to " << endl;
+         cout << "domainGrid::InterpToCellCenter is not proper size" << endl;
+         exit (EXIT_FAILURE);
+   } 
+
+
+   //  interpolate using specifed method
+   //
+   if(METHOD == "C2") { // 2nd order central
+
+      for (auto i=0; i<Nout; i++) {
+         Fout.at(i) = (Fin.at(i+1)+Fin.at(i))/2.0;
+      }
+
+   } // end METHOD=C2
+
+   else if(METHOD == "U1") { // first order upwind
+      
+      for (auto i=0; i<Nout; i++) {
+      
+         if(upC.at(i)<0.0) {
+            Fout.at(i) = Fin.at(i+1);
+         } else {
+            Fout.at(i) = Fin.at(i);
+         }
+   
+      }
+   
+   } // end METHOD=U1
+
+   else if(METHOD == "QUICK") {   
+      // Use 2nd order QUICK upwinding
+      //
+      double Ui, ap, am;
+      double a0 = 3.0/4.0, a1 = 3.0/8.0, a2 = 1.0/8.0;
+      for (auto i=0; i<Nout; i++) {
+      
+         Ui = upC.at(i);
+         ap = 1.0;
+         am = 0.0;
+         if(Ui<0.0) {
+            ap = 0.0;
+            am = 1.0; 
+         }
+
+         if(i==0 || i==Nout-1) {
+            Fout.at(i) = ap*Fin.at(i) + am*Fin.at(i+1);
+         } else {
+            Fout.at(i) = ap*( a0*Fin.at(i) 
+                           +  a1*Fin.at(i+1) 
+                           -  a2*Fin.at(i-1) ) 
+                       + am*( a0*Fin.at(i+1) 
+                           +  a1*Fin.at(i)
+                           -  a2*Fin.at(i+2) ); 
+         }
+      }
+
+   } // end METHOD=QUICK 
+   
+   else {
+      cout << "advection scheme not valid," << endl;
+      cout << "should be caught on initilization!" << endl;
+      exit (EXIT_FAILURE);
+   }
+
+
+} // end function InterpToCellEdges
+
+
+void domainGrid::computeFluxTVD(vector<double> &Flout, 
+                                vector<double> &FloutL,  vector<double> &FloutR, 
+                                vector<double> &Flratio, vector<double> &FlLim, 
+                                const vector<double> &Flin,
+                                const vector<double> &upC,
+                                const vector<double> &fin) const {
+
+   // this function interpolates cell-center flux Flin
+   // to Fout, defined at cell edges, using TVD scheme 
+   // FloutL and FloutR are left and right going fluxes
+   // upC is the local maximum characteristic speed
+   // and fin is the function being fluxed
+
+ 
+   const int Nout = Flout.size();
+   vector<double> FluxL1st, FluxR1st;
+   vector<double> DeltaFluxL, DeltaFluxR;
+   FluxL1st.assign(Nout,0.0);   
+   FluxR1st.assign(Nout,0.0); 
+   DeltaFluxL.assign(Nout,0.0);
+   DeltaFluxR.assign(Nout,0.0);  
+
+   // compute first order left and right fluxes
+   //
+   for (auto i=0; i<Nout; i++) {
+      FluxR1st.at(i) = Flin.at(i)   + upC.at(i)*fin.at(i);
+      FluxL1st.at(i) = Flin.at(i+1) - upC.at(i+1)*fin.at(i+1);
+   }
+
+   // compute 2nd order left and right fluxes 
+   // using flux limiter
+   //
+   for (auto i=1; i<Nout-1; i++) {
+      DeltaFluxR.at(i) = 0.5*(FluxR1st.at(i+1)-FluxR1st.at(i)); 
+      DeltaFluxL.at(i) = 0.5*(FluxL1st.at(i)-FluxL1st.at(i-1)); 
+      //Flratio.at(i) = DeltaFluxL.at(i)/DeltaFluxR.at(i);
+      Flratio.at(i) = (fin.at(i+1) - fin.at(i-1))/(fin.at(i+2) - fin.at(i)); // divide by zero?
+      //FlLim.at(i) = (abs(Flratio.at(i))+Flratio.at(i))/(abs(Flratio.at(i)) + 1.0); // van Leer
+      FlLim.at(i) = 2.0;
+      if(Flratio.at(i)<=2.0) FlLim.at(i) = Flratio.at(i);
+      if(Flratio.at(i)<=1.0) FlLim.at(i) = 1.0;
+      if(Flratio.at(i)<=0.5) FlLim.at(i) = 2.0*Flratio.at(i);
+      if(Flratio.at(i)<=0.0) FlLim.at(i) = 0.0;
+      
+      FloutR.at(i) = FluxR1st.at(i) + FlLim.at(i)*DeltaFluxR.at(i);
+      FloutL.at(i) = FluxL1st.at(i) + FlLim.at(i)*DeltaFluxL.at(i);
+      Flout.at(i) = (FloutR.at(i) + FloutL.at(i))/2.0;
+   }
+   //Flout.at(0) = (FloutR.at(0) + FloutL.at(0))/2.0;
+   //Flout.at(nCE-1) = (FluxR.at(nCE-1) + FluxL.at(nCE-1))/2.0;
+ 
+
+} // end function computeFluxTVD
+
+/*
+vector<double> DDX(const vector<double> &Fin, const double &dx) {
+
+   const int Nout  = Fin.size()-1;
+   vector<double> Fout;
+   Fout.assign(Nout,0.0);
+   for (auto i=0; i<Nout; i++) {
+      Fout.at(i) = (Fin.at(i+1)-Fin.at(i))/dx;
+   }
+
+   return Fout;
 
 }
+*/
 
 #endif

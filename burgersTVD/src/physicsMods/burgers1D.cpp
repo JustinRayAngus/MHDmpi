@@ -135,157 +135,62 @@ void variables::initialize(const domainGrid& Xgrid, const Json::Value& root,
    dataFile.add(FluxR, "FluxR", 1); // right going flux
    dataFile.add(FluxL, "FluxL", 1); // left going flux
 
-
-
 }
 
 
 void computeFluxes(const domainGrid& Xgrid)
 {
-   const double dX = Xgrid.dX;
-   const int nCE = Flux.size();
-   const vector<double> U=F0;
-   const int nCC = U.size();
- 
-
-   // compute Flux = U^2/2 - K*dFU/dX
+   // compute Flux = F0^2/2 - K*dF0/dX
    //              = FluxAdv + FluxDif
    //
    // FluxAdv = (FluxR+FluxL)/2 is computed using upwinding schemes
    // FluxDif is computed using standard centered scheme
 
 
-   // Step 1: set flux freezing speed and 
-   // compute advection flux at cell center
-   
+   const int nCE = Flux.size();
+   const int nCC = F0.size();
    vector<double> Cspeed, FluxAdvCC, FluxAdv, FluxDif;
-   vector<double> FluxR1st, FluxL1st, DeltaFluxR, DeltaFluxL;
    FluxAdvCC.assign(nCC,0.0);
    FluxAdv.assign(nCE,0.0);
-   DeltaFluxL.assign(nCE,0.0);
-   DeltaFluxR.assign(nCE,0.0);
-   FluxL1st.assign(nCE,0.0);
-   FluxR1st.assign(nCE,0.0);
-   Cspeed = U; // Local flux freezing speed 
+   FluxDif.assign(nCE,0.0);
+   
+
+   // set flux freezing speed and 
+   // compute advection flux at cell center
+   //
+   Cspeed = F0; // adv flux jacobian
    for (auto i=0; i<nCC; i++) {
-      FluxAdvCC.at(i) = U.at(i)*U.at(i)/2.0;
+      FluxAdvCC.at(i) = F0.at(i)*F0.at(i)/2.0;
    }
 
 
-   // compute diffusive flux using standard centered scheme
+   // compute diffusive flux using 
+   // standard centered scheme
    //
-   FluxDif.assign(nCE,0.0);
-   //domainGrid domGrid;
-   Xgrid.DDX(FluxDif,U);
+   Xgrid.DDX(FluxDif,F0);
+   //FluxDif = DDX(F0,Xgrid.dX);
    transform(FluxDif.begin(), FluxDif.end(), FluxDif.begin(), 
              bind1st(multiplies<double>(),-K)); 
 
 
-   // Step 2: compute first order upwind fluxes
-   // for FluxL and FluxR at cell edges
-   
-
+   // compute advective flux using
+   // specified scheme from input file
+   //
    if(advScheme0 == "TVD") {
-      
-      // Step 2: compute first order upwind fluxes
-      // for FluxL and FluxR at cell edges
-      //
-      for (auto i=0; i<nCE; i++) {
-         FluxR1st.at(i) = FluxAdvCC.at(i)   + Cspeed.at(i)*U.at(i);
-         FluxL1st.at(i) = FluxAdvCC.at(i+1) - Cspeed.at(i+1)*U.at(i+1);
-         //FluxDif.at(i) = -K*(U.at(i+1)-U.at(i))/dX;
-      }
-
-      // Step 3: compute 2nd order corrections to FluxR and FluxL
-      //
-      for (auto i=1; i<nCE-1; i++) {
-         DeltaFluxR.at(i) = 0.5*(FluxR1st.at(i+1)-FluxR1st.at(i)); 
-         DeltaFluxL.at(i) = 0.5*(FluxL1st.at(i)-FluxL1st.at(i-1)); 
-         //FluxRatio.at(i) = DeltaFluxL.at(i)/DeltaFluxR.at(i);
-         FluxRatio.at(i) = (U.at(i+1) - U.at(i-1))/(U.at(i+2) - U.at(i)); // divide by zero?
-         //FluxLim.at(i) = (abs(FluxRatio.at(i))+FluxRatio.at(i))/(abs(FluxRatio.at(i)) + 1.0); // van Leer
-         FluxLim.at(i) = 2.0;
-         if(FluxRatio.at(i)<=2.0) FluxLim.at(i) = FluxRatio.at(i);
-         if(FluxRatio.at(i)<=1.0) FluxLim.at(i) = 1.0;
-         if(FluxRatio.at(i)<=0.5) FluxLim.at(i) = 2.0*FluxRatio.at(i);
-         if(FluxRatio.at(i)<=0.0) FluxLim.at(i) = 0.0;
-         
-         FluxR.at(i) = FluxR1st.at(i) + FluxLim.at(i)*DeltaFluxR.at(i);
-         FluxL.at(i) = FluxL1st.at(i) + FluxLim.at(i)*DeltaFluxL.at(i);
-         FluxAdv.at(i) = (FluxR.at(i) + FluxL.at(i))/2.0;
-         Flux.at(i) = FluxAdv.at(i) + FluxDif.at(i);
-      }
-      //FluxAdv.at(0) = (FluxR.at(0) + FluxL.at(0))/2.0;
-      //Flux.at(0) = FluxAdv.at(0) + FluxDif.at(0);
-      //FluxAdv.at(nCE-1) = (FluxR.at(nCE-1) + FluxL.at(nCE-1))/2.0;
-      //Flux.at(nCE-1) = FluxAdv.at(nCE-1) + FluxDif.at(nCE-1);
-      
-
+      Xgrid.computeFluxTVD(FluxAdv,FluxL,FluxR,FluxRatio,FluxLim,
+                           FluxAdvCC,Cspeed,F0);
    }      
-   else if(advScheme0 == "C2") {
-      // Use second order central differencing/interpolation
-      //
-      for (auto i=0; i<nCE; i++) {
-         Flux.at(i) = (U.at(i+1)+U.at(i))/2.0*(U.at(i+1)+U.at(i))/2.0/2.0 
-                    - K*(U.at(i+1)-U.at(i))/dX;
-      }
+   else {
+      Xgrid.InterpToCellEdges(FluxAdv,FluxAdvCC,Cspeed,advScheme0);
    } 
-   else if(advScheme0 == "U1") {
-      // Use first order upwinding
-      //
-      double Ui, ap, am;
-      for (auto i=0; i<nCE; i++) {
-      
-         Ui = U.at(i)/2.0;
-         ap = 1.0;
-         am = 0.0;
-         if(Ui<0.0) {
-            ap = 0.0;
-            am = 1.0; 
-         }
 
-         Flux.at(i) = ap*U.at(i)*U.at(i)/2.0 
-                    + am*U.at(i+1)*U.at(i+1)/2.0 
-                    - K*(U.at(i+1)-U.at(i))/dX;
-   
-      } // end for loop
-   }
-   else if(advScheme0 == "QUICK") {   
-      // Use 2nd order QUICK upwinding
-      //
-      double Ui, ap, am;
-      double a0 = 3.0/4.0, a1 = 3.0/8.0, a2 = 1.0/8.0;
-      for (auto i=0; i<nCE; i++) {
-      
-         Ui = U.at(i)/2.0;
-         ap = 1.0;
-         am = 0.0;
-         if(Ui<0.0) {
-            ap = 0.0;
-            am = 1.0; 
-         }
 
-         if(i==0 || i==nCE-1) {
-            Flux.at(i) = ap*U.at(i)*U.at(i)/2.0 
-                       + am*U.at(i+1)*U.at(i+1)/2.0 
-                       - K*(U.at(i+1)-U.at(i))/dX;
-   
-         } else {
-            Flux.at(i) = ap*( a0*U.at(i)*U.at(i) 
-                           +  a1*U.at(i+1)*U.at(i+1) 
-                           -  a2*U.at(i-1)*U.at(i-1) )/2.0 
-                       + am*( a0*U.at(i+1)*U.at(i+1) 
-                           +  a1*U.at(i)*U.at(i)
-                           -  a2*U.at(i+2)*U.at(i+2) )/2.0 
-                       - K*(U.at(i+1)-U.at(i))/dX;
-         }
+   // add advective and diffusive flux together
+   //
+   Flux = FluxAdv; //+ FluxDif;
+   transform(Flux.begin(), Flux.end(), FluxDif.begin(), 
+                  Flux.begin(), plus<double>());
 
-      } // end for loop
-   } else {
-      cout << "advection scheme not valid," << endl;
-      cout << "should be caught on initilization!" << endl;
-      exit (EXIT_FAILURE);
-   }
 
 }
 
