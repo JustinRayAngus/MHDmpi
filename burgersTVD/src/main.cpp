@@ -7,10 +7,12 @@
 #include <typeinfo>
 #include <algorithm>
 #include <mpi.h>
+#include <assert.h>
 
 #include "json/json.h"
 #include "HDF5dataFile.h"
 #include "domainGrid.h"
+#include "vectorMath.h"
 #include "timeDomain.h"
 #include "variables.h"
 #include "physicsMods/burgers1D.cpp" // physics module

@@ -391,6 +391,8 @@ H5Cpp.h
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/H5Cpp.h
 
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/domainGrid.h
+vectorMath.h
+/Users/angus1/Programs/MHDmpi/burgersTVD/src/vectorMath.h
 
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/json/json.h
 stddef.h
@@ -555,12 +557,16 @@ algorithm
 -
 mpi.h
 -
+assert.h
+-
 json/json.h
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/json/json.h
 HDF5dataFile.h
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/HDF5dataFile.h
 domainGrid.h
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/domainGrid.h
+vectorMath.h
+/Users/angus1/Programs/MHDmpi/burgersTVD/src/vectorMath.h
 timeDomain.h
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/timeDomain.h
 variables.h
@@ -575,12 +581,16 @@ physicsMods/burgers1D.cpp
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/timeDomain.h
 ../variables.h
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/variables.h
+../vectorMath.h
+/Users/angus1/Programs/MHDmpi/burgersTVD/src/vectorMath.h
 
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/timeDomain.h
 
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/variables.h
 domainGrid.h
 /Users/angus1/Programs/MHDmpi/burgersTVD/src/domainGrid.h
+
+/Users/angus1/Programs/MHDmpi/burgersTVD/src/vectorMath.h
 
 /opt/local/include/openmpi-gcc5/mpi.h
 stddef.h

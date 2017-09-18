@@ -30,13 +30,15 @@ tout= hdf5read(thisFile,'tout');
 %%%
 %
 %close(figure(1));
-f1=figure(2); set(f1,'position',[646     1  1100   420]);
+f1=figure(2); set(f1,'position',[1030 925 1100 420]);
 
 subplot(1,2,1);
 hold on; plot(Xcc,F0(:,1)); box on;
 hold on; plot(Xcc,F0(:,round(end/2)));
 hold on; plot(Xcc,F0(:,end)); grid on;
 set(gca,'xtick',-0.5:0.1:0.5);
+xlabel('x'); ylabel('f');
+title('function');
 xlim([-0.5 0.5]);
 %
 subplot(1,2,2);
@@ -44,13 +46,15 @@ hold on; plot(Xce,Flux(:,1)); box on;
 hold on; plot(Xce,Flux(:,round(end/2)));
 hold on; plot(Xce,Flux(:,round(end))); grid on;
 set(gca,'xtick',-0.5:0.1:0.5);
+xlabel('x'); ylabel('flux');
+title('flux');
 xlim([-0.5 0.5]);
 
 %
 %
 %
 
-f3=figure(3); set(f3,'position',[646  100  1100   420]);
+f3=figure(3); set(f3,'position',[1030 430 1100 420]);
 %vi ..
 subplot(1,2,1);
 hold on; plot(Xce,FluxRatio(:,end)); grid on;
@@ -66,7 +70,7 @@ xlim([-0.5 0.5]);
 %
 %
 
-f4=figure(4); set(f4,'position',[646  100  1100   420]);
+f4=figure(4); set(f4,'position',[1030 0 1100 420]);
 %
 subplot(1,2,1);
 hold on; plot(Xce,FluxL(:,end)); grid on;

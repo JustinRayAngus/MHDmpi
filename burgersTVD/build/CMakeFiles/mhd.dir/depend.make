@@ -75,6 +75,7 @@ CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/burgersTVD/src/main
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/burgersTVD/src/physicsMods/burgers1D.cpp
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/burgersTVD/src/timeDomain.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/burgersTVD/src/variables.h
+CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/burgersTVD/src/vectorMath.h
 CMakeFiles/mhd.dir/main.cpp.o: /opt/local/include/openmpi-gcc5/mpi.h
 CMakeFiles/mhd.dir/main.cpp.o: /opt/local/include/openmpi-gcc5/mpi_portable_platform.h
 CMakeFiles/mhd.dir/main.cpp.o: /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/comm.h

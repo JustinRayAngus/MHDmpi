@@ -11,6 +11,7 @@
 #include "../domainGrid.h"
 #include "../timeDomain.h"
 #include "../variables.h"
+#include "../vectorMath.h"
 
 using namespace std;
 
@@ -35,7 +36,7 @@ void variables::initialize(const domainGrid& Xgrid, const Json::Value& root,
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
 
-   double Xshift;
+   vector<double> Xshift;
    const int nXcc = Xgrid.Xcc.size();
    const int nXce = Xgrid.Xce.size();
    F0.assign(nXcc,0.0);
@@ -65,28 +66,40 @@ void variables::initialize(const domainGrid& Xgrid, const Json::Value& root,
       a = aVal.asDouble();
       b = bVal.asDouble();
       c = cVal.asDouble();
-      if(c < 0.0) {
-         cout << "ERROR: gaussian width c is not a positive" << endl; 
-         cout << "value in input file" << endl;
-         exit (EXIT_FAILURE);
-      }
       
       type0 = type.asString();
       if(type0=="gaussian" || type0=="Gaussian") {
          
-         for (auto n=0; n<Xgrid.nXsub+2; n++) {
-            //F0[n] = 1.0-0.25*Xgrid.Xcc[n]*Xgrid.Xcc[n];
-            Xshift = (Xgrid.Xcc[n]-b)/c;
-            F0.at(n) = a*exp(-Xshift*Xshift/2.0);
+         Xshift = (Xgrid.Xcc-b)/c;
+         F0 = a*exp(-Xshift*Xshift/2.0);
+         
+         if(c < 0.0) {
+            cout << "ERROR: gaussian width c is not positive" << endl; 
+            cout << "value in input file" << endl;
+            exit (EXIT_FAILURE);
          }
-         //transform(F0.begin(), F0.end(), F0.begin(), 
-         //bind1st(multiplies<double>(),1.0/zeroMom)); 
          if(procID==0) {
             cout << "Initial F0 is Gaussian with amplitude = " << a << endl;
             cout << "center at x = " << b << endl;
             cout << "and width = " << c << endl;
          }
 
+      }
+      else if(type0=="tanh") {
+         
+         Xshift = (Xgrid.Xcc-b)/c;
+         F0 = a*tanh(Xshift);
+         
+         if(c < 0.0) {
+            cout << "ERROR: tanh width c is not positive" << endl; 
+            cout << "value in input file" << endl;
+            exit (EXIT_FAILURE);
+         }
+         if(procID==0) {
+            cout << "Initial F0 is tanh with amplitude = " << a << endl;
+            cout << "center at x = " << b << endl;
+            cout << "and width = " << c << endl;
+         }
       }
       else {
          cout << "Initial Variable type = " << type0 << " is not valid " << endl;
@@ -159,9 +172,12 @@ void computeFluxes(const domainGrid& Xgrid)
    // compute advection flux at cell center
    //
    Cspeed = F0; // adv flux jacobian
+   FluxAdvCC = F0*F0*0.5;
+   /*
    for (auto i=0; i<nCC; i++) {
       FluxAdvCC.at(i) = F0.at(i)*F0.at(i)/2.0;
    }
+   */
 
 
    // compute diffusive flux using 
@@ -187,9 +203,9 @@ void computeFluxes(const domainGrid& Xgrid)
 
    // add advective and diffusive flux together
    //
-   Flux = FluxAdv; //+ FluxDif;
-   transform(Flux.begin(), Flux.end(), FluxDif.begin(), 
-                  Flux.begin(), plus<double>());
+   Flux = FluxAdv + FluxDif;
+   //transform(Flux.begin(), Flux.end(), FluxDif.begin(), 
+   //               Flux.begin(), plus<double>());
 
 
 }

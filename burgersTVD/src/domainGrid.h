@@ -7,13 +7,14 @@
 #ifndef domainGrid_h
 #define domainGrid_h
 
-//#include "EEDF.h"
+#include "vectorMath.h"
 
 using namespace std;
 
 //vector<double> DDX(const vector<double> &Fin, const double &dx);
 // above funtion doesn't use anything from grid and doesn't
 // belong defined here
+
 
 class domainGrid
 {
@@ -185,19 +186,8 @@ void domainGrid::DDX(vector<double> &Fout, const vector<double> &Fin) const {
    
    const int Nout = Fout.size();
    const int Nin  = Fin.size();
-   if(Nout != nXce) {  
-         cout << "ERROR: output vector in call to domainGrid::DDX " << endl;
-         cout << "is not proper size" << endl;
-         cout << "Nout = " << Nout << endl;
-         cout << "nXce = " << nXce << endl;
-         exit (EXIT_FAILURE);
-   }
-   if(Nin != nXcc) {
-         cout << "ERROR: input vector in call to domainGrid::DDX " << endl;
-         cout << "is not proper size" << endl;
-         exit (EXIT_FAILURE);
-
-   } 
+   assert(Nout == nXce);
+   assert(Nin == nXcc);
 
    for (auto i=0; i<Nout; i++) {
       Fout.at(i) = (Fin.at(i+1)-Fin.at(i))/dX;
@@ -221,21 +211,9 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
    const int Nout = Fout.size();
    const int Nin  = Fin.size();
    const int NupC = upC.size();
-   if(Nout != nXce) {  
-         cout << "ERROR: output vector in call to " << endl;
-         cout << "domainGrid::InterpToCellCenter is not proper size" << endl;
-         exit (EXIT_FAILURE);
-   }
-   if(Nin != nXcc) {
-         cout << "ERROR: input vector in call to " << endl;
-         cout << "domainGrid::InterpToCellCenter is not proper size" << endl;
-         exit (EXIT_FAILURE);
-   } 
-   if(NupC != nXcc) {
-         cout << "ERROR: upwind speed vector in call to " << endl;
-         cout << "domainGrid::InterpToCellCenter is not proper size" << endl;
-         exit (EXIT_FAILURE);
-   } 
+   assert(Nout == nXce);
+   assert(Nin  == nXcc);
+   assert(NupC == nXcc);
 
 
    //  interpolate using specifed method
@@ -313,9 +291,19 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
    // FloutL and FloutR are left and right going fluxes
    // upC is the local maximum characteristic speed
    // and fin is the function being fluxed
+   
+   
+   const int Nout = Flout.size();
+   assert(Nout == nXce);
+   assert(FloutL.size()  == Xce.size());
+   assert(FloutR.size()  == Xce.size());
+   assert(Flratio.size() == Xce.size());
+   assert(FlLim.size()   == Xce.size());
+   assert(Flin.size() == Xcc.size());
+   assert(upC.size()  == Xcc.size());
+   assert(fin.size()  == Xcc.size());
 
  
-   const int Nout = Flout.size();
    vector<double> FluxL1st, FluxR1st;
    vector<double> DeltaFluxL, DeltaFluxR;
    FluxL1st.assign(Nout,0.0);   
