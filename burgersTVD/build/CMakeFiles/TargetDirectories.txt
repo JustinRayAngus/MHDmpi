@@ -1,3 +1,0 @@
-/Users/angus1/Programs/MHDmpi/burgersTVD/build/CMakeFiles/rebuild_cache.dir
-/Users/angus1/Programs/MHDmpi/burgersTVD/build/CMakeFiles/edit_cache.dir
-/Users/angus1/Programs/MHDmpi/burgersTVD/build/CMakeFiles/mhd.dir
