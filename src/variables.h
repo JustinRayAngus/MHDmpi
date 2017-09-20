@@ -20,7 +20,7 @@ class variables
 public:
    void initialize(const domainGrid&, const Json::Value&, HDF5dataFile&);
    void setdtSim(double&, const timeDomain&, const domainGrid&);
-   void advanceF0(const domainGrid&, const double&);
+   void advance(const domainGrid&, const double&);
 };
 
 /*

@@ -119,7 +119,7 @@ int main(int argc, char** argv) {
       
       // advance variables from n => n+1
       //
-      vars.advanceF0(Xgrid, dtSim);
+      vars.advance(Xgrid, dtSim);
 
       // check if thist is an output time
       //
