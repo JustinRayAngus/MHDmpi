@@ -26,6 +26,7 @@ public:
   vector<double> Xcc, Xce; // spatial grid at cell-center and at cell-edge 
 
   void initialize(const Json::Value&);
+  void setInitialProfile(vector<double>&, const Json::Value&) const;
   void communicate(vector<double>&) const;
   void InterpToCellEdges(vector<double>&, const vector<double>&,
                          const vector<double>&, const string&) const;
@@ -114,6 +115,75 @@ void domainGrid::initialize(const Json::Value& root)
    //Xcc[nX/numProcs+1] = Xmin + offset + (nXsub+1)*dX;
 
 }
+
+void domainGrid::setInitialProfile(vector<double> &var, 
+                   const Json::Value &varRoot) const
+{
+   int procID, numProcs;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+   MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
+
+   double a, b, c, d;
+   vector<double> Xshift;
+   string type0;
+
+   const int Nvar = var.size();
+   assert(Nvar == nXcc);
+
+   const Json::Value defValue; // used for default reference
+   Json::Value aVal = varRoot.get("a",defValue);
+   Json::Value bVal = varRoot.get("b",defValue);
+   Json::Value cVal = varRoot.get("c",defValue);
+   Json::Value dVal = varRoot.get("d",defValue);
+   Json::Value type = varRoot.get("type",defValue);
+   if(aVal == defValue || bVal == defValue || 
+      cVal == defValue || dVal == defValue || 
+      type == defValue) {
+      cout << "ERROR: at least 1 initial profile value " << endl;
+      cout << "not declared in input file" << endl;
+      exit (EXIT_FAILURE);
+   } 
+   a = aVal.asDouble();
+   b = bVal.asDouble();
+   c = cVal.asDouble();
+   d = dVal.asDouble();
+      
+   type0 = type.asString();
+   if(type0=="gaussian" || type0=="Gaussian") {
+      
+      Xshift = (Xcc-b)/c;
+      var = a*exp(-Xshift*Xshift/2.0) + d;
+      
+      if(c == 0.0) {
+         cout << "ERROR: gaussian width c cannot be zero" << endl; 
+         exit (EXIT_FAILURE);
+      }
+      if(procID==0) {
+         cout << "Initial var is Gaussian with amplitude = " << a << endl;
+         cout << "center at x = " << b << endl;
+         cout << "width = " << c << endl;
+         cout << "and y-shift = " << d << endl;
+      }
+
+   }
+   else if(type0=="tanh") {
+      
+      Xshift = (Xcc-b)/c;
+      var = a*tanh(Xshift) + d;
+      
+      if(c == 0.0) {
+         cout << "ERROR: tanh width c cannot be zero" << endl; 
+         exit (EXIT_FAILURE);
+      }
+      if(procID==0) {
+         cout << "Initial F0 is tanh with amplitude = " << a << endl;
+      }
+
+   } else {
+     var = 1.0 + 0.0*Xcc;
+   }
+
+} // end setInitialProfile
 
 void domainGrid::communicate(vector<double> &F0) const {
 
