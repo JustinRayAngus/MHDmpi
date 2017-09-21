@@ -3,15 +3,17 @@
  * variables function class header file
  *
  * This file should be included in each physics 
- * module file where the below functions are
- * defined in detail
+ * module file where the functions declared
+ * below are defined
  *
 ***/
 
 #ifndef variables_h
 #define variables_h
 
-#include "domainGrid.h"
+//#include "domainGrid.h"
+//#include "timeDomain.h"
+//#include "HDF5dataFile.h"
 
 using namespace std;
 
@@ -23,12 +25,5 @@ public:
    void advance(const domainGrid&, const double&);
 };
 
-/*
-void variables::initialize(const domainGrid& Xgrid, const Json::Value& root, 
-                      HDF5dataFile& dataFile)
-{
-   cout << "HELLO VARIABLE CLASS" << endl;
-}
-*/
 
 #endif

@@ -8,9 +8,14 @@
 ***/
 
 
-#include "../domainGrid.h"
-#include "../variables.h"
-#include "../vectorMath.h"
+//#include "domainGrid.h"
+//#include "timeDomain.h"
+#include "variables.h"
+//#include "vectorMath.h"
+//#include "json/json.h"
+//#include "HDF5dataFile.h"
+//#include "mpi.h"
+
 
 using namespace std;
 
@@ -24,6 +29,10 @@ void computeFluxes(const domainGrid&);
 void setXminBoundary(const domainGrid&, const double&);
 void setXmaxBoundary(const domainGrid&, const double&);
 
+int physics_init(bool wtf) {
+   cout << "DOES THIS WORK????" << endl;
+   return 0;
+};
 
 void variables::initialize(const domainGrid& Xgrid, const Json::Value& root, 
                       HDF5dataFile& dataFile)
@@ -31,7 +40,6 @@ void variables::initialize(const domainGrid& Xgrid, const Json::Value& root,
    int procID, numProcs;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
-
 
    // alternative means for getting grid, opposed
    // to passing predefined instance (Xgrid) to 
@@ -41,7 +49,6 @@ void variables::initialize(const domainGrid& Xgrid, const Json::Value& root,
    cout << "mesh->nXcc = " << (*mesh).nXcc << endl;
    cout << "mesh->nXcc = " << mesh->nXcc << endl;
    
-
    const int nXcc = Xgrid.Xcc.size();
    const int nXce = Xgrid.Xce.size();
    F0.assign(nXcc,0.0);

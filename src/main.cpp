@@ -10,13 +10,14 @@
 #include <assert.h>
 
 #include "json/json.h"
+#include "vectorMath.h"
 #include "HDF5dataFile.h"
 #include "domainGrid.h"
-#include "vectorMath.h"
 #include "timeDomain.h"
 #include "variables.h"
 //#include "physicsMods/burgers1D.cpp" // physics module
 #include "burgers1D.cpp" // physics module
+
 
 using namespace std;
 
@@ -36,13 +37,21 @@ using namespace std;
 domainGrid* domainGrid::mesh = NULL;
 
 
+//void initialize(const domainGrid, const Json::Value, HDF5dataFile);
+//void setdtSim(double, const timeDomain, const domainGrid);
+int physics_init(bool wtf);
+
 int main(int argc, char** argv) {   
+
+
+   bool wtf = 0;
+   int wtf2 = physics_init(wtf);
 
    // start MPI stuff
    //
    int procID, numProcs;
    //double wtime;
-   
+
    //MPI_Status status;
    MPI_Init (&argc, &argv);
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
@@ -110,11 +119,13 @@ int main(int argc, char** argv) {
    //  
    variables vars;
    vars.initialize(Xgrid, inputRoot, dataFile);   
+   //initialize(Xgrid, inputRoot, dataFile);   
 
 
    // set initial time-step
    //
    double dtSim;
+   //setdtSim(dtSim, tDom, Xgrid);
    vars.setdtSim(dtSim, tDom, Xgrid);
    tDom.dtSim = dtSim;
    if(procID==0) {

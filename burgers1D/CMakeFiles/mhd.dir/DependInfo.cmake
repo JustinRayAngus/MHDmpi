@@ -4,8 +4,11 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "/Users/angus1/Programs/MHDmpi/src/domainGrid.cpp" "/Users/angus1/Programs/MHDmpi/burgers1D/CMakeFiles/mhd.dir/domainGrid.cpp.o"
   "/Users/angus1/Programs/MHDmpi/src/jsoncpp.cpp" "/Users/angus1/Programs/MHDmpi/burgers1D/CMakeFiles/mhd.dir/jsoncpp.cpp.o"
   "/Users/angus1/Programs/MHDmpi/src/main.cpp" "/Users/angus1/Programs/MHDmpi/burgers1D/CMakeFiles/mhd.dir/main.cpp.o"
+  "/Users/angus1/Programs/MHDmpi/src/timeDomain.cpp" "/Users/angus1/Programs/MHDmpi/burgers1D/CMakeFiles/mhd.dir/timeDomain.cpp.o"
+  "/Users/angus1/Programs/MHDmpi/src/vectorMath.cpp" "/Users/angus1/Programs/MHDmpi/burgers1D/CMakeFiles/mhd.dir/vectorMath.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "Clang")
 

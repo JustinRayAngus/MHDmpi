@@ -28,6 +28,9 @@ include_directories("./physicsMods")
 
 set(sources 
    main.cpp
+   domainGrid.cpp
+   vectorMath.cpp
+   timeDomain.cpp
    jsoncpp.cpp)
 add_executable(mhd ${sources})
 target_link_libraries(mhd ${MPI_LIBRARIES} hdf5 hdf5_cpp)

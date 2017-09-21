@@ -1,0 +1,129 @@
+Notes on Header files, source files (.cpp), and includes
+
+See 
+http://www.cplusplus.com/forum/articles/10627/
+https://stackoverflow.com/questions/9299676/ld-duplicate-symbol
+
+
+The current state of my code as I'm writing this is that basically everything (declaration
+and definition) is in header files and the only source file is main.cpp. I also have 
+Jsoncpp.cpp, but as should become clear after reading this, this file, which doesn't use 
+any functions from my header files doesn't effect things.
+
+
+What I want to do:
+
+I want to create an arbitrary second source file (i.e. burgers1D.cpp) that will contain
+the definition of the functions variables.initialize, variables.advance, and 
+variables.setdtSim. All of which will be specific to the physics problem of interest.
+I'm basically making the code user friendly for solving a variety of physics problems 
+using the same core code (like BOUT++ does). 
+
+The way I have been running right now is to manually #include burgers1D.cpp in
+main.cpp, which is where the functions mentioned above are called. 
+This works just fine, but I don't want to have to change main.cpp for each separate
+physics.cpp file that I create. I want to instead build main.cpp and burgers1D.cpp 
+separately and link them. Then if I use a different physics.cpp I want to just change
+a line in CMakeLists and build again. Or maybe build each one separatley and separately
+link them... I'll worry about that part later
+
+
+What I tried initially:
+
+The first thing I tried to do was to simply not #include burgers1D.cpp in main.cpp and 
+build. Of course this failed because the functions called in main.cpp that are defined in
+burgers1D.cpp were never defined. They are declared in variables.h, but they are not
+defined.
+
+The second thing I tried to do was add burgers1D.cpp to the "sources" in CMakeLists.txt.
+When building like this I got all kinds of "does not name a type" errors. I found out
+that this was occurring because I needed to #include all of the appropriate header files
+in burgers1D.cpp same as I do for main.cpp.
+
+The third thing I did was to include all of the necessary header files, and then when
+building I would get the duplicate symbols error messages.
+
+This is when I started reading up on the web and realized that I did not understand
+the connection between header files, source files, and #includes. 
+
+
+What I learned:
+
+1) aAll functions must be both declared and defined. In hindsight this is obvious,
+but I'm new to c++ so I was not familiar with differences between including the .cpp 
+file in main.cpp and adding it to the sources in CmakeLists.
+
+
+2) Order of #include headerFile.h in main.cpp matters and header files are inherited
+
+I started messing around with the #include headerfile.h ordering in main.cpp and I 
+realized that order mattered and each subsequent header file inherited the ones above 
+it, thus making it not necessary to manually include the ones above it in the header
+file itself if it is needed there.
+
+For example, The functions in domainGrid.h use those defined in vectorMath.h. The 
+following ordering in main.cpp works just fine
+
+#include "vectorMath.h"
+#include "domainGrid.h"
+
+while this does not
+
+#include "domainGrid.h"
+#include "vectorMath.h"
+
+The one above that does not work will work if I put #include "vectorMath.h" inside
+domainGrid.h.
+
+Also, there is no harm in having all my header files #include all other header files.
+It all builds and runs just fine. This is because of the guards placed in each header
+file will not define the stuff there once it has been define once before.
+
+Furthermore, If I say #include "vectorMath.h" in domainGrid.h, and then I #include 
+"domainGrid.h" in another file called "timeDomain.h", then timeDomain.h will inherit 
+vectorMath.h as well.
+
+
+3) Each .cpp file included in the set(sources) tree in CMakeLists are compiled separately,
+creating multiple .o files.
+
+When trying to include both main.cpp and burgers1D.cpp as sources in CMakeLists, I first 
+only included the variables.h file in burgers1D.cpp. I could not understand why 
+burgers1D.cpp was not inheriting the #included files that were inherited into variables.h
+from all the #include stuff above it in main.cpp. Now that I understand that each source 
+file is built separately, this makes sense. This is also why I needed to also #include
+all the appropriate header files in burgers1D.cpp, even though that did not work for
+another reason.
+
+
+4) If the same function is defined in both .o files, then it is defined twice and 
+"duplicate symbols" error is returned during linking. 
+
+This is where I learned the true nature and difference between header and source files.
+Only through header files that contain declaration of functions can two separate source
+files be linked. If I have a function defined in a header file, and then I #include it
+in two separate source files, the function will be defined twice and "duplicate symbols"
+error will be returned during build.
+
+
+Conclusion:
+I was able to bypass understanding #include and linking source files since I only had one
+true .cpp file (burgers1D.cpp was treated like a header file) and everything else was 
+in header files. Now I understand that in order to achieve what I want I need to first
+separate up my header files into header+source files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

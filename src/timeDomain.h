@@ -7,7 +7,11 @@
 #ifndef timeDomain_h
 #define timeDomain_h
 
-//#include "domainGrid.h"
+#include "json/json.h"
+//#include "vectorMath.h"   // causes duplicate symbol error!!!
+//#include "HDF5dataFile.h" // causes duplicate symbol error!!!
+//#include "mpi.h"
+
 
 using namespace std;
 
@@ -27,6 +31,7 @@ public:
 
 };
 
+/*
 void timeDomain::initialize(const Json::Value& root)
 {
    int procID;
@@ -72,6 +77,6 @@ void timeDomain::updatetOut(const double thistOut)
 {
    tOut = thistOut;
 }
-
+*/
 
 #endif
