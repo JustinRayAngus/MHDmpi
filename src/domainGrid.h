@@ -25,6 +25,8 @@ public:
   double Xmax, Xmin, dX;
   vector<double> Xcc, Xce; // spatial grid at cell-center and at cell-edge 
 
+  static domainGrid* mesh; // pointer to a domainGrid instance
+
   void initialize(const Json::Value&);
   void setInitialProfile(vector<double>&, const Json::Value&) const;
   void communicate(vector<double>&) const;
@@ -36,7 +38,12 @@ public:
                       const vector<double>&) const;
   void DDX(vector<double>&, const vector<double>&) const;
 
+//domainGrid() {};
+
 };
+
+//domainGrid* domainGrid::mesh = NULL;
+
 
 void domainGrid::initialize(const Json::Value& root)
 {

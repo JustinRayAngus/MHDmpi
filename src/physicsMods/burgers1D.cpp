@@ -9,7 +9,6 @@
 
 
 #include "../domainGrid.h"
-#include "../timeDomain.h"
 #include "../variables.h"
 #include "../vectorMath.h"
 
@@ -32,6 +31,16 @@ void variables::initialize(const domainGrid& Xgrid, const Json::Value& root,
    int procID, numProcs;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
+
+
+   // alternative means for getting grid, opposed
+   // to passing predefined instance (Xgrid) to 
+   // functions
+   //
+   domainGrid* mesh = domainGrid::mesh;
+   cout << "mesh->nXcc = " << (*mesh).nXcc << endl;
+   cout << "mesh->nXcc = " << mesh->nXcc << endl;
+   
 
    const int nXcc = Xgrid.Xcc.size();
    const int nXce = Xgrid.Xce.size();

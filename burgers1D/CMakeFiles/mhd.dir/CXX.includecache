@@ -386,6 +386,24 @@ H5FDstdio.h
 H5FDwindows.h
 /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5FDwindows.h
 
+/Users/angus1/Programs/MHDmpi/src/./domainGrid.h
+vectorMath.h
+/Users/angus1/Programs/MHDmpi/src/./vectorMath.h
+
+/Users/angus1/Programs/MHDmpi/src/./physicsMods/burgers1D.cpp
+../domainGrid.h
+/Users/angus1/Programs/MHDmpi/src/./domainGrid.h
+../variables.h
+/Users/angus1/Programs/MHDmpi/src/./variables.h
+../vectorMath.h
+/Users/angus1/Programs/MHDmpi/src/./vectorMath.h
+
+/Users/angus1/Programs/MHDmpi/src/./variables.h
+domainGrid.h
+/Users/angus1/Programs/MHDmpi/src/./domainGrid.h
+
+/Users/angus1/Programs/MHDmpi/src/./vectorMath.h
+
 /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.h
 H5Cpp.h
 /Users/angus1/Programs/MHDmpi/src/H5Cpp.h
@@ -571,18 +589,8 @@ timeDomain.h
 /Users/angus1/Programs/MHDmpi/src/timeDomain.h
 variables.h
 /Users/angus1/Programs/MHDmpi/src/variables.h
-physicsMods/burgers1D.cpp
-/Users/angus1/Programs/MHDmpi/src/physicsMods/burgers1D.cpp
-
-/Users/angus1/Programs/MHDmpi/src/physicsMods/burgers1D.cpp
-../domainGrid.h
-/Users/angus1/Programs/MHDmpi/src/domainGrid.h
-../timeDomain.h
-/Users/angus1/Programs/MHDmpi/src/timeDomain.h
-../variables.h
-/Users/angus1/Programs/MHDmpi/src/variables.h
-../vectorMath.h
-/Users/angus1/Programs/MHDmpi/src/vectorMath.h
+burgers1D.cpp
+/Users/angus1/Programs/MHDmpi/src/burgers1D.cpp
 
 /Users/angus1/Programs/MHDmpi/src/timeDomain.h
 

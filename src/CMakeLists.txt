@@ -21,6 +21,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_CXX_COMPILER mpicxx)
 set(CMAKE_C_COMPILER mpicc)
 
+# include path to physics modules
+include_directories("./physicsMods")
+#include_directories("../src/physicsMods")
+#include_directories("/Users/angus1/Programs/MHDmpi/src/physicsMods")
 
 set(sources 
    main.cpp

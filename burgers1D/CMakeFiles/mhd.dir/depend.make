@@ -68,11 +68,14 @@ CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/includ
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5public.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5version.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/hdf5.h
+CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/./domainGrid.h
+CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/./physicsMods/burgers1D.cpp
+CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/./variables.h
+CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/./vectorMath.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/domainGrid.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/json/json.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/main.cpp
-CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/physicsMods/burgers1D.cpp
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/timeDomain.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/variables.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/vectorMath.h

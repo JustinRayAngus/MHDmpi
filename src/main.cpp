@@ -15,7 +15,8 @@
 #include "vectorMath.h"
 #include "timeDomain.h"
 #include "variables.h"
-#include "physicsMods/burgers1D.cpp" // physics module
+//#include "physicsMods/burgers1D.cpp" // physics module
+#include "burgers1D.cpp" // physics module
 
 using namespace std;
 
@@ -24,6 +25,16 @@ using namespace std;
 #ifndef H5_NO_NAMESPACE
    using namespace H5;
 #endif
+
+
+// have to give initial definition to 
+// static variables before main()
+// (How does BOUT++ do this?)
+//
+//domainGrid defGrid;
+//domainGrid* domainGrid::mesh = &defGrid;
+domainGrid* domainGrid::mesh = NULL;
+
 
 int main(int argc, char** argv) {   
 
@@ -84,6 +95,8 @@ int main(int argc, char** argv) {
    // initialize spatial grid and time domain
    //
    domainGrid Xgrid;
+   domainGrid::mesh = &Xgrid;
+   //Xgrid.mesh = &Xgrid;
    Xgrid.initialize(inputRoot);
    dataFile.add(Xgrid.Xcc, "Xcc", 0); 
    dataFile.add(Xgrid.Xce, "Xce", 0); 

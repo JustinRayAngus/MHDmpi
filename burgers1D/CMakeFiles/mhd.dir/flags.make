@@ -6,5 +6,5 @@ CXX_FLAGS =  -Wall   -std=c++0x
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include -I/opt/local/include/openmpi-gcc5 
+CXX_INCLUDES = -I/Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include -I/opt/local/include/openmpi-gcc5 -I/Users/angus1/Programs/MHDmpi/src/./physicsMods 
 

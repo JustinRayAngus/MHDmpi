@@ -13,6 +13,7 @@ set(CMAKE_CXX_COMPILER_ID "Clang")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include"
   "/opt/local/include/openmpi-gcc5"
+  "/Users/angus1/Programs/MHDmpi/src/./physicsMods"
   )
 
 # Targets to which this target links.

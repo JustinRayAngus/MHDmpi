@@ -44,7 +44,7 @@ private:
 
    template<class T>
       struct VarStr {
-         T *ptr;
+         T* ptr;
          string name;
          bool grow;
       };
