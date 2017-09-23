@@ -1,0 +1,3 @@
+/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles/rebuild_cache.dir
+/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles/edit_cache.dir
+/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles/mhd.dir

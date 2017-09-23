@@ -16,7 +16,7 @@
 #include "timeDomain.h"
 #include "variables.h"
 //#include "physicsMods/burgers1D.cpp" // physics module
-#include "burgers1D.cpp" // physics module
+//#include "burgers1D.cpp" // physics module
 
 
 using namespace std;
@@ -37,15 +37,7 @@ using namespace std;
 domainGrid* domainGrid::mesh = NULL;
 
 
-//void initialize(const domainGrid, const Json::Value, HDF5dataFile);
-//void setdtSim(double, const timeDomain, const domainGrid);
-int physics_init(bool wtf);
-
 int main(int argc, char** argv) {   
-
-
-   bool wtf = 0;
-   int wtf2 = physics_init(wtf);
 
    // start MPI stuff
    //

@@ -1,0 +1,18 @@
+I'm trying to make the code more modular
+like BOUT++ so that one can use the same
+framework to run many different physics 
+problems
+
+In order to run a physics module follow
+these steps
+1) cd to a physics module directory (i.e ./burgers1D)
+2) "source sourceMe" (this will set environment
+   variables for name of and path to physics
+   module
+3) "cmake ../../src" (or whatever path is to
+   where CMakeLists.txt is)
+4) "make" (build and link)
+5) "mpiexec -np N ./mhd" run the code with N
+   processors
+
+

@@ -1,9 +1,0 @@
-I'm trying to make the code more modular
-like BOUT++ so that one can use the same
-framework to run many different physics 
-problems
-
-Right now one needs to manually include
-the specific physics.cpp file in main.cpp
-
-
