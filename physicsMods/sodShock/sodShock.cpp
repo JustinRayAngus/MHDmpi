@@ -1,6 +1,7 @@
 /***
  * 
- * physics module for 1D burgers equation
+ * physics module for sod shock test
+ *
  *
 ***/
 

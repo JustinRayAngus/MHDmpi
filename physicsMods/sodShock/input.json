@@ -1,0 +1,23 @@
+{
+"Xgrid":{
+         "Xmin":-0.5,
+         "Xmax":0.5,
+         "nX":100,
+         "nXg":2 // number of guard cells each end
+        },
+"Time" :{
+         "dtOut":0.02,     // output time intervals
+         "tOutSteps":20,   // number of output setps
+         "dtFrac":2.0     // dtSim = dtMax/dtFrac
+       },
+"Variables" :{
+         "type":"Gaussian", // initial profile
+         "a":1.0,  // amplitude
+         "b":0.0,  // x-shift
+         "c":0.1,  // width
+         "d":0.0,  // y-shift
+         "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+         "diffC":0.002 // diffusion coefficient
+       }
+}
+
