@@ -10,7 +10,7 @@
          "tOutSteps":20,   // number of output setps
          "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
-"Variables" :{
+"Physics" :{
          "type":"Gaussian", // initial profile
          "a":1.0,  // amplitude
          "b":0.0,  // x-shift

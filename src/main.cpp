@@ -14,7 +14,7 @@
 #include "HDF5dataFile.h"
 #include "domainGrid.h"
 #include "timeDomain.h"
-#include "variables.h"
+#include "Physics.h"
 //#include "physicsMods/burgers1D.cpp" // physics module
 //#include "burgers1D.cpp" // physics module
 
@@ -107,10 +107,10 @@ int main(int argc, char** argv) {
    tDom.initialize(inputRoot);
    dataFile.add(tDom.tOut, "tout", 1); // actual output time   
 
-   // initialize variables
+   // initialize Physics object
    //  
-   variables vars;
-   vars.initialize(Xgrid, inputRoot, dataFile);   
+   Physics phys;
+   phys.initialize(Xgrid, inputRoot, dataFile);   
    //initialize(Xgrid, inputRoot, dataFile);   
 
 
@@ -118,7 +118,7 @@ int main(int argc, char** argv) {
    //
    double dtSim;
    //setdtSim(dtSim, tDom, Xgrid);
-   vars.setdtSim(dtSim, tDom, Xgrid);
+   phys.setdtSim(dtSim, tDom, Xgrid);
    tDom.dtSim = dtSim;
    if(procID==0) {
       cout << "Initial simulation time step: " << dtSim << endl << endl;
@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
       
       // advance variables from n => n+1
       //
-      vars.advance(Xgrid, dtSim);
+      phys.advance(Xgrid, dtSim);
 
       // check if thist is an output time
       //

@@ -219,10 +219,12 @@ vector<T> operator/(const T &b, const vector<T> &a)
 ////////////////////////////////////////////////////////////////
 //
 // functions for other common math operators
-// exp(), tanh, log(), cos(), sin() ...
+// exp(), sqrt(), tanh(), log(), cos(), sin() ...
 //
 
 vector<double> exp(const vector<double> &fin);
+
+vector<double> sqrt(const vector<double> &fin);
 
 vector<double> tanh(const vector<double> &fin);
 

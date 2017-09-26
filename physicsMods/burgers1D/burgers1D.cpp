@@ -23,7 +23,7 @@
 #include "timeDomain.h"
 #include "HDF5dataFile.h"
 
-#include "variables.h"
+#include "Physics.h"
 
 
 using namespace std;
@@ -39,7 +39,7 @@ void setXminBoundary(const domainGrid&, const double&);
 void setXmaxBoundary(const domainGrid&, const double&);
 
 
-void variables::initialize(const domainGrid& Xgrid, const Json::Value& root, 
+void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root, 
                       HDF5dataFile& dataFile)
 {
    int procID, numProcs;
@@ -64,11 +64,11 @@ void variables::initialize(const domainGrid& Xgrid, const Json::Value& root,
    FluxR.assign(nXce,0.0);
    FluxL.assign(nXce,0.0);
    const Json::Value defValue; // used for default reference
-   const Json::Value Vars = root.get("Variables",defValue);
-   if(Vars.isObject()) {
-      if(procID==0) printf("\nInitializing Variables ...\n");
-      Json::Value advScheme = Vars.get("advScheme",defValue);
-      Json::Value KVal = Vars.get("diffC",defValue);
+   const Json::Value Phys = root.get("Physics",defValue);
+   if(Phys.isObject()) {
+      if(procID==0) printf("\nInitializing Physics ...\n");
+      Json::Value advScheme = Phys.get("advScheme",defValue);
+      Json::Value KVal = Phys.get("diffC",defValue);
       if(advScheme == defValue || KVal == defValue) {
          cout << "ERROR: advScheme or diffC is " << endl;
          cout << "not declared in input file" << endl;
@@ -97,19 +97,19 @@ void variables::initialize(const domainGrid& Xgrid, const Json::Value& root,
 
    }
    else {
-      cout << "value for key \"Variables\" is not object type !" << endl;
+      cout << "value for key \"Physics\" is not object type !" << endl;
       exit (EXIT_FAILURE);
    }
   
 
-   Xgrid.setInitialProfile(F0,Vars);
+   Xgrid.setInitialProfile(F0,Phys);
    if(procID==0) setXminBoundary(Xgrid, 0.0);   
    if(procID==numProcs-1) setXmaxBoundary(Xgrid, 0.0);   
    Xgrid.communicate(F0);
    F0old  = F0;
    computeFluxes(Xgrid); // inital calculation before add to output   
   
-
+   dataFile.add(K, "K", 0);
    dataFile.add(F0, "F0", 1); 
    dataFile.add(FluxRatio, "FluxRatio", 1);  
    dataFile.add(FluxLim, "FluxLim", 1);  
@@ -117,10 +117,10 @@ void variables::initialize(const domainGrid& Xgrid, const Json::Value& root,
    dataFile.add(FluxR, "FluxR", 1);
    dataFile.add(FluxL, "FluxL", 1);
 
-} // end variables.initilize
+} // end Physics.initilize
 
 
-void variables::advance(const domainGrid& Xgrid, const double& dt)
+void Physics::advance(const domainGrid& Xgrid, const double& dt)
 {
    const int nMax = F0.size();
    const int nXg = Xgrid.nXg;
@@ -164,7 +164,7 @@ void variables::advance(const domainGrid& Xgrid, const double& dt)
    //
    F0old = F0;
 
-} // end variables.advance
+} // end Physics.advance
 
 
 void computeFluxes(const domainGrid& Xgrid)
@@ -237,7 +237,7 @@ void setXmaxBoundary(const domainGrid& Xgrid, const double& C)
 }
 
 
-void variables::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
+void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
 {
    int procID;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);

@@ -421,12 +421,14 @@ timeDomain.h
 /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/timeDomain.h
 HDF5dataFile.h
 /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/HDF5dataFile.h
-variables.h
-/Users/angus1/Programs/MHDmpi/physicsMods/sodShock/variables.h
+Physics.h
+/Users/angus1/Programs/MHDmpi/physicsMods/sodShock/Physics.h
 
 /Users/angus1/Programs/MHDmpi/src/./HDF5dataFile.h
 H5Cpp.h
 /Users/angus1/Programs/MHDmpi/src/./H5Cpp.h
+
+/Users/angus1/Programs/MHDmpi/src/./Physics.h
 
 /Users/angus1/Programs/MHDmpi/src/./domainGrid.h
 json/json.h
@@ -494,8 +496,6 @@ config.h
 json/json.h
 /Users/angus1/Programs/MHDmpi/src/./json/json.h
 
-/Users/angus1/Programs/MHDmpi/src/./variables.h
-
 /Users/angus1/Programs/MHDmpi/src/./vectorMath.h
 iostream
 -
@@ -551,6 +551,8 @@ HDF5dataFile.h
 /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.h
 H5Cpp.h
 /Users/angus1/Programs/MHDmpi/src/H5Cpp.h
+
+/Users/angus1/Programs/MHDmpi/src/Physics.h
 
 /Users/angus1/Programs/MHDmpi/src/domainGrid.cpp
 iostream
@@ -763,8 +765,8 @@ domainGrid.h
 /Users/angus1/Programs/MHDmpi/src/domainGrid.h
 timeDomain.h
 /Users/angus1/Programs/MHDmpi/src/timeDomain.h
-variables.h
-/Users/angus1/Programs/MHDmpi/src/variables.h
+Physics.h
+/Users/angus1/Programs/MHDmpi/src/Physics.h
 
 /Users/angus1/Programs/MHDmpi/src/timeDomain.cpp
 timeDomain.h
@@ -775,8 +777,6 @@ mpi.h
 /Users/angus1/Programs/MHDmpi/src/timeDomain.h
 json/json.h
 /Users/angus1/Programs/MHDmpi/src/json/json.h
-
-/Users/angus1/Programs/MHDmpi/src/variables.h
 
 /Users/angus1/Programs/MHDmpi/src/vectorMath.cpp
 iostream

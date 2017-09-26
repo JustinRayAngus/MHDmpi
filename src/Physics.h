@@ -1,6 +1,6 @@
 /***
  * 
- * variables function class header file
+ * Physics function class header file
  *
  * This file should be included in each physics 
  * module file where the functions declared
@@ -8,8 +8,8 @@
  *
 ***/
 
-#ifndef variables_h
-#define variables_h
+#ifndef Physics_h
+#define Physics_h
 
 //#include "domainGrid.h"
 //#include "timeDomain.h"
@@ -17,7 +17,7 @@
 
 using namespace std;
 
-class variables
+class Physics
 {
 public:
    void initialize(const domainGrid&, const Json::Value&, HDF5dataFile&);

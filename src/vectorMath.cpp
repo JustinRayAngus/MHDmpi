@@ -26,7 +26,7 @@ using namespace std;
 ////////////////////////////////////////////////////////////////
 //
 // functions for other common math operators
-// exp(), tanh, log(), cos(), sin() ...
+// exp(), sqrt(), tanh, log(), cos(), sin() ...
 //
 
 vector<double> exp(const vector<double> &fin) {
@@ -40,6 +40,22 @@ vector<double> exp(const vector<double> &fin) {
 
    for (auto i=0; i<imax; i++) {
       result.at(i) = exp(fin.at(i));
+   }
+
+   return result;
+}
+
+vector<double> sqrt(const vector<double> &fin) {
+
+   vector<double> result;
+   const int imax = fin.size();
+   result.resize(imax);
+
+   //cout << "fin SIZE IS " << fin.size() << endl;
+   //cout << "RESULT SIZE IS " << result.size() << endl;
+
+   for (auto i=0; i<imax; i++) {
+      result.at(i) = sqrt(fin.at(i));
    }
 
    return result;

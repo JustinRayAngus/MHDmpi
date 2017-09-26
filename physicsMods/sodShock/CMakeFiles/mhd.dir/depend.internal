@@ -208,11 +208,11 @@ CMakeFiles/mhd.dir/main.cpp.o
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5version.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/hdf5.h
  /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.h
+ /Users/angus1/Programs/MHDmpi/src/Physics.h
  /Users/angus1/Programs/MHDmpi/src/domainGrid.h
  /Users/angus1/Programs/MHDmpi/src/json/json.h
  /Users/angus1/Programs/MHDmpi/src/main.cpp
  /Users/angus1/Programs/MHDmpi/src/timeDomain.h
- /Users/angus1/Programs/MHDmpi/src/variables.h
  /Users/angus1/Programs/MHDmpi/src/vectorMath.h
  /opt/local/include/openmpi-gcc5/mpi.h
  /opt/local/include/openmpi-gcc5/mpi_portable_platform.h
@@ -314,10 +314,10 @@ CMakeFiles/mhd.dir/sodShock.cpp.o
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/hdf5.h
  /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/sodShock.cpp
  /Users/angus1/Programs/MHDmpi/src/./HDF5dataFile.h
+ /Users/angus1/Programs/MHDmpi/src/./Physics.h
  /Users/angus1/Programs/MHDmpi/src/./domainGrid.h
  /Users/angus1/Programs/MHDmpi/src/./json/json.h
  /Users/angus1/Programs/MHDmpi/src/./timeDomain.h
- /Users/angus1/Programs/MHDmpi/src/./variables.h
  /Users/angus1/Programs/MHDmpi/src/./vectorMath.h
  /opt/local/include/openmpi-gcc5/mpi.h
  /opt/local/include/openmpi-gcc5/mpi_portable_platform.h

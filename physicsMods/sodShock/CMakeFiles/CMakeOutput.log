@@ -28,30 +28,30 @@ The CXX compiler identification is AppleClang, found in "/Users/angus1/Programs/
 Determining if the C compiler works passed with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_620d1/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_620d1.dir/build.make CMakeFiles/cmTC_620d1.dir/build
-Building C object CMakeFiles/cmTC_620d1.dir/testCCompiler.c.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_620d1.dir/testCCompiler.c.o   -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp/testCCompiler.c
-Linking C executable cmTC_620d1
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_620d1.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_620d1.dir/testCCompiler.c.o  -o cmTC_620d1  
+Run Build Command:"/usr/bin/make" "cmTC_25055/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_25055.dir/build.make CMakeFiles/cmTC_25055.dir/build
+Building C object CMakeFiles/cmTC_25055.dir/testCCompiler.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_25055.dir/testCCompiler.c.o   -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp/testCCompiler.c
+Linking C executable cmTC_25055
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_25055.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_25055.dir/testCCompiler.c.o  -o cmTC_25055  
 
 
 Detecting C compiler ABI info compiled with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_ba1e5/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_ba1e5.dir/build.make CMakeFiles/cmTC_ba1e5.dir/build
-Building C object CMakeFiles/cmTC_ba1e5.dir/CMakeCCompilerABI.c.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_ba1e5.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.7/Modules/CMakeCCompilerABI.c
-Linking C executable cmTC_ba1e5
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ba1e5.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_ba1e5.dir/CMakeCCompilerABI.c.o  -o cmTC_ba1e5   
+Run Build Command:"/usr/bin/make" "cmTC_b4c35/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_b4c35.dir/build.make CMakeFiles/cmTC_b4c35.dir/build
+Building C object CMakeFiles/cmTC_b4c35.dir/CMakeCCompilerABI.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_b4c35.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.7/Modules/CMakeCCompilerABI.c
+Linking C executable cmTC_b4c35
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b4c35.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_b4c35.dir/CMakeCCompilerABI.c.o  -o cmTC_b4c35   
 Apple LLVM version 7.3.0 (clang-703.0.29)
 Target: x86_64-apple-darwin15.6.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_ba1e5 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_ba1e5.dir/CMakeCCompilerABI.c.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_b4c35 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_b4c35.dir/CMakeCCompilerABI.c.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a
 @(#)PROGRAM:ld  PROJECT:ld64-264.3.101
 configured to support archs: armv6 armv7 armv7s arm64 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em (tvOS)
 Library search paths:
@@ -66,18 +66,18 @@ Parsed C implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_ba1e5/fast"]
-  ignore line: [/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_ba1e5.dir/build.make CMakeFiles/cmTC_ba1e5.dir/build]
-  ignore line: [Building C object CMakeFiles/cmTC_ba1e5.dir/CMakeCCompilerABI.c.o]
-  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_ba1e5.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.7/Modules/CMakeCCompilerABI.c]
-  ignore line: [Linking C executable cmTC_ba1e5]
-  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ba1e5.dir/link.txt --verbose=1]
-  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_ba1e5.dir/CMakeCCompilerABI.c.o  -o cmTC_ba1e5   ]
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_b4c35/fast"]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_b4c35.dir/build.make CMakeFiles/cmTC_b4c35.dir/build]
+  ignore line: [Building C object CMakeFiles/cmTC_b4c35.dir/CMakeCCompilerABI.c.o]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc     -o CMakeFiles/cmTC_b4c35.dir/CMakeCCompilerABI.c.o   -c /opt/local/share/cmake-3.7/Modules/CMakeCCompilerABI.c]
+  ignore line: [Linking C executable cmTC_b4c35]
+  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b4c35.dir/link.txt --verbose=1]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_b4c35.dir/CMakeCCompilerABI.c.o  -o cmTC_b4c35   ]
   ignore line: [Apple LLVM version 7.3.0 (clang-703.0.29)]
   ignore line: [Target: x86_64-apple-darwin15.6.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin]
-  link line: [ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_ba1e5 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_ba1e5.dir/CMakeCCompilerABI.c.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a]
+  link line: [ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_b4c35 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_b4c35.dir/CMakeCCompilerABI.c.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a]
     arg [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld] ==> ignore
     arg [-demangle] ==> ignore
     arg [-dynamic] ==> ignore
@@ -86,11 +86,11 @@ Parsed C implicit link information from above output:
     arg [-macosx_version_min] ==> ignore
     arg [10.11.0] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_ba1e5] ==> ignore
+    arg [cmTC_b4c35] ==> ignore
     arg [-search_paths_first] ==> ignore
     arg [-headerpad_max_install_names] ==> ignore
     arg [-v] ==> ignore
-    arg [CMakeFiles/cmTC_ba1e5.dir/CMakeCCompilerABI.c.o] ==> ignore
+    arg [CMakeFiles/cmTC_b4c35.dir/CMakeCCompilerABI.c.o] ==> ignore
     arg [-lSystem] ==> lib [System]
     arg [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a] ==> lib [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a]
   Library search paths: [;/usr/lib;/usr/local/lib]
@@ -111,13 +111,13 @@ Parsed C implicit link information from above output:
 Detecting C [-std=c11] compiler features compiled with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_b21e6/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_b21e6.dir/build.make CMakeFiles/cmTC_b21e6.dir/build
-Building C object CMakeFiles/cmTC_b21e6.dir/feature_tests.c.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -std=c11 -o CMakeFiles/cmTC_b21e6.dir/feature_tests.c.o   -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.c
-Linking C executable cmTC_b21e6
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b21e6.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_b21e6.dir/feature_tests.c.o  -o cmTC_b21e6  
+Run Build Command:"/usr/bin/make" "cmTC_751ec/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_751ec.dir/build.make CMakeFiles/cmTC_751ec.dir/build
+Building C object CMakeFiles/cmTC_751ec.dir/feature_tests.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -std=c11 -o CMakeFiles/cmTC_751ec.dir/feature_tests.c.o   -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.c
+Linking C executable cmTC_751ec
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_751ec.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_751ec.dir/feature_tests.c.o  -o cmTC_751ec  
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -129,13 +129,13 @@ Linking C executable cmTC_b21e6
 Detecting C [-std=c99] compiler features compiled with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_4e530/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_4e530.dir/build.make CMakeFiles/cmTC_4e530.dir/build
-Building C object CMakeFiles/cmTC_4e530.dir/feature_tests.c.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -std=c99 -o CMakeFiles/cmTC_4e530.dir/feature_tests.c.o   -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.c
-Linking C executable cmTC_4e530
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4e530.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_4e530.dir/feature_tests.c.o  -o cmTC_4e530  
+Run Build Command:"/usr/bin/make" "cmTC_292f1/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_292f1.dir/build.make CMakeFiles/cmTC_292f1.dir/build
+Building C object CMakeFiles/cmTC_292f1.dir/feature_tests.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -std=c99 -o CMakeFiles/cmTC_292f1.dir/feature_tests.c.o   -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.c
+Linking C executable cmTC_292f1
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_292f1.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_292f1.dir/feature_tests.c.o  -o cmTC_292f1  
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -147,13 +147,13 @@ Linking C executable cmTC_4e530
 Detecting C [-std=c90] compiler features compiled with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_8cb38/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_8cb38.dir/build.make CMakeFiles/cmTC_8cb38.dir/build
-Building C object CMakeFiles/cmTC_8cb38.dir/feature_tests.c.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -std=c90 -o CMakeFiles/cmTC_8cb38.dir/feature_tests.c.o   -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.c
-Linking C executable cmTC_8cb38
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_8cb38.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_8cb38.dir/feature_tests.c.o  -o cmTC_8cb38  
+Run Build Command:"/usr/bin/make" "cmTC_b07c7/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_b07c7.dir/build.make CMakeFiles/cmTC_b07c7.dir/build
+Building C object CMakeFiles/cmTC_b07c7.dir/feature_tests.c.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -std=c90 -o CMakeFiles/cmTC_b07c7.dir/feature_tests.c.o   -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.c
+Linking C executable cmTC_b07c7
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b07c7.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc    -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_b07c7.dir/feature_tests.c.o  -o cmTC_b07c7  
 
 
     Feature record: C_FEATURE:1c_function_prototypes
@@ -163,30 +163,30 @@ Linking C executable cmTC_8cb38
 Determining if the CXX compiler works passed with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_a7dbd/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_a7dbd.dir/build.make CMakeFiles/cmTC_a7dbd.dir/build
-Building CXX object CMakeFiles/cmTC_a7dbd.dir/testCXXCompiler.cxx.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++      -o CMakeFiles/cmTC_a7dbd.dir/testCXXCompiler.cxx.o -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
-Linking CXX executable cmTC_a7dbd
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a7dbd.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_a7dbd.dir/testCXXCompiler.cxx.o  -o cmTC_a7dbd  
+Run Build Command:"/usr/bin/make" "cmTC_a5a33/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_a5a33.dir/build.make CMakeFiles/cmTC_a5a33.dir/build
+Building CXX object CMakeFiles/cmTC_a5a33.dir/testCXXCompiler.cxx.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++      -o CMakeFiles/cmTC_a5a33.dir/testCXXCompiler.cxx.o -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp/testCXXCompiler.cxx
+Linking CXX executable cmTC_a5a33
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a5a33.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_a5a33.dir/testCXXCompiler.cxx.o  -o cmTC_a5a33  
 
 
 Detecting CXX compiler ABI info compiled with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_90af3/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_90af3.dir/build.make CMakeFiles/cmTC_90af3.dir/build
-Building CXX object CMakeFiles/cmTC_90af3.dir/CMakeCXXCompilerABI.cpp.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++      -o CMakeFiles/cmTC_90af3.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.7/Modules/CMakeCXXCompilerABI.cpp
-Linking CXX executable cmTC_90af3
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_90af3.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_90af3.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_90af3   
+Run Build Command:"/usr/bin/make" "cmTC_6110d/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_6110d.dir/build.make CMakeFiles/cmTC_6110d.dir/build
+Building CXX object CMakeFiles/cmTC_6110d.dir/CMakeCXXCompilerABI.cpp.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++      -o CMakeFiles/cmTC_6110d.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.7/Modules/CMakeCXXCompilerABI.cpp
+Linking CXX executable cmTC_6110d
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6110d.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_6110d.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_6110d   
 Apple LLVM version 7.3.0 (clang-703.0.29)
 Target: x86_64-apple-darwin15.6.0
 Thread model: posix
 InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_90af3 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_90af3.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_6110d -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_6110d.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a
 @(#)PROGRAM:ld  PROJECT:ld64-264.3.101
 configured to support archs: armv6 armv7 armv7s arm64 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em (tvOS)
 Library search paths:
@@ -201,18 +201,18 @@ Parsed CXX implicit link information from above output:
   link line regex: [^( *|.*[/\])(ld|([^/\]+-)?ld|collect2)[^/\]*( |$)]
   ignore line: [Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp]
   ignore line: []
-  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_90af3/fast"]
-  ignore line: [/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_90af3.dir/build.make CMakeFiles/cmTC_90af3.dir/build]
-  ignore line: [Building CXX object CMakeFiles/cmTC_90af3.dir/CMakeCXXCompilerABI.cpp.o]
-  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++      -o CMakeFiles/cmTC_90af3.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.7/Modules/CMakeCXXCompilerABI.cpp]
-  ignore line: [Linking CXX executable cmTC_90af3]
-  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_90af3.dir/link.txt --verbose=1]
-  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_90af3.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_90af3   ]
+  ignore line: [Run Build Command:"/usr/bin/make" "cmTC_6110d/fast"]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_6110d.dir/build.make CMakeFiles/cmTC_6110d.dir/build]
+  ignore line: [Building CXX object CMakeFiles/cmTC_6110d.dir/CMakeCXXCompilerABI.cpp.o]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++      -o CMakeFiles/cmTC_6110d.dir/CMakeCXXCompilerABI.cpp.o -c /opt/local/share/cmake-3.7/Modules/CMakeCXXCompilerABI.cpp]
+  ignore line: [Linking CXX executable cmTC_6110d]
+  ignore line: [/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6110d.dir/link.txt --verbose=1]
+  ignore line: [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names  -v -Wl,-v CMakeFiles/cmTC_6110d.dir/CMakeCXXCompilerABI.cpp.o  -o cmTC_6110d   ]
   ignore line: [Apple LLVM version 7.3.0 (clang-703.0.29)]
   ignore line: [Target: x86_64-apple-darwin15.6.0]
   ignore line: [Thread model: posix]
   ignore line: [InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin]
-  link line: [ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_90af3 -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_90af3.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a]
+  link line: [ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch x86_64 -macosx_version_min 10.11.0 -o cmTC_6110d -search_paths_first -headerpad_max_install_names -v CMakeFiles/cmTC_6110d.dir/CMakeCXXCompilerABI.cpp.o -lc++ -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a]
     arg [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld] ==> ignore
     arg [-demangle] ==> ignore
     arg [-dynamic] ==> ignore
@@ -221,11 +221,11 @@ Parsed CXX implicit link information from above output:
     arg [-macosx_version_min] ==> ignore
     arg [10.11.0] ==> ignore
     arg [-o] ==> ignore
-    arg [cmTC_90af3] ==> ignore
+    arg [cmTC_6110d] ==> ignore
     arg [-search_paths_first] ==> ignore
     arg [-headerpad_max_install_names] ==> ignore
     arg [-v] ==> ignore
-    arg [CMakeFiles/cmTC_90af3.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+    arg [CMakeFiles/cmTC_6110d.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
     arg [-lc++] ==> lib [c++]
     arg [-lSystem] ==> lib [System]
     arg [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a] ==> lib [/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.3.0/lib/darwin/libclang_rt.osx.a]
@@ -247,13 +247,13 @@ Parsed CXX implicit link information from above output:
 Detecting CXX [-std=c++14] compiler features compiled with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_13dda/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_13dda.dir/build.make CMakeFiles/cmTC_13dda.dir/build
-Building CXX object CMakeFiles/cmTC_13dda.dir/feature_tests.cxx.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -std=c++14 -o CMakeFiles/cmTC_13dda.dir/feature_tests.cxx.o -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_13dda
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_13dda.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_13dda.dir/feature_tests.cxx.o  -o cmTC_13dda  
+Run Build Command:"/usr/bin/make" "cmTC_087b6/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_087b6.dir/build.make CMakeFiles/cmTC_087b6.dir/build
+Building CXX object CMakeFiles/cmTC_087b6.dir/feature_tests.cxx.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -std=c++14 -o CMakeFiles/cmTC_087b6.dir/feature_tests.cxx.o -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_087b6
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_087b6.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_087b6.dir/feature_tests.cxx.o  -o cmTC_087b6  
 
 
     Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
@@ -318,13 +318,13 @@ Linking CXX executable cmTC_13dda
 Detecting CXX [-std=c++11] compiler features compiled with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_4c5ca/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_4c5ca.dir/build.make CMakeFiles/cmTC_4c5ca.dir/build
-Building CXX object CMakeFiles/cmTC_4c5ca.dir/feature_tests.cxx.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -std=c++11 -o CMakeFiles/cmTC_4c5ca.dir/feature_tests.cxx.o -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_4c5ca
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_4c5ca.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_4c5ca.dir/feature_tests.cxx.o  -o cmTC_4c5ca  
+Run Build Command:"/usr/bin/make" "cmTC_0e89e/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_0e89e.dir/build.make CMakeFiles/cmTC_0e89e.dir/build
+Building CXX object CMakeFiles/cmTC_0e89e.dir/feature_tests.cxx.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -std=c++11 -o CMakeFiles/cmTC_0e89e.dir/feature_tests.cxx.o -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_0e89e
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0e89e.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_0e89e.dir/feature_tests.cxx.o  -o cmTC_0e89e  
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers
@@ -389,13 +389,13 @@ Linking CXX executable cmTC_4c5ca
 Detecting CXX [-std=c++98] compiler features compiled with the following output:
 Change Dir: /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/CMakeTmp
 
-Run Build Command:"/usr/bin/make" "cmTC_f9ef4/fast"
-/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_f9ef4.dir/build.make CMakeFiles/cmTC_f9ef4.dir/build
-Building CXX object CMakeFiles/cmTC_f9ef4.dir/feature_tests.cxx.o
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -std=c++98 -o CMakeFiles/cmTC_f9ef4.dir/feature_tests.cxx.o -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.cxx
-Linking CXX executable cmTC_f9ef4
-/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f9ef4.dir/link.txt --verbose=1
-/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_f9ef4.dir/feature_tests.cxx.o  -o cmTC_f9ef4  
+Run Build Command:"/usr/bin/make" "cmTC_b3363/fast"
+/Applications/Xcode.app/Contents/Developer/usr/bin/make -f CMakeFiles/cmTC_b3363.dir/build.make CMakeFiles/cmTC_b3363.dir/build
+Building CXX object CMakeFiles/cmTC_b3363.dir/feature_tests.cxx.o
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -std=c++98 -o CMakeFiles/cmTC_b3363.dir/feature_tests.cxx.o -c /Users/angus1/Programs/MHDmpi/physicsMods/sodShock/CMakeFiles/feature_tests.cxx
+Linking CXX executable cmTC_b3363
+/opt/local/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b3363.dir/link.txt --verbose=1
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++     -Wl,-search_paths_first -Wl,-headerpad_max_install_names   CMakeFiles/cmTC_b3363.dir/feature_tests.cxx.o  -o cmTC_b3363  
 
 
     Feature record: CXX_FEATURE:0cxx_aggregate_default_initializers

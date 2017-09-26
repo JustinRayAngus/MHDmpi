@@ -165,8 +165,17 @@ void domainGrid::setInitialProfile(vector<double> &var,
          cout << "Initial F0 is tanh with amplitude = " << a << endl;
       }
 
+   } 
+   else if(type0=="step") {
+      
+      int Nmax = Xcc.size();
+      for (auto i=0; i<Nmax; i++) {
+         (Xcc.at(i)<b) ? var.at(i)=a : var.at(i)=c;
+      }   
+   
    } else {
-     var = 1.0 + 0.0*Xcc;
+      Xshift = (Xcc-b);
+      var = a*Xshift*Xshift + c*Xshift + d;
    }
 
 } // end setInitialProfile
@@ -282,7 +291,7 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
    } // end METHOD=C2
 
    else if(METHOD == "U1") { // first order upwind
-      
+  
       for (auto i=0; i<Nout; i++) {
       
          if(upC.at(i)<0.0) {
