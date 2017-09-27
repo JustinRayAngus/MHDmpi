@@ -12,7 +12,7 @@
        },
 "Physics":{
            "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
-           "gammaC":1.6667, // adiabatic coefficient
+           "gammaC":1.4, // adiabatic coefficient
            "N":{
                 "type":"step", // initial profile
                 "a":1.0,  // amplitude

@@ -263,18 +263,13 @@ void Physics::advance(const domainGrid& Xgrid, const double& dt)
 
 void computeFluxes(const domainGrid& Xgrid)
 {
-   // FluxN = M
-   // FluxM = M^2/N + P
-   //
 
-   const int nCE = FluxN.size();
+   //const int nCE = FluxN.size();
    const int nCC = N.size();
    vector<double> Cspeed, FluxNcc, FluxMcc, FluxEcc;
-   vector<double> FluxP;
    FluxNcc.assign(nCC,0.0);
    FluxMcc.assign(nCC,0.0);
    FluxEcc.assign(nCC,0.0);
-   FluxP.assign(nCE,0.0);
    
 
    //  define derived variables
@@ -290,7 +285,7 @@ void computeFluxes(const domainGrid& Xgrid)
    Cspeed = V + Cs; // adv flux jacobian
    FluxNcc = M;
    FluxMcc = M*M/N + P;
-   FluxEcc = V*(E+P);
+   FluxEcc = V*E + V*P;
    
 
    // compute advective flux using

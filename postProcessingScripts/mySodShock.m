@@ -23,6 +23,7 @@ E  = hdf5read(thisFile,'E');
 P  = hdf5read(thisFile,'P');
 V  = hdf5read(thisFile,'V');
 Cs  = hdf5read(thisFile,'Cs');
+gamma0 = hdf5read(thisFile,'gamma0');
 FluxRatio  = hdf5read(thisFile,'FluxRatio');
 FluxLim    = hdf5read(thisFile,'FluxLim');
 FluxL    = hdf5read(thisFile,'FluxL');
@@ -35,63 +36,58 @@ tout= hdf5read(thisFile,'tout');
 
 %%%
 %
-%close(figure(1));
+
 f1=figure(1); 
-set(f1,'position',[1030 925 1100 420]);
-%set(f1,'position',[341 436 1100 420]);
+%set(f2,'position',[1030 425 1100 840]);
+set(f1,'position',[341 436 900 840]);
 
-
-subplot(1,2,1);
-hold on; plot(Xcc,N(:,1)); box on;
-hold on; plot(Xcc,N(:,round(end/2)));
-hold on; plot(Xcc,N(:,end)); grid on;
-set(gca,'xtick',-0.5:0.1:0.5);
-xlabel('x'); ylabel('f');
-title('mass density');
-xlim([-0.5 0.5]);
+subplot(2,2,1);
+hold on; plot(Xcc,N(:,1),'black'); box on;
+hold on; plot(Xcc,N(:,4),'b');
+hold on; plot(Xcc,N(:,8),'r'); grid on;
+set(gca,'xtick',-0.5:0.25:0.5);
+set(gca,'ytick',0:0.3:1.2);
+xlabel('x'); ylabel('N');
+title('mass density'); axis('square');
+axis([-0.5 0.5 0 1.2]);
 %
-subplot(1,2,2);
-hold on; plot(Xce,FluxN(:,1)); box on;
-hold on; plot(Xce,FluxN(:,round(end/2)));
-hold on; plot(Xce,FluxN(:,round(end))); grid on;
-set(gca,'xtick',-0.5:0.1:0.5);
-xlabel('x'); ylabel('flux');
-title('flux');
-xlim([-0.5 0.5]);
-
+subplot(2,2,2);
+hold on; plot(Xcc,V(:,1),'black'); box on;
+hold on; plot(Xcc,V(:,4),'b');
+hold on; plot(Xcc,V(:,8),'r'); grid on;
+set(gca,'xtick',-0.5:0.25:0.5);
+set(gca,'ytick',0:0.3:1.2);
+xlabel('x'); ylabel('V');
+title('velocity'); axis('square');
+axis([-0.5 0.5 0 1.2]);
 %
+subplot(2,2,3);
+hold on; plot(Xcc,P(:,1),'black'); box on;
+hold on; plot(Xcc,P(:,4),'b');
+hold on; plot(Xcc,P(:,8),'r'); grid on;
+set(gca,'xtick',-0.5:0.25:0.5);
+set(gca,'ytick',0:0.3:1.2);
+xlabel('x'); ylabel('P');
+title('pressure'); axis('square');
+axis([-0.5 0.5 0 1.2]);
 %
-%
-
-f2=figure(2); 
-set(f2,'position',[1030 425 1100 420]);
-%set(f1,'position',[341 436 1100 420]);
-
-
-subplot(1,2,1);
-hold on; plot(Xcc,P(:,1)); box on;
-hold on; plot(Xcc,P(:,round(end/2)));
-hold on; plot(Xcc,P(:,end)); grid on;
-set(gca,'xtick',-0.5:0.1:0.5);
-xlabel('x'); ylabel('f');
-title('momentum density');
-xlim([-0.5 0.5]);
-%
-subplot(1,2,2);
-hold on; plot(Xce,FluxM(:,1)); box on;
-hold on; plot(Xce,FluxM(:,round(end/2)));
-hold on; plot(Xce,FluxM(:,round(end))); grid on;
-set(gca,'xtick',-0.5:0.1:0.5);
-xlabel('x'); ylabel('flux');
-title('flux');
-xlim([-0.5 0.5]);
+subplot(2,2,4);
+eta = P./N/(gamma0-1);
+hold on; plot(Xcc,eta(:,1),'black'); box on;
+hold on; plot(Xcc,eta(:,4),'b'); grid on;
+hold on; plot(Xcc,eta(:,8),'r');
+xlabel('x'); ylabel('\eta'); axis('square');
+title('internal energy per unit mass');
+set(gca,'xtick',-0.5:0.25:0.5);
+set(gca,'ytick',1:0.5:3);
+axis([-0.5 0.5 1 3]);
 
 
 figure(4);
 hold on; plot(Xcc,P(:,end),'black'); box on;
 hold on; plot(Xcc,N(:,end),'black--'); box on;
 axis([-0.5 0.5 0 1.2]); grid on;
-xlabel('x'); ylabel('density (solid), pressure (dashed)');
+xlabel('x'); ylabel('pressure (solid), density (dashed)');
 title(['t=',num2str(tout(end)),': compare with sodShock BOUT++']);
 
 end
