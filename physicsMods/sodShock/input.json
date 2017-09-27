@@ -8,10 +8,11 @@
 "Time":{
         "dtOut":0.02,     // output time intervals
         "tOutSteps":10,   // number of output setps
-        "dtFrac":20.0     // dtSim = dtMax/dtFrac
+        "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
            "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+           "Nsub":2, // time solver subcycles (1|2 for U1|TVD)
            "gammaC":1.4, // adiabatic coefficient
            "N":{
                 "type":"step", // initial profile

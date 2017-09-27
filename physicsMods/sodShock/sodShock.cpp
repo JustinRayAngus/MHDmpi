@@ -1,6 +1,18 @@
 /***
  * 
- * physics module for sod shock test
+ * physics module for testing shock capturing schemes
+ *
+ * see G.A. Sod, J. of Comp. Phys. 27, 1-31 (1978)
+ *
+ * upwding (U1) scheme seems to fail at really high
+ * grid resolution (fine at nx=3000, fails at nx=4000)
+ * I think this is result of how pressure term in 
+ * momentum equation is handled
+ *
+ * QUICK doesn't work well at all
+ *
+ * TVD works very well, and no problem at high resolution
+ * (nx=6000 is fine)
  *
 ***/
 
@@ -30,6 +42,7 @@ using namespace std;
 
 string advScheme0;    // advection differencing scheme
 double gamma0;        // adiabatic coefficient
+int Nsub;             // time-solver subcycle steps
 vector<double> N, M, E;   // function
 vector<double> F0, Cs, V, P;      // function
 vector<double> F0old, Nold, Mold, Eold;
@@ -88,7 +101,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    if(Phys.isObject()) {
       if(procID==0) printf("\nInitializing Physics ...\n");
       Json::Value advScheme = Phys.get("advScheme",defValue);
-      Json::Value gammaVal = Phys.get("gammaC",defValue);
+      Json::Value gammaVal  = Phys.get("gammaC",defValue);
+      Json::Value NsubVal   = Phys.get("Nsub",defValue);
       if(advScheme == defValue || gammaVal == defValue) {
          cout << "ERROR: advScheme or gamma is " << endl;
          cout << "not declared in input file" << endl;
@@ -112,6 +126,13 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       if(procID==0) cout << "adiabatic coefficent = " << gamma0 << endl;
       if(gamma0 < 1.0) {
          printf("ERROR: adiabatic coefficient can't be < 1\n");
+         exit (EXIT_FAILURE);
+      }
+      
+      Nsub = NsubVal.asInt();
+      if(procID==0) cout << "Nsub = " << Nsub << endl;
+      if(gamma0 < 1.0) {
+         printf("ERROR: Nsub must be int >= 1\n");
          exit (EXIT_FAILURE);
       }
 
@@ -165,7 +186,10 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
 
    Cs = sqrt(gamma0*P/N);
 
-   computeFluxes(Xgrid); // inital calculation before add to output   
+   // need inital flux calculation before add to output
+   // and before first call to Physics.advance   
+   computeFluxes(Xgrid);   
+  
   
    dataFile.add(N, "N", 1);  // density 
    dataFile.add(M, "M", 1);  // momentum density 
@@ -197,63 +221,36 @@ void Physics::advance(const domainGrid& Xgrid, const double& dt)
 
    //domainGrid* mesh = domainGrid::mesh;
 
-   // Explicit forward advance from n to n+1/2 using Flux(n)
-   // (calc of Flux(t=0) is done during initilization)
-   //
-   for (auto i=nXg; i<nMax-nXg; i++) {
-      N.at(i) = Nold.at(i) - dt/2.0*(FluxN.at(i)-FluxN.at(i-1))/Xgrid.dX;
-      M.at(i) = Mold.at(i) - dt/2.0*(FluxM.at(i)-FluxM.at(i-1))/Xgrid.dX;
-      E.at(i) = Eold.at(i) - dt/2.0*(FluxE.at(i)-FluxE.at(i-1))/Xgrid.dX;
+   // Explicit forward advance from n to n+1 using subcycling in time 
+   //  
+   double thisdt;
+   for (auto n=1; n<Nsub+1; n++) {
+      thisdt = dt*n/Nsub;
+
+      for (auto i=nXg; i<nMax-nXg; i++) {
+         N.at(i) = Nold.at(i) - thisdt*(FluxN.at(i)-FluxN.at(i-1))/Xgrid.dX;
+         M.at(i) = Mold.at(i) - thisdt*(FluxM.at(i)-FluxM.at(i-1))/Xgrid.dX;
+         E.at(i) = Eold.at(i) - thisdt*(FluxE.at(i)-FluxE.at(i-1))/Xgrid.dX;
+      }
+
+      if(procID==0) {
+         setXminBoundary(N, 1.0);   
+         setXminBoundary(M, 0.0);   
+         setXminBoundary(E, 1.0/(gamma0-1.0));   
+      }
+      if(procID==numProcs-1) {
+         setXmaxBoundary(N, 0.125);   
+         setXmaxBoundary(M, 0.0);   
+         setXmaxBoundary(E, 0.1/(gamma0-1.0));   
+      }
+      Xgrid.communicate(N);
+      Xgrid.communicate(M);
+      Xgrid.communicate(E);
+      
+      computeFluxes(Xgrid);
+
    }
 
-
-   // apply boundary conditions, communicate, compute Flux
-   //
-   if(procID==0) {
-      setXminBoundary(N, 1.0);   
-      setXminBoundary(M, 0.0);   
-      setXminBoundary(E, 1.0/(gamma0-1.0));   
-   }
-   if(procID==numProcs-1) {
-      setXmaxBoundary(N, 0.125);   
-      setXmaxBoundary(M, 0.0);   
-      setXmaxBoundary(E, 0.1/(gamma0-1.0));   
-   }
-   Xgrid.communicate(N);
-   Xgrid.communicate(M);
-   Xgrid.communicate(E);
-   computeFluxes(Xgrid); // compute RHS using N(n+1/2)
-
-
-   // Explicit forward advance from n to n+1 using Flux(n+1/2)
-   //
-   for (auto i=nXg; i<nMax-nXg; i++) {
-      N.at(i) = Nold.at(i) - dt*(FluxN.at(i)-FluxN.at(i-1))/Xgrid.dX;
-      M.at(i) = Mold.at(i) - dt*(FluxM.at(i)-FluxM.at(i-1))/Xgrid.dX;
-      E.at(i) = Eold.at(i) - dt*(FluxE.at(i)-FluxE.at(i-1))/Xgrid.dX;
-   }
-   
-
-   // apply boundary conditions, communicate, compute Flux
-   //
-   if(procID==0) {
-      setXminBoundary(N, 1.0);   
-      setXminBoundary(M, 0.0);   
-      setXminBoundary(E, 1.0/(gamma0-1.0));   
-   }
-   if(procID==numProcs-1) {
-      setXmaxBoundary(N, 0.125);   
-      setXmaxBoundary(M, 0.0);   
-      setXmaxBoundary(E, 0.1/(gamma0-1.0));   
-   }
-   Xgrid.communicate(N);
-   Xgrid.communicate(M);
-   Xgrid.communicate(E);
-   computeFluxes(Xgrid);
-   
-
-   //  update Nold
-   //
    Nold = N;
    Mold = M;
    Eold = E;
@@ -264,13 +261,14 @@ void Physics::advance(const domainGrid& Xgrid, const double& dt)
 void computeFluxes(const domainGrid& Xgrid)
 {
 
-   //const int nCE = FluxN.size();
+   const int nCE = FluxN.size();
    const int nCC = N.size();
    vector<double> Cspeed, FluxNcc, FluxMcc, FluxEcc;
+   vector<double> FluxP; 
    FluxNcc.assign(nCC,0.0);
    FluxMcc.assign(nCC,0.0);
    FluxEcc.assign(nCC,0.0);
-   
+   FluxP.assign(nCE,0.0);
 
    //  define derived variables
    //
@@ -285,7 +283,7 @@ void computeFluxes(const domainGrid& Xgrid)
    Cspeed = V + Cs; // adv flux jacobian
    FluxNcc = M;
    FluxMcc = M*M/N + P;
-   FluxEcc = V*E + V*P;
+   FluxEcc = V*(E + P);
    
 
    // compute advective flux using
@@ -300,9 +298,11 @@ void computeFluxes(const domainGrid& Xgrid)
                            FluxEcc,Cspeed,E);
    }      
    else {
-      Xgrid.InterpToCellEdges(FluxN,FluxNcc,Cspeed,advScheme0);
-      Xgrid.InterpToCellEdges(FluxM,FluxMcc,Cspeed,advScheme0);
-      Xgrid.InterpToCellEdges(FluxE,FluxEcc,Cspeed,advScheme0);
+      Xgrid.InterpToCellEdges(FluxN,FluxNcc,N,advScheme0);
+      Xgrid.InterpToCellEdges(FluxM,FluxMcc-P,M,advScheme0);
+      Xgrid.InterpToCellEdges(FluxP,P,M,"C2");
+      FluxM = FluxM+FluxP;
+      Xgrid.InterpToCellEdges(FluxE,FluxEcc,E,advScheme0);
    } 
 
 
@@ -351,10 +351,8 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    const double dX = Xgrid.dX;
    double dtmax = dX/Cmax;
    dtSim = min(dtmax/tDom.dtFrac,tDom.dtOut);
-   if(procID==0) {
-      cout << endl; 
-      cout << "max stable time step is " << dtmax << endl;
-      cout << endl; 
-   }
+   //if(procID==0) {
+   //   cout << "max stable time step is " << dtmax << endl;
+   //}
 }
 

@@ -38,8 +38,8 @@ tout= hdf5read(thisFile,'tout');
 %
 
 f1=figure(1); 
-%set(f2,'position',[1030 425 1100 840]);
-set(f1,'position',[341 436 900 840]);
+set(f1,'position',[1030 425 900 840]);
+%set(f1,'position',[341 436 900 840]);
 
 subplot(2,2,1);
 hold on; plot(Xcc,N(:,1),'black'); box on;
@@ -64,7 +64,7 @@ axis([-0.5 0.5 0 1.2]);
 subplot(2,2,3);
 hold on; plot(Xcc,P(:,1),'black'); box on;
 hold on; plot(Xcc,P(:,4),'b');
-hold on; plot(Xcc,P(:,8),'r'); grid on;
+hold on; plot(Xcc,P(:,6),'r'); grid on;
 set(gca,'xtick',-0.5:0.25:0.5);
 set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('P');
@@ -83,12 +83,20 @@ set(gca,'ytick',1:0.5:3);
 axis([-0.5 0.5 1 3]);
 
 
-figure(4);
+f4=figure(4); set(f4,'position', [1945 45 560 420]); 
 hold on; plot(Xcc,P(:,end),'black'); box on;
 hold on; plot(Xcc,N(:,end),'black--'); box on;
 axis([-0.5 0.5 0 1.2]); grid on;
 xlabel('x'); ylabel('pressure (solid), density (dashed)');
 title(['t=',num2str(tout(end)),': compare with sodShock BOUT++']);
+
+
+f5=figure(5); set(f5,'position', [1945 45 560 420]); 
+hold on; plot(Xcc,P(:,2),'black'); box on;
+hold on; plot(Xcc,P(:,3),'r'); box on;
+axis([-0.5 0.5 0 1.2]); grid on;
+xlabel('x');
+title('bad ascillations early on using U1 with nx>3000');
 
 end
 

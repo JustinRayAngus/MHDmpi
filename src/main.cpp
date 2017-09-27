@@ -143,6 +143,7 @@ int main(int argc, char** argv) {
          tDom.updatetOut(thist);
          dataFile.writeAll(); // append extendable outputs
          thistOutInt = thistOutInt+1;
+         phys.setdtSim(dtSim, tDom, Xgrid);
          if(procID==0) {
             cout << "Output variables dumped at t = " 
                  << thist << " units?" << endl;
