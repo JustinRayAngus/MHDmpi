@@ -113,6 +113,19 @@ vector<double> sin(const vector<double> &fin) {
    return result;
 }
 
+vector<double> pow(const vector<double> &fin, const double exponent) {
+
+   vector<double> result;
+   const int imax = fin.size();
+   result.resize(imax);
+
+   for (auto i=0; i<imax; i++) {
+      result.at(i) = pow(fin.at(i), exponent);
+   }
+
+   return result;
+}
+
 vector<double> abs(const vector<double> &fin) {
 
    vector<double> result;

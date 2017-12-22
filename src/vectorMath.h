@@ -234,6 +234,8 @@ vector<double> cos(const vector<double> &fin);
 
 vector<double> sin(const vector<double> &fin);
 
+vector<double> pow(const vector<double> &fin, const double exponent);
+
 vector<double> abs(const vector<double> &fin);
 
 double min(const vector<double> &fin);

@@ -35,6 +35,7 @@ using namespace std;
 //domainGrid defGrid;
 //domainGrid* domainGrid::mesh = &defGrid;
 domainGrid* domainGrid::mesh = NULL;
+timeDomain* timeDomain::tmesh = NULL;
 
 
 int main(int argc, char** argv) {   
@@ -104,6 +105,7 @@ int main(int argc, char** argv) {
    
    //
    timeDomain tDom;
+   timeDomain::tmesh = &tDom;
    tDom.initialize(inputRoot);
    dataFile.add(tDom.tOut, "tout", 1); // actual output time   
 
@@ -117,13 +119,15 @@ int main(int argc, char** argv) {
    // set initial time-step
    //
    double dtSim;
-   //setdtSim(dtSim, tDom, Xgrid);
    phys.setdtSim(dtSim, tDom, Xgrid);
    tDom.dtSim = dtSim;
    if(procID==0) {
       cout << "Initial simulation time step: " << dtSim << endl << endl;
    }
-   double thist = 0;
+   double thist=0;
+   tDom.tSim = thist;
+   //timeDomain::ptSim = &thist;
+
    int thistOutInt = 1;
    vector<double> F0m(Xgrid.nX,0.0), errorVec(Xgrid.nX,0.0);
 
@@ -132,7 +136,8 @@ int main(int argc, char** argv) {
    //
    while(thist<tDom.tmax) {
       thist = thist + dtSim; // new time at end of this time step
-      
+      tDom.tSim = thist;
+
       // advance variables from n => n+1
       //
       phys.advance(Xgrid, dtSim);

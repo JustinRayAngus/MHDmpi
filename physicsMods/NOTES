@@ -1,0 +1,14 @@
+1Ddpf is working ok, but there are serveral issues
+
+1) I'm not sure I'm treating the x=0 boundary correctly (this is where ideal current source
+is located). I cannot seem to get rid of oscillations in Ez and Vx that occur there.
+
+2) I'm not sure I'm solving for the electromagnetic fluxes correctly. I may also not be 
+solving the E field in time the correct way.
+
+3) I have issues when using TVD scheme for electric field advance. Furthermore, I'm
+using max(U)+Cs as Cspeed for TVD advance of magnetic field
+
+4) I'm not resolving light waves. I don't think I understand the relaxation scheme fully yet. I'm not sure what all time scales are ignored and what's not. 
+
+5) Going forward, set up this problem using standard explicit scheme with diffusion operator in induction equation. This will give a baseline for what the simulations should do.

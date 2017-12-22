@@ -26,6 +26,12 @@ public:
   vector<double> tOutVec;        // vector of output times
   double tOut;           // current output time 
   
+  double tSim=0.; // current simulation time
+  static timeDomain* tmesh; // pointer to a timeDomain instance
+  
+  static double* ptSim; // pointer to tSim value
+  //ptSim = &tSim; returns does not name a type error ????
+
   void initialize(const Json::Value&);
   void updatetOut(double thistOut);
 

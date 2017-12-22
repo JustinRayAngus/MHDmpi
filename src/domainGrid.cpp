@@ -246,15 +246,24 @@ void domainGrid::communicate(vector<double> &F0) const {
 
 void domainGrid::DDX(vector<double> &Fout, const vector<double> &Fin) const {
 
-   // check that Fin (at cell center) and Fout (cell edges) are proper size
+   // check that Fin (at cell center) and 
+   // use Fout size to determine how to take DDX
    
    const int Nout = Fout.size();
    const int Nin  = Fin.size();
-   assert(Nout == nXce);
+   //assert(Nout == nXce);
    assert(Nin == nXcc);
 
-   for (auto i=0; i<Nout; i++) {
-      Fout.at(i) = (Fin.at(i+1)-Fin.at(i))/dX;
+   if(Nout == nXce) { // Fout is at cell edges
+      for (auto i=0; i<Nout; i++) {
+         Fout.at(i) = (Fin.at(i+1)-Fin.at(i))/dX;
+      }   
+   } 
+   else {
+      for (auto i=1; i<Nout-1; i++) {
+         Fout.at(i) = (Fin.at(i+1)-Fin.at(i-1))/2.0/dX;
+      }   
+      
    }
 
 }
@@ -348,7 +357,8 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
                                 vector<double> &Flratio, vector<double> &FlLim, 
                                 const vector<double> &Flin,
                                 const vector<double> &upC,
-                                const vector<double> &fin) const {
+                                const vector<double> &fin,
+				const int order) const {
 
    // this function interpolates cell-center flux Flin
    // to Fout, defined at cell edges, using TVD scheme 
@@ -374,6 +384,10 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
    FluxR1st.assign(Nout,0.0); 
    DeltaFluxL.assign(Nout,0.0);
    DeltaFluxR.assign(Nout,0.0);  
+   
+   vector<double> FlratioL, FlLimL;
+   FlratioL.assign(Nout,0.0);   
+   FlLimL.assign(Nout,0.0);   
 
    // compute first order left and right fluxes
    //
@@ -388,17 +402,36 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
    for (auto i=1; i<Nout-1; i++) {
       DeltaFluxR.at(i) = 0.5*(FluxR1st.at(i+1)-FluxR1st.at(i)); 
       DeltaFluxL.at(i) = 0.5*(FluxL1st.at(i)-FluxL1st.at(i-1)); 
-      //Flratio.at(i) = DeltaFluxL.at(i)/DeltaFluxR.at(i);
-      Flratio.at(i) = (fin.at(i+1) - fin.at(i-1))/(fin.at(i+2) - fin.at(i)); // divide by zero?
-      //FlLim.at(i) = (abs(Flratio.at(i))+Flratio.at(i))/(abs(Flratio.at(i)) + 1.0); // van Leer
+      Flratio.at(i) = DeltaFluxL.at(i)/DeltaFluxR.at(i);
+      //Flratio.at(i)  = (fin.at(i) - fin.at(i-1))/(fin.at(i+1) - fin.at(i)); // divide by zero?
+      if(Flratio.at(i)>100.0) Flratio.at(i) = 100.0;
+      //if(Flratio.at(i)<0.0) cout << "Flratio = " << Flratio.at(i) << endl;
+      //if(upC.at(i)<0.0) cout << "upC = " << upC.at(i) << endl;
       FlLim.at(i) = 2.0;
       if(Flratio.at(i)<=2.0) FlLim.at(i) = Flratio.at(i);
       if(Flratio.at(i)<=1.0) FlLim.at(i) = 1.0;
       if(Flratio.at(i)<=0.5) FlLim.at(i) = 2.0*Flratio.at(i);
       if(Flratio.at(i)<=0.0) FlLim.at(i) = 0.0;
+      //FlratioL.at(i) = DeltaFluxL.at(i+1)/DeltaFluxR.at(i+1);
+      FlratioL.at(i) = (fin.at(i+2) - fin.at(i+1))/(fin.at(i+1) - fin.at(i)); // divide by zero?
+      FlLimL.at(i) = 2.0;
+      if(FlratioL.at(i)<=2.0) FlLimL.at(i) = FlratioL.at(i);
+      if(FlratioL.at(i)<=1.0) FlLimL.at(i) = 1.0;
+      if(FlratioL.at(i)<=0.5) FlLimL.at(i) = 2.0*FlratioL.at(i);
+      if(FlratioL.at(i)<=0.0) FlLimL.at(i) = 0.0;
+      //FlLimL.at(i) = (abs(FlratioL.at(i))+FlratioL.at(i))/(abs(FlratioL.at(i)) + 1.0); // van Leer
       
-      FloutR.at(i) = FluxR1st.at(i) + FlLim.at(i)*DeltaFluxR.at(i);
-      FloutL.at(i) = FluxL1st.at(i) + FlLim.at(i)*DeltaFluxL.at(i);
+      //if(i==1) FlLim.at(i) = 0.0;
+      //if(i==1) FlLimL.at(i) = 0.0;
+
+      if(order==1) {
+         FloutR.at(i) = FluxR1st.at(i);
+         FloutL.at(i) = FluxL1st.at(i);
+      }
+      else {
+         FloutR.at(i) = FluxR1st.at(i) + FlLim.at(i)*DeltaFluxR.at(i);
+         FloutL.at(i) = FluxL1st.at(i) + FlLim.at(i)*DeltaFluxL.at(i);
+      }
       Flout.at(i) = (FloutR.at(i) + FloutL.at(i))/2.0;
    }
    //Flout.at(0) = (FloutR.at(0) + FloutL.at(0))/2.0;

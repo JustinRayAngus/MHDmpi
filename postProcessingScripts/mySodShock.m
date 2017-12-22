@@ -9,6 +9,8 @@ clear all;
 
 numProcs = 4;
 filePath = '../physicsMods/sodShock/';
+%filePath = '../physicsMods/testing/';
+
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
@@ -96,7 +98,7 @@ hold on; plot(Xcc,P(:,2),'black'); box on;
 hold on; plot(Xcc,P(:,3),'r'); box on;
 axis([-0.5 0.5 0 1.2]); grid on;
 xlabel('x');
-title('bad ascillations early on using U1 with nx>3000');
+title('bad oscillations early on using U1 with nx>3000');
 
 end
 

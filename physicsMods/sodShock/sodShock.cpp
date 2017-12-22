@@ -51,8 +51,8 @@ vector<double> FluxR, FluxL;  // flux at cell-edges
 vector<double> FluxN, FluxM, FluxE;
 
 void computeFluxes(const domainGrid&);
-void setXminBoundary(vector<double>&, const double&);
-void setXmaxBoundary(vector<double>&, const double&);
+void setXminBoundary(vector<double>&, const double, const double);
+void setXmaxBoundary(vector<double>&, const double, const double);
 
 // alternative means for getting grid, opposed
 // to passing predefined instance (Xgrid) to 
@@ -148,8 +148,9 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    const Json::Value Nvar = Phys.get("N",defValue);
    if(Nvar.isObject()) { 
       Xgrid.setInitialProfile(N,Nvar);
-      if(procID==0) setXminBoundary(N, 1.0);   
-      if(procID==numProcs-1) setXmaxBoundary(N, 0.125);   
+      if(procID==0) setXminBoundary(N, 0.0, 1.0);   
+      //if(procID==numProcs-1) setXmaxBoundary(N, 0.125);   
+      if(procID==numProcs-1) setXmaxBoundary(N, 0.0, 1.0);   
       Xgrid.communicate(N);
       Nold  = N;
       //computeFluxes(Xgrid); // inital calculation before add to output   
@@ -161,8 +162,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    const Json::Value Vvar = Phys.get("V",defValue);
    if(Vvar.isObject()) { 
       Xgrid.setInitialProfile(V,Vvar);
-      if(procID==0) setXminBoundary(V, 0.0);   
-      if(procID==numProcs-1) setXmaxBoundary(V, 0.0);   
+      if(procID==0) setXminBoundary(V, 0.0, -1.0);   
+      if(procID==numProcs-1) setXmaxBoundary(V, 0.0, -1.0);   
       Xgrid.communicate(V);
       M = N*V;
       Mold  = M;
@@ -174,8 +175,9 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    const Json::Value Pvar = Phys.get("P",defValue);
    if(Pvar.isObject()) { 
       Xgrid.setInitialProfile(P,Pvar);
-      if(procID==0) setXminBoundary(P, 1.0);   
-      if(procID==numProcs-1) setXmaxBoundary(P, 0.1);   
+      if(procID==0) setXminBoundary(P, 0.0, 1.0);   
+      //if(procID==numProcs-1) setXmaxBoundary(P, 0.1);   
+      if(procID==numProcs-1) setXmaxBoundary(P, 0.0, 1.0);   
       Xgrid.communicate(P);
       E = P/(gamma0-1.0) + 0.5*M*V;
       Eold  = E;
@@ -211,7 +213,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
 } // end Physics.initilize
 
 
-void Physics::advance(const domainGrid& Xgrid, const double& dt)
+void Physics::advance(const domainGrid& Xgrid, const double dt)
 {
    const int nMax = N.size();
    const int nXg = Xgrid.nXg;
@@ -234,14 +236,18 @@ void Physics::advance(const domainGrid& Xgrid, const double& dt)
       }
 
       if(procID==0) {
-         setXminBoundary(N, 1.0);   
-         setXminBoundary(M, 0.0);   
-         setXminBoundary(E, 1.0/(gamma0-1.0));   
+         setXminBoundary(N, 0.0, 1.0);   
+         setXminBoundary(M, 0.0, -1.0);   
+         //setXminBoundary(E, 1.0/(gamma0-1.0));   
+         setXminBoundary(E, 0.0, 1.0);   
       }
       if(procID==numProcs-1) {
-         setXmaxBoundary(N, 0.125);   
-         setXmaxBoundary(M, 0.0);   
-         setXmaxBoundary(E, 0.1/(gamma0-1.0));   
+         //setXmaxBoundary(N, 0.125);   
+         //setXmaxBoundary(M, 0.0);   
+         //setXmaxBoundary(E, 0.1/(gamma0-1.0));   
+         setXmaxBoundary(N, 0.0, 1.0);   
+         setXmaxBoundary(M, 0.0, -1.0);   
+         setXmaxBoundary(E, 0.0, 1.0);   
       }
       Xgrid.communicate(N);
       Xgrid.communicate(M);
@@ -291,11 +297,11 @@ void computeFluxes(const domainGrid& Xgrid)
    //
    if(advScheme0 == "TVD") {
       Xgrid.computeFluxTVD(FluxN,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxNcc,Cspeed,N);
+                           FluxNcc,Cspeed,N,2);
       Xgrid.computeFluxTVD(FluxM,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxMcc,Cspeed,M);
+                           FluxMcc,Cspeed,M,2);
       Xgrid.computeFluxTVD(FluxE,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxEcc,Cspeed,E);
+                           FluxEcc,Cspeed,E,2);
    }      
    else {
       Xgrid.InterpToCellEdges(FluxN,FluxNcc,N,advScheme0);
@@ -309,27 +315,28 @@ void computeFluxes(const domainGrid& Xgrid)
 } // end computeFluxes
 
 
-void setXminBoundary(vector<double>& var, const double& C)
+void setXminBoundary(vector<double>& var, const double C0, const double C1)
 {
    
    domainGrid* mesh = domainGrid::mesh;
    //F0.front() = 2.0*C-F0.at(1); 
    //F0.front() = C; 
    for (auto i=0; i<mesh->nXg; i++) {
-      var.at(i) = C;
+      //var.at(i) = C;
+      var.at(i) = C0 + C1*var.at(mesh->nXg+1-i);
    }
    
 }
 
 
-void setXmaxBoundary(vector<double>& var, const double& C)
+void setXmaxBoundary(vector<double>& var, const double C0, const double C1)
 {
    
    domainGrid* mesh = domainGrid::mesh;
    //F0[nXsub+1] = 2.0*C-F0[nXsub]; 
    //F0[nXsub+1] = C;
    for (auto i=mesh->nXcc-mesh->nXg; i<mesh->nXcc; i++) {
-      var.at(i) = C;
+      var.at(i) = C0 + C1*var.at(mesh->nXcc-mesh->nXg-1);
    }
    //var.back() = C;
    //cout << "var.size() = " var.size() << endl; 
