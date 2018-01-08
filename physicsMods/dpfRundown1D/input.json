@@ -1,14 +1,14 @@
 {
 "Xgrid":{
-         "Xmin":-0.5,
-         "Xmax":0.5,
+         "Xmin":0.0,
+         "Xmax":1.0,
          "nX":200,
          "nXg":2 // number of guard cells each end
         },
 "Time":{
-        "dtOut":1.0,     // output time intervals
-        "tOutSteps":10,   // number of output setps
-        "dtFrac":2.0     // dtSim = dtMax/dtFrac
+        "dtOut":2.0e-2,     // output time intervals
+        "tOutSteps":20,   // number of output setps
+        "dtFrac":1.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
            "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"

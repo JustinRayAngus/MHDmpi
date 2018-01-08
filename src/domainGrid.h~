@@ -36,7 +36,8 @@ public:
   void computeFluxTVD(vector<double>&, vector<double>&, vector<double>&,
                       vector<double>&, vector<double>&,
                       const vector<double>&, const vector<double>&,
-                      const vector<double>&) const;
+                      const vector<double>&,
+		      const int) const;
   void DDX(vector<double>&, const vector<double>&) const;
 
 //domainGrid() {};

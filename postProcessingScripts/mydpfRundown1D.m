@@ -7,9 +7,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
+%%%   set default font and lines
+%
+set(0,'defaultaxesfontsize',18);
+set(0,'defaulttextfontsize',18);
+set(0,'defaultaxeslinewidth',1.5);
+set(0,'defaultlinelinewidth',1.5);
+set(0,'defaultaxesfontweight','bold');
+
+
 numProcs = 4;
 filePath = '../physicsMods/dpfRundown1D/';
 
+plotBackIndex = 0; % plot time will be end-plotBackIndex
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
@@ -28,6 +38,7 @@ J  = hdf5read(thisFile,'J');
 J0  = hdf5read(thisFile,'J0'); % curl(B)
 Ez  = hdf5read(thisFile,'Ez');
 Cs  = hdf5read(thisFile,'Cs');
+eta  = hdf5read(thisFile,'eta');
 gamma0 = hdf5read(thisFile,'gamma0');
 FluxRatio  = hdf5read(thisFile,'FluxRatio');
 FluxLim    = hdf5read(thisFile,'FluxLim');
@@ -43,83 +54,80 @@ dX = Xcc(2)-Xcc(1);
 
 
 T = P./N;
-eta0 = 1e-3;
-figure(2); hold on; plot(Xcc,P(:,2),'black*');
-%P2 = S.*N.^(5/3-1);
 %figure(2); hold on; plot(Xce,FluxR(:,5),'r--');
-figure(4); hold on; plot(Xce,FluxLim(:,2),'b');
-figure(4); hold on; plot(Xce,FluxRatio(:,2),'r');
+%figure(4); hold on; plot(Xce,FluxLim(:,end),'b');
+%figure(4); hold on; plot(Xce,FluxRatio(:,end),'r');
 %%%
-%
+figure(10); hold on; plot(Xcc,V(:,end));
 
 plots=1;
 if(plots)
-f1=figure(1); 
+f1=figure(11); 
 set(f1,'position',[1030 425 1300 840]);
 %set(f1,'position',[341 436 900 840]);
 
 subplot(2,3,1);
 hold on; plot(Xcc,N(:,1),'black'); box on;
 hold on; plot(Xcc,N(:,round(end/2)),'b');
-hold on; plot(Xcc,N(:,end),'r'); grid on;
-set(gca,'xtick',-0.5:0.25:0.5);
+hold on; plot(Xcc,N(:,end-plotBackIndex),'r'); grid on;
+set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('N');
 title('mass density'); axis('square');
-xlim([-0.51 0.5]);
+xlim([0 1]);
 %
 subplot(2,3,2);
-hold on; plot(Xcc,M(:,1),'black'); box on;
-hold on; plot(Xcc,M(:,round(end/2)),'b');
-hold on; plot(Xcc,M(:,end),'r'); grid on;
-set(gca,'xtick',-0.5:0.25:0.5);
+hold on; plot(Xcc,V(:,1),'black'); box on;
+hold on; plot(Xcc,V(:,round(end/2)),'b');
+hold on; plot(Xcc,V(:,end-plotBackIndex),'r'); grid on;
+set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('V');
 title('velocity'); axis('square');
-xlim([-0.51 0.5]);
+xlim([0 1]);
 %
 subplot(2,3,3);
 hold on; plot(Xcc,P(:,1),'black'); box on;
 hold on; plot(Xcc,P(:,round(end/2)),'b');
-hold on; plot(Xcc,P(:,end),'r'); grid on;
-set(gca,'xtick',-0.5:0.25:0.5);
+hold on; plot(Xcc,P(:,end-plotBackIndex),'r'); grid on;
+hold on; plot(Xcc,T(:,end-plotBackIndex),'g');
+set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('P');
 title('thermal pressure'); axis('square');
-xlim([-0.51 0.5]);
+xlim([0 1]);
 %
 %
 subplot(2,3,4);
-hold on; plot(Xcc,Ez(:,1),'black'); box on;
-hold on; plot(Xcc,Ez(:,round(end/2)),'b');
-hold on; plot(Xcc,Ez(:,end),'r'); grid on;
-set(gca,'xtick',-0.5:0.25:0.5);
+hold on; plot(Xce,Ez(:,1),'black'); box on;
+hold on; plot(Xce,Ez(:,round(end/2)),'b');
+hold on; plot(Xce,Ez(:,end-plotBackIndex),'r'); grid on;
+set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('Ez');
 title('electric field'); axis('square');
-xlim([-0.51 0.5]);
+xlim([0 1]);
 %
 subplot(2,3,5);
-eta = P./N/(gamma0-1);
 hold on; plot(Xcc,B(:,1),'black'); box on;
 hold on; plot(Xcc,B(:,round(end/2)),'b'); grid on;
-hold on; plot(Xcc,B(:,end),'r');
+hold on; plot(Xcc,B(:,end-plotBackIndex),'r');
 xlabel('x'); ylabel('B'); axis('square');
 title('magnetic field');
-set(gca,'xtick',-0.5:0.25:0.5);
+set(gca,'xtick',0.0:0.25:2);
 %set(gca,'ytick',1:0.5:3);
-xlim([-0.5 0.5]);
+xlim([0 1]);
 %
 subplot(2,3,6);
-hold on; plot(Xcc,J(:,1),'black'); box on;
-hold on; plot(Xcc,J(:,round(end/2)),'b'); grid on;
-hold on; plot(Xcc,J(:,end),'r');
-hold on; plot(Xcc,J0(:,end),'g--');
+hold on; plot(Xce,J(:,1),'black'); box on;
+hold on; plot(Xce,J(:,round(end/2)),'b'); grid on;
+hold on; plot(Xce,J(:,end-plotBackIndex),'r');
+hold on; plot(Xce,J0(:,end-plotBackIndex),'g--');
 xlabel('x'); ylabel('J'); axis('square');
 title('current density');
-set(gca,'xtick',-0.5:0.25:0.5);
+set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',1:0.5:3);
-axis([-0.5 0.5 -10 0]);
+xlim([0 1]);
 end
 
 

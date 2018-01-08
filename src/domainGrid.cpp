@@ -351,6 +351,26 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
 
 } // end function InterpToCellEdges
 
+void domainGrid::InterpToCellCenter(vector<double> &Fout, 
+                                   const vector<double> &Fin) const {
+
+   // this function interpolates cell-edge Fin to cell
+   // to Fout, defined at cell center
+
+   // check that vectors in call are proper size
+   //
+   const int Nout = Fout.size();
+   const int Nin  = Fin.size();
+   assert(Nout == nXcc);
+   assert(Nin  == nXce);
+
+
+   for (auto i=1; i<Nout-1; i++) {
+      Fout.at(i) = (Fin.at(i)+Fin.at(i-1))/2.0;
+   }
+
+
+} // end InterpToCellCenter
 
 void domainGrid::computeFluxTVD(vector<double> &Flout, 
                                 vector<double> &FloutL,  vector<double> &FloutR, 

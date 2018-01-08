@@ -40,7 +40,7 @@ using namespace std;
 
 string advScheme0;    // advection differencing scheme
 double gamma0;        // adiabatic coefficient
-double eta0=0.08;     // resistivity
+double eta0=0.04;     // resistivity
 double delta0=1.0e-4; // relaxation const (v/c)^2
 double B0 = 0.0;      // boundary value of magnetic field
 int Nsub;             // time-solver subcycle steps
@@ -461,13 +461,12 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       //Xgrid.InterpToCellEdges(FluxEz,FluxEzcc,Ez,"C2");
    } 
 
-   //Xgrid.InterpToCellEdges(FluxB,FluxB0cc,B,"C2");
    if(procID==0) {
       setXminBoundary(FluxN, 0.0, 0.0);   
       //setXminBoundary(FluxM, (P.at(2)+P.at(1))/2.0, 0.0);   
       //setXminBoundary(FluxM, (FluxMcc.at(2)+FluxMcc.at(1))/2.0, 0.0);   
       setXminBoundary(FluxS, 0.0, 0.0);
-      //setXminBoundary(FluxB, VBce.at(1), 0.0);
+      setXminBoundary(FluxB, 0.0, 0.0);
    }   
    //FluxB = FluxB-Eprime;
    FluxB = -Ez;

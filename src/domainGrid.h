@@ -33,6 +33,7 @@ public:
   void communicate(vector<double>&) const;
   void InterpToCellEdges(vector<double>&, const vector<double>&,
                          const vector<double>&, const string&) const;
+  void InterpToCellCenter(vector<double>&, const vector<double>&) const;
   void computeFluxTVD(vector<double>&, vector<double>&, vector<double>&,
                       vector<double>&, vector<double>&,
                       const vector<double>&, const vector<double>&,

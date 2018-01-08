@@ -47,7 +47,7 @@ vector<double> FluxRatio, FluxLim;
 vector<double> FluxR, FluxL;  // flux at cell-edges   
 vector<double> FluxN, FluxM, FluxS, FluxB, FluxEz;
 
-void computeFluxes(const domainGrid&);
+void computeFluxes(const domainGrid&, const int);
 void setXminBoundary(vector<double>&, const double, const double);
 void setXminExtrap(vector<double>&);
 void setXmaxBoundary(vector<double>&, const double, const double);
@@ -208,7 +208,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    
    // need inital flux calculation before add to output
    // and before first call to Physics.advance   
-   computeFluxes(Xgrid);   
+   computeFluxes(Xgrid, 1); // 1 for first order calculation   
   
   
    dataFile.add(N, "N", 1);  // density 
@@ -267,11 +267,12 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       //cout << "thist = " << tmesh->tSim << endl;
       double thist = tmesh->tSim;
       B0 = thist/10.0;
+      if(B0>1.0) B0 = 1.0;
       
       if(procID==0) {
          //setXminBoundary(N, N.at(2), 0.0);   
          //setXminBoundary(M, 0.0, -1.0);   
-         //setXminBoundary(M, M.at(2), 0.0);   
+         //setXminBoundary(M, -M.at(2), 0.0);   
          //setXminBoundary(S, S.at(2), 0.0);
          setXminExtrap(N);
          setXminExtrap(M);
@@ -289,36 +290,40 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       Xgrid.communicate(S);
       Xgrid.communicate(B);
       
-      // compute fluxes using partialy updated fields at n+1
+
+      // compute fluxes using partialy updated fields at n+1/2 for 2nd order
+      // or n+1 for 1st order
+      computeFluxes(Xgrid, Nsub); // compute second order fluxes at n+1/2
       //vector<double> FluxEzold = FluxEz;
-      computeFluxes(Xgrid);
       //FluxEz = (FluxEz+FluxEzold)/2.0;
 
-      // update implicit variables
-      for (auto i=nXg; i<nMax-nXg; i++) {
-         Ez.at(i) = Ezold.at(i) - thisdt/delta0*(FluxEz.at(i)-FluxEz.at(i-1))/Xgrid.dX
+   } // finish subcycle steps for N, M, S, and B
+
+   // update implicit variables
+   for (auto i=nXg; i<nMax-nXg; i++) {
+      Ez.at(i) = Ezold.at(i) - thisdt/delta0*(FluxEz.at(i)-FluxEz.at(i-1))/Xgrid.dX
 		  - thisdt/delta0*M.at(i)/N.at(i)*B.at(i)/eta0;
-	 Ez.at(i) = Ez.at(i)/(1.0+thisdt/delta0/eta0);
-      }
-   
-      // update Ez at lower boundary for Bfield flux
-      E0 = eta0*(B.at(2)-B0)/Xgrid.dX - (V.at(1)+V.at(2))*(B0+B.at(2))/4.0;
-      //E0 = eta0*(B.at(2)-B0)/Xgrid.dX;
-      //double exparg = thisdt/eta0;
-      //E0 = E0*exp(-exparg) + eta0*(1.0-exp(-exparg))*(B.at(2)-B0)/Xgrid.dX;
-      if(procID==0) {
-         setXminBoundary(Ez, E0, 0.0);
-      }
-      if(procID==numProcs-1) {
-         setXmaxBoundary(Ez, 0.0, 0.0);   
-      }
-      Xgrid.communicate(Ez);
-
-
-      // compute fluxes using fully updated fields at n+1
-      computeFluxes(Xgrid);
-
+      Ez.at(i) = Ez.at(i)/(1.0+thisdt/delta0/eta0);
    }
+   
+   // update Ez at lower boundary for Bfield flux
+   E0 = eta0*(B.at(2)-B0)/Xgrid.dX - (V.at(1)+V.at(2))*(B0+B.at(2))/4.0;
+   //E0 = eta0*(B.at(2)-B0)/Xgrid.dX;
+   //double exparg = thisdt/eta0;
+   //E0 = E0*exp(-exparg) + eta0*(1.0-exp(-exparg))*(B.at(2)-B0)/Xgrid.dX;
+   if(procID==0) {
+      setXminBoundary(Ez, E0, 0.0);
+   }
+   if(procID==numProcs-1) {
+      setXmaxBoundary(Ez, 0.0, 0.0);   
+   }
+   Xgrid.communicate(Ez);
+
+
+   // compute fluxes using fully updated fields at n+1
+   computeFluxes(Xgrid, 1);
+
+//   }
 
    Nold = N;
    Mold = M;
@@ -329,7 +334,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 } // end Physics.advance
 
 
-void computeFluxes(const domainGrid& Xgrid)
+void computeFluxes(const domainGrid& Xgrid, const int order)
 {
 
    const int nCE = FluxN.size();
@@ -392,18 +397,18 @@ void computeFluxes(const domainGrid& Xgrid)
    //
    if(advScheme0 == "TVD") {
       Xgrid.computeFluxTVD(FluxN,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxNcc,Cspeed,N);
+                           FluxNcc,Cspeed,N,Nsub);
       //Xgrid.computeFluxTVD(FluxM,FluxL,FluxR,FluxRatio,FluxLim,
-      //                     FluxMcc,Cspeed,M);
+      //                     FluxMcc,Cspeed,M,Nsub);
       Xgrid.computeFluxTVD(FluxS,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxScc,Cspeed,S);
+                           FluxScc,Cspeed,S,Nsub);
       Xgrid.computeFluxTVD(FluxB,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxBcc,Cspeed,B);
+                           FluxBcc,Cspeed,B,Nsub);
       //Xgrid.computeFluxTVD(FluxEz,FluxL,FluxR,FluxRatio,FluxLim,
-      //                     FluxEzcc,Cvaceff,Ez);
+      //                     FluxEzcc,Cspeed,Ez,Nsub);
       Xgrid.InterpToCellEdges(FluxEz,FluxEzcc,Ez,"C2");
       Xgrid.computeFluxTVD(FluxM,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxMcc,Cspeed,M);
+                           FluxMcc,Cspeed,M,Nsub);
    }
    else {
       Xgrid.InterpToCellEdges(FluxN,FluxNcc,V,advScheme0);
@@ -417,10 +422,10 @@ void computeFluxes(const domainGrid& Xgrid)
    if(procID==0) {
       setXminBoundary(FluxN, 0.0, 0.0);   
       //setXminBoundary(FluxM, (P.at(2)+P.at(1))/2.0, 0.0);   
-      setXminBoundary(FluxM, (FluxMcc.at(2)+FluxMcc.at(1))/2.0, 0.0);   
+      //setXminBoundary(FluxM, (FluxMcc.at(2)+FluxMcc.at(1))/2.0, 0.0);   
       setXminBoundary(FluxS, 0.0, 0.0);
-      setXminBoundary(FluxB, -E0, 0.0);
-      setXminBoundary(FluxEz, -(B0+B.at(2))/2.0, 0.0);   
+      //setXminBoundary(FluxB, -E0, 0.0);
+      //setXminBoundary(FluxEz, -(B0+B.at(2))/2.0, 0.0);   
    }   
    Xgrid.communicate(FluxL);   
    Xgrid.communicate(FluxR);   
@@ -451,8 +456,10 @@ void setXminBoundary(vector<double>& var, const double C0, const double C1)
 void setXminExtrap(vector<double>& var)
 {
    
-   var.at(1) = 2.0*var.at(2) - var.at(3);
-   var.at(0) = 2.0*var.at(1) - var.at(2);
+   //var.at(1) = 2.0*var.at(2) - var.at(3);
+   //var.at(0) = 2.0*var.at(1) - var.at(2);
+   var.at(1) = 3.0*(var.at(2) - var.at(3)) + var.at(4);
+   var.at(0) = 3.0*(var.at(1) - var.at(2)) + var.at(3);
    //var.at(0) = var.at(1);
 }
 
@@ -481,6 +488,8 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    Cchar = abs(V)+Cs;
    Cmax = max(Cchar);
    //cout << "Cmax = " << Cmax << endl;
+   //cout << "abs(V) = " << max(abs(V))<< endl;
+   //cout << "Cs = " << max(Cs)<< endl;
 
    const double dX = Xgrid.dX;
    double dtCFL_sound = dX/Cmax;
