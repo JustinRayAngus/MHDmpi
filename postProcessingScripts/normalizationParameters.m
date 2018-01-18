@@ -71,7 +71,7 @@ t0 = r0/U0;                   % time [s]
 %%%   Bnorm|x=0 = Bx0*tnorm/tx0;
 %
 Bx0 = mu0*I0/dy/B0;
-tx0 = 100e-9/t0;
+tx0 = 200e-9/t0;
 
 
 %%%   calculate dimensionless parameters
