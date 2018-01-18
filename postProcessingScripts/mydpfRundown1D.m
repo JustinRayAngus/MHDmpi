@@ -19,7 +19,7 @@ set(0,'defaultaxesfontweight','bold');
 numProcs = 4;
 filePath = '../physicsMods/dpfRundown1D/';
 
-plotBackIndex = 0; % plot time will be end-plotBackIndex
+plotBackIndex = 1; % plot time will be end-plotBackIndex
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
@@ -54,12 +54,20 @@ dX = Xcc(2)-Xcc(1);
 
 
 T = P./N;
+Ptot = 3/2*P+B.^2/2+M.*V/2.0;
 %figure(2); hold on; plot(Xce,FluxR(:,5),'r--');
 %figure(4); hold on; plot(Xce,FluxLim(:,end),'b');
 %figure(4); hold on; plot(Xce,FluxRatio(:,end),'r');
 %%%
-figure(10); hold on; plot(Xcc,V(:,end));
-
+figure(10); hold on; plot(Xcc,Ptot(:,end),'black','displayName','total');
+hold on; plot(Xcc,B(:,end).^2/2.0,'b','displayName','magnetic');
+hold on; plot(Xcc,1.5*P(:,end),'r','displayName','thermal');
+hold on; plot(Xcc,M(:,end).*V(:,end)/2.0,'color',[.47 .67 .19],'displayName','mean');
+title('total energy');
+box on;
+if(i==1) 
+    lg10=legend('show'); set(lg10,'location','best');
+end
 plots=1;
 if(plots)
 f1=figure(11); 
