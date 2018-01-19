@@ -1,2 +1,0 @@
-export PHYScpp=mhdShock.cpp
-export PHYS_HOME="../physicsMods/mhdShock"
