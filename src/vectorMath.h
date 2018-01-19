@@ -22,6 +22,293 @@
 using namespace std;
 
 
+//////////////////////////////////////////
+//
+//    vector<vector> operators
+//
+
+
+// matrix a + matrix b
+//
+template <typename T>
+vector<vector<T>> operator+(const vector<vector<T>>& a, const vector<vector<T>>& b)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+   assert(a.size() == b.size());
+   assert(a[0].size() == b[0].size());
+
+   vector< vector<T> > result;
+   vector<T> rvec;
+   
+   for (auto i=0; i<imax; i++) {
+       rvec.reserve(jmax);
+       transform(a.at(i).begin(), a.at(i).end(), b.at(i).begin(),
+                 back_inserter(rvec), plus<T>());
+       if(i==0) {
+	   result.resize(1,rvec);
+       }
+       else { 
+           result.push_back(rvec);
+       }
+       rvec.clear();
+   }
+
+   return result;
+}
+
+// matrix a + double b
+//
+template <typename T>
+vector<vector<T>> operator+(const vector<vector<T>>& a, const T& b)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+
+   vector< vector<T> > result;
+   result.assign(imax,vector<T>(jmax));
+   vector< vector<T> > bmatrix;
+   vector<T> bvector(jmax,b);
+   bmatrix.assign(imax,bvector);
+   
+   result = a + bmatrix;
+
+   return result;
+}
+
+// double b + matrix a
+//
+template <typename T>
+vector<vector<T>> operator+(const T& b, const vector<vector<T>>& a)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+
+   vector< vector<T> > result;
+   result.assign(imax,vector<T>(jmax));
+   result = a + b;
+
+   return result;
+}
+
+// matrix a - matrix b
+//
+template <typename T>
+vector<vector<T>> operator-(const vector<vector<T>>& a, const vector<vector<T>>& b)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+   assert(a.size() == b.size());
+   assert(a[0].size() == b[0].size());
+
+   vector< vector<T> > result;
+   vector<T> rvec;
+   
+   for (auto i=0; i<imax; i++) {
+       rvec.reserve(jmax);
+       transform(a.at(i).begin(), a.at(i).end(), b.at(i).begin(),
+                 back_inserter(rvec), minus<T>());
+       if(i==0) {
+	   result.resize(1,rvec);
+       }
+       else { 
+           result.push_back(rvec);
+       }
+       rvec.clear();
+   }
+
+   return result;
+}
+
+// matrix a - double b
+//
+template <typename T>
+vector<vector<T>> operator-(const vector<vector<T>>& a, const T& b)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+
+   vector< vector<T> > result;
+   result.assign(imax,vector<T>(jmax));
+   vector< vector<T> > bmatrix;
+   vector<T> bvector(jmax,b);
+   bmatrix.assign(imax,bvector);
+   
+   result = a - bmatrix;
+
+   return result;
+}
+
+// double b - matrix a
+//
+template <typename T>
+vector<vector<T>> operator-(const T& b, const vector<vector<T>>& a)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+
+   vector< vector<T> > result;
+   result.assign(imax,vector<T>(jmax));
+   vector< vector<T> > bmatrix;
+   vector<T> bvector(jmax,b);
+   bmatrix.assign(imax,bvector);
+   
+   result = bmatrix - a;
+
+   return result;
+}
+
+// - matrix a
+//
+template <typename T>
+vector<vector<T>> operator-(const vector<vector<T>> &a)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+   
+   vector<vector<T>> result;
+   result.assign(imax,vector<T>(jmax));
+   result = -1.0*a;
+
+   return result;
+}
+
+// matrix a * matrix b
+//
+template <typename T>
+vector<vector<T>> operator*(const vector<vector<T>>& a, const vector<vector<T>>& b)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+   assert(a.size() == b.size());
+   assert(a[0].size() == b[0].size());
+
+   vector< vector<T> > result;
+   vector<T> rvec;
+   
+   for (auto i=0; i<imax; i++) {
+       rvec.reserve(jmax);
+       transform(a.at(i).begin(), a.at(i).end(), b.at(i).begin(),
+                 back_inserter(rvec), multiplies<T>());
+       if(i==0) {
+	   result.resize(1,rvec);
+       }
+       else { 
+           result.push_back(rvec);
+       }
+       rvec.clear();
+   }
+
+   return result;
+}
+
+// double b * matrix a 
+// 
+template <typename T>
+vector<vector<T>> operator*(const T b, const vector<vector<T>>& a)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+   
+   vector<vector<T>> result;
+   result.assign(imax,vector<T>(jmax));
+   vector<vector<T>> bmatrix;
+   vector<T> bvector(jmax,b);
+   bmatrix.assign(imax,bvector);
+   result = a*bmatrix;
+
+   return result;
+}
+
+// matrix a * double b 
+// 
+template <typename T>
+vector<vector<T>> operator*(const vector<vector<T>>& a, const T b)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+   
+   vector<vector<T>> result;
+   result.assign(imax,vector<T>(jmax));
+   vector< vector<T> > bmatrix;
+   vector<T> bvector(jmax,b);
+   bmatrix.assign(imax,bvector);
+   result = a*bmatrix;
+
+   return result;
+}
+
+// matrix a / matrix b
+//
+template <typename T>
+vector<vector<T>> operator/(const vector<vector<T>>& a, const vector<vector<T>>& b)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+   assert(a.size() == b.size());
+   assert(a[0].size() == b[0].size());
+
+   vector< vector<T> > result;
+   vector<T> rvec;
+   
+   for (auto i=0; i<imax; i++) {
+       rvec.reserve(jmax);
+       transform(a.at(i).begin(), a.at(i).end(), b.at(i).begin(),
+                 back_inserter(rvec), divides<T>());
+       if(i==0) {
+	   result.resize(1,rvec);
+       }
+       else { 
+           result.push_back(rvec);
+       }
+       rvec.clear();
+   }
+
+   return result;
+}
+
+// matrix a / double b 
+// 
+template <typename T>
+vector<vector<T>> operator/(const vector<vector<T>>& a, const T b)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+   
+   vector<vector<T>> result;
+   result.assign(imax,vector<T>(jmax));
+   vector< vector<T> > bmatrix;
+   vector<T> bvector(jmax,b);
+   bmatrix.assign(imax,bvector);
+   result = a/bmatrix;
+
+   return result;
+}
+
+// double b / matrix a 
+// 
+template <typename T>
+vector<vector<T>> operator/(const T b, const vector<vector<T>>& a)
+{
+   const int imax = a.size();
+   const int jmax = a[0].size();
+   
+   vector<vector<T>> result;
+   result.assign(imax,vector<T>(jmax));
+   vector< vector<T> > bmatrix;
+   vector<T> bvector(jmax,b);
+   bmatrix.assign(imax,bvector);
+   result = bmatrix/a;
+
+   return result;
+}
+
+//////////////////////////////////////////
+//
+//    vector operators
+//
+
+
 // vector a + vector b
 //
 template <typename T>
@@ -242,6 +529,28 @@ double min(const vector<double> &fin);
 
 double max(const vector<double> &fin);
 
+
+// operators for vector<vector>
+//
+vector<vector<double>> exp(const vector<vector<double>> &fin);
+
+vector<vector<double>> sqrt(const vector<vector<double>> &fin);
+
+vector<vector<double>> tanh(const vector<vector<double>> &fin);
+
+vector<vector<double>> log(const vector<vector<double>> &fin);
+
+vector<vector<double>> cos(const vector<vector<double>> &fin);
+
+vector<vector<double>> sin(const vector<vector<double>> &fin);
+
+vector<vector<double>> pow(const vector<vector<double>> &fin, const double exponent);
+
+vector<vector<double>> abs(const vector<vector<double>> &fin);
+
+double min(const vector<vector<double>> &fin);
+
+double max(const vector<vector<double>> &fin);
 
 #endif
 
