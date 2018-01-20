@@ -1,8 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%
-%%%   look at output variables from 1D Sod shock simulations
-%%%
-%%%   see G.A. Sod,. J. Comp. Phys. 27, 1-31 (1978)
+%%%   look at output variables from 2D MHD pinch simulations
 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
@@ -17,7 +15,7 @@ set(0,'defaultaxesfontweight','bold');
 
 
 numProcs = 4;
-filePath = '../physicsMods/dpfRundown1D/';
+filePath = '../physicsMods/pinch2D/';
 
 plotBackIndex = 1; % plot time will be end-plotBackIndex
 
@@ -26,8 +24,18 @@ fileName = ['output',num2str(i-1),'.h5'];
 thisFile = [filePath,fileName];
 procID  = hdf5read(thisFile,'procID');
 fileinfo = hdf5info(thisFile);
+%
 Xcc = hdf5read(thisFile,'Xcc');
 Xce = hdf5read(thisFile,'Xce');
+%
+Zcc = hdf5read(thisFile,'Zcc');
+Zce = hdf5read(thisFile,'Zce');
+
+matW = hdf5read(thisFile,'matW');
+matrixA = hdf5read(thisFile,'matrixA');
+matrixB = hdf5read(thisFile,'matrixB');
+matrixC = hdf5read(thisFile,'matrixC');
+
 N  = hdf5read(thisFile,'N');
 M  = hdf5read(thisFile,'M');
 S  = hdf5read(thisFile,'S');
@@ -53,17 +61,36 @@ tout= hdf5read(thisFile,'tout');
 dX = Xcc(2)-Xcc(1);
 
 
+
+figure(1); hold on; pcolor(Zcc,Xcc,matW'); shading flat;
+xlabel('Z'); ylabel('X'); colorbar; grid on;
+
+% figure(4); hold on; h=pcolor(Zce,Xcc,matrixC'); shading flat;
+% xlabel('Z'); ylabel('X'); colorbar; grid on;
+% 
+figure(2); plot(Xcc,matrixA(round(end/2),:));
+% hold on; plot(Xcc,matrixC(round(end/2),:),'Marker','x');
+%figure(2); plot(Zcc,matrixA(:,round(end/2)));
+%hold on; plot(Zce,matrixC(:,round(end/2)),'Marker','x');
+%display(size(matrixC));
+%hold on; plot(Xcc,Xcc,'r*');
+
 T = P./N;
-Ptot = P+B.^2/2+M.*V;
-%figure(2); hold on; plot(Xce,FluxR(:,5),'r--');
-%figure(4); hold on; plot(Xce,FluxLim(:,end),'b');
-%figure(4); hold on; plot(Xce,FluxRatio(:,end),'r');
-%%%
-figure(10); hold on; plot(Xcc,Ptot(:,end),'black','displayName','total');
-hold on; plot(Xcc,B(:,end).^2/2.0,'b','dsip');
-hold on; plot(Xcc,P(:,end),'r');
-hold on; plot(Xcc,M(:,end).*V(:,end),'color',[.47 .67 .19]);
-plots=1;
+Ptot = 3/2*P+B.^2/2+M.*V/2.0;
+% %figure(2); hold on; plot(Xce,FluxR(:,5),'r--');
+% %figure(4); hold on; plot(Xce,FluxLim(:,end),'b');
+% %figure(4); hold on; plot(Xce,FluxRatio(:,end),'r');
+% %%%
+% figure(10); hold on; plot(Xcc,Ptot(:,end),'black','displayName','total');
+% hold on; plot(Xcc,B(:,end).^2/2.0,'b','displayName','magnetic');
+% hold on; plot(Xcc,1.5*P(:,end),'r','displayName','thermal');
+% hold on; plot(Xcc,M(:,end).*V(:,end)/2.0,'color',[.47 .67 .19],'displayName','mean');
+% title('total energy');
+% box on;
+if(i==1) 
+    lg10=legend('show'); set(lg10,'location','best');
+end
+plots=0;
 if(plots)
 f1=figure(11); 
 set(f1,'position',[1030 425 1300 840]);
