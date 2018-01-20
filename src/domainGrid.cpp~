@@ -929,28 +929,26 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
    //
    for (auto i=1; i<Nout-1; i++) {
       DeltaFluxR.at(i) = 0.5*(FluxR1st.at(i+1)-FluxR1st.at(i)); 
-      DeltaFluxL.at(i) = 0.5*(FluxL1st.at(i)-FluxL1st.at(i-1)); 
-      Flratio.at(i) = DeltaFluxL.at(i)/DeltaFluxR.at(i);
-      //Flratio.at(i)  = (fin.at(i) - fin.at(i-1))/(fin.at(i+1) - fin.at(i)); // divide by zero?
+      DeltaFluxL.at(i) = 0.5*(FluxL1st.at(i-1)-FluxL1st.at(i)); 
+      //Flratio.at(i) = DeltaFluxL.at(i)/DeltaFluxR.at(i);
+      //Flratio.at(i) = DeltaFluxR.at(i)/DeltaFluxL.at(i);
+      if(Flin.at(i)/fin.at(i)>=0.0) {
+         Flratio.at(i)  = (fin.at(i) -fin.at(i-1))
+		         /(fin.at(i+1)-fin.at(i)); // divide by zero?
+      } else {
+	 Flratio.at(i)  = (fin.at(i+2)-fin.at(i+1))
+		         /(fin.at(i+1)-fin.at(i)); // divide by zero?
+      }
       if(Flratio.at(i)>100.0) Flratio.at(i) = 100.0;
-      //if(Flratio.at(i)<0.0) cout << "Flratio = " << Flratio.at(i) << endl;
-      //if(upC.at(i)<0.0) cout << "upC = " << upC.at(i) << endl;
+      
       FlLim.at(i) = 2.0;
       if(Flratio.at(i)<=2.0) FlLim.at(i) = Flratio.at(i);
       if(Flratio.at(i)<=1.0) FlLim.at(i) = 1.0;
       if(Flratio.at(i)<=0.5) FlLim.at(i) = 2.0*Flratio.at(i);
       if(Flratio.at(i)<=0.0) FlLim.at(i) = 0.0;
-      //FlratioL.at(i) = DeltaFluxL.at(i+1)/DeltaFluxR.at(i+1);
-      FlratioL.at(i) = (fin.at(i+2) - fin.at(i+1))/(fin.at(i+1) - fin.at(i)); // divide by zero?
-      FlLimL.at(i) = 2.0;
-      if(FlratioL.at(i)<=2.0) FlLimL.at(i) = FlratioL.at(i);
-      if(FlratioL.at(i)<=1.0) FlLimL.at(i) = 1.0;
-      if(FlratioL.at(i)<=0.5) FlLimL.at(i) = 2.0*FlratioL.at(i);
-      if(FlratioL.at(i)<=0.0) FlLimL.at(i) = 0.0;
-      //FlLimL.at(i) = (abs(FlratioL.at(i))+FlratioL.at(i))/(abs(FlratioL.at(i)) + 1.0); // van Leer
+      //FlLim.at(i) = (abs(Flratio.at(i))+Flratio.at(i))/(abs(Flratio.at(i)) + 1.0); // van Leer
       
       //if(i==1) FlLim.at(i) = 0.0;
-      //if(i==1) FlLimL.at(i) = 0.0;
 
       if(order==1) {
          FloutR.at(i) = FluxR1st.at(i);
@@ -1077,8 +1075,8 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
    FloutR = FluxR1st;
    FloutL = FluxL1st;
    if(order==2) {
-      FloutR = FloutR1st + FlLim*DeltaFluxR;
-      FloutL = FloutL1st + FlLim*DeltaFluxL;
+      FloutR = FluxR1st + FlLim*DeltaFluxR;
+      FloutL = FluxL1st + FlLim*DeltaFluxL;
    }
    Flout = (FloutR+FloutL)/2.0;
 

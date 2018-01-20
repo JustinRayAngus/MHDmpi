@@ -32,10 +32,10 @@ tout= hdf5read(thisFile,'tout');
 %close(figure(1));
 f1=figure(1); 
 %set(f1,'position',[1030 925 1100 420]);
-set(f1,'position',[341 436 1100 420]);
+set(f1,'position',[858 37 500 760]);
 
 
-subplot(1,2,1);
+subplot(2,1,1);
 hold on; plot(Xcc,F0(:,1)); box on;
 hold on; plot(Xcc,F0(:,round(end/2)));
 hold on; plot(Xcc,F0(:,end)); grid on;
@@ -44,14 +44,17 @@ xlabel('x'); ylabel('f');
 title('function');
 xlim([-0.5 0.5]);
 %
-subplot(1,2,2);
-hold on; plot(Xce,Flux(:,1)); box on;
-hold on; plot(Xce,Flux(:,round(end/2)));
-hold on; plot(Xce,Flux(:,round(end))); grid on;
+subplot(2,1,2);
+%hold on; plot(Xce,FluxL(:,1)); box on;
+hold on; plot(Xce,FluxL(:,round(end/2)),'displayName','Left');
+hold on; plot(Xce,FluxR(:,round(end/2)),'displayName','right');
+%hold on; plot(Xce,FluxL(:,round(end))); grid on;
 set(gca,'xtick',-0.5:0.1:0.5);
-xlabel('x'); ylabel('flux');
-title('flux');
-xlim([-0.5 0.5]);
+xlabel('x'); ylabel('flux'); grid on;
+title('flux'); xlim([-0.5 0.5]);
+if(i==1) 
+    lg1=legend('show');
+end
 
 %
 %
