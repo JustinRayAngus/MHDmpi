@@ -102,7 +102,10 @@ int main(int argc, char** argv) {
    Xgrid.initialize(inputRoot);
    dataFile.add(Xgrid.Xcc, "Xcc", 0); 
    dataFile.add(Xgrid.Xce, "Xce", 0); 
-   
+   if(Xgrid.nZ>1) {
+      dataFile.add(Xgrid.Zcc, "Zcc", 0); 
+      dataFile.add(Xgrid.Zce, "Zce", 0);
+   }   
    //
    timeDomain tDom;
    timeDomain::tmesh = &tDom;

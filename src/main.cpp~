@@ -35,7 +35,7 @@ using namespace std;
 //domainGrid defGrid;
 //domainGrid* domainGrid::mesh = &defGrid;
 domainGrid* domainGrid::mesh = NULL;
-domainGrid* timeDomain::tmesh = NULL;
+timeDomain* timeDomain::tmesh = NULL;
 
 
 int main(int argc, char** argv) {   

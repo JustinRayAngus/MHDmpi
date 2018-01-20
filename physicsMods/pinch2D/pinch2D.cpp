@@ -52,7 +52,7 @@ vector<double> FluxR, FluxL;  // flux at cell-edges
 vector<double> FluxN, FluxM, FluxS, FluxB, FluxEz;
 
 //vector<vector<double>> matrixA(20, vector<double>(21));
-vector<vector<double>> matrixA;
+vector<vector<double>> matW, matrixA, matrixB, matrixC;
 
 
 // Set lower threshold values for N, T, and S
@@ -60,8 +60,11 @@ double Nthresh=1.0e-4, Tthresh=2.5e-2, Sthresh;
 
 void computeFluxes(const domainGrid&, const int);
 void setXminBoundary(vector<double>&, const double, const double);
+void setXminBoundary(vector<vector<double>>&, const double, const double);
 void setXminExtrap(vector<double>&);
+void setXminExtrap(vector<vector<double>>&);
 void setXmaxBoundary(vector<double>&, const double, const double);
+void setXmaxBoundary(vector<vector<double>>&, const double, const double);
 
 // alternative means for getting grid, opposed
 // to passing predefined instance (Xgrid) to 
@@ -86,15 +89,31 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    const int nXcc = Xgrid.Xcc.size();
    const int nXce = Xgrid.Xce.size();
 
-   const int nZcc = 4; // number of z-cells
+   const int nZcc = Xgrid.Zcc.size(); // number of z-cells
+   const int nZce = Xgrid.Zce.size();
 
-   N.assign(nXcc,0.0);
    //matrixA.assign(nXce,N);
    vector<double> vectorA;
-   vectorA.assign(nXcc,1.0);
-   matrixA.assign(nZcc,Xgrid.Xcc);
-   //matrixA.assign(nXce,vector<double>(nXcc));
-   //matrixA = matrixA + matrixA; 
+   vectorA.assign(nZcc,1.0);
+   //matrixA.assign(Zcc,Xgrid.Xcc);
+   matW.assign(nXcc,vector<double>(nZcc)); // cell-center
+   matrixA.assign(nXcc,vector<double>(nZcc)); // cell-center
+   matrixB.assign(nXcc,vector<double>(nZce)); // stag-Z
+   matrixC.assign(nXcc,vector<double>(nZce)); // stag-X
+   //matrixA.assign(nXcc,Xgrid.Zcc); // cell-center
+   for (auto i=0; i<nXcc; i++) {
+      for (auto j=0; j<nZcc; j++) {
+         matrixA[i][j] = Xgrid.Xcc[i]*Xgrid.Zcc[j];
+      }
+   }
+   //Xgrid.DDX(matrixC,matrixA);
+   //Xgrid.InterpToCellCenter(matrixC,matrixA);
+   Xgrid.InterpToCellEdges(matrixC,matrixA,matrixA,"C2",1);
+   Xgrid.communicate(matrixC);
+   if(procID==0) setXminBoundary(matrixC, 0.0, 1.0);   
+   //if(procID==0) setXminExtrap(matrixC);   
+   if(procID==numProcs-1) setXmaxBoundary(matrixC, 0.0, 1.0);   
+   
    //matrixA = 1.0/matrixA; 
    //matrixA = 3.0+matrixA;
    //matrixA = exp(matrixA);
@@ -102,6 +121,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    //minA = min(matrixA);
    //cout << "minA = " << minA << endl;
 
+   N.assign(nXcc,0.0);
    Nold.assign(nXcc,0.0);
    M.assign(nXcc,0.0);
    Mold.assign(nXcc,0.0);
@@ -139,11 +159,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    if(Phys.isObject()) {
       if(procID==0) printf("\nInitializing Physics ...\n");
       Json::Value advScheme = Phys.get("advScheme",defValue);
-      Json::Value gammaVal  = Phys.get("gammaC",defValue);
-      Json::Value NsubVal   = Phys.get("Nsub",defValue);
-      Json::Value deltaVal  = Phys.get("delta0",defValue);
-      if(advScheme == defValue || gammaVal == defValue ||
-	 NsubVal == defValue || deltaVal == defValue) {
+      if(advScheme == defValue) {
          cout << "ERROR: advScheme or gamma " << endl;
          cout << "or Nsub or delta0 is " << endl;
          cout << "not declared in input file" << endl;
@@ -163,22 +179,29 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
          exit (EXIT_FAILURE);
       }
 
+      Json::Value gammaVal  = Phys.get("gammaC",defValue);
       gamma0 = gammaVal.asDouble();
+      if(gammaVal.isObject()) gamma0 = gammaVal.asDouble();
+      else gamma0 = 5.0/3.0;
       if(procID==0) cout << "adiabatic coefficent = " << gamma0 << endl;
       if(gamma0 < 1.0) {
          printf("ERROR: adiabatic coefficient can't be < 1\n");
          exit (EXIT_FAILURE);
       }
+      Sthresh = Nthresh*Tthresh/pow(Nthresh,gamma0-1);
       
-      Nsub = NsubVal.asInt();
+      Json::Value NsubVal = Phys.get("Nsub",defValue);
+      if(NsubVal.isObject()) Nsub = NsubVal.asInt();
+      else Nsub = 2;
       if(procID==0) cout << "Nsub = " << Nsub << endl;
-      if(gamma0 < 1.0) {
+      if(Nsub < 1) {
          printf("ERROR: Nsub must be int >= 1\n");
          exit (EXIT_FAILURE);
       }
-      Sthresh = Nthresh*Tthresh/pow(Nthresh,gamma0-1);
       
-      delta0 = deltaVal.asDouble();
+      Json::Value deltaVal  = Phys.get("delta0",defValue);
+      if(deltaVal.isObject()) delta0 = deltaVal.asDouble();
+      else delta0 = 1.0e-4;
       if(procID==0) cout << "relaxation constant = " << delta0 << endl;
       if(delta0 >= 1.0) {
          printf("ERROR: delta0>=1 ==> cvac<=V \n");
@@ -192,6 +215,20 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       exit (EXIT_FAILURE);
    }
   
+
+   //   get initial profile for matrix Variable
+   //
+   const Json::Value Wvar = Phys.get("W",defValue);
+   if(Wvar.isObject()) { 
+      Xgrid.setInitialProfile(matW,Wvar);
+      if(procID==0) setXminBoundary(matW, 0.0, 1.0);   
+      if(procID==numProcs-1) setXmaxBoundary(matW, 0.0, 1.0);   
+      Xgrid.communicate(matW);
+      //Wold  = matW;
+   } else {
+      cout << "value for Physics variable \"W\" is not object type !" << endl;
+      exit (EXIT_FAILURE);
+   }
 
    //   get initial profiles for variables
    //
@@ -265,7 +302,10 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
 
    // add stuff to output files
    //
+   dataFile.add(matW, "matW", 0);  // matrixTest 
    dataFile.add(matrixA, "matrixA", 0);  // matrixTest 
+   dataFile.add(matrixB, "matrixB", 0);  // matrixTest 
+   dataFile.add(matrixC, "matrixC", 0);  // matrixTest 
    dataFile.add(N, "N", 1);  // density 
    dataFile.add(M, "M", 1);  // momentum density 
    dataFile.add(S, "S", 1);  // entropy density
@@ -531,6 +571,23 @@ void setXminBoundary(vector<double>& var, const double C0, const double C1)
    */
 }
 
+void setXminBoundary(vector<vector<double>>& var, 
+		     const double C0, const double C1)
+{
+   const int thisnZ = var[0].size();
+
+   domainGrid* mesh = domainGrid::mesh;
+   //F0.front() = 2.0*C-F0.at(1); 
+   //F0.front() = C; 
+   for (auto i=0; i<mesh->nXg; i++) {
+      for (auto j=0; j<thisnZ; j++) {
+         //var.at(i) = C0;
+         var[i][j] = C0 + C1*var[mesh->nXg+1-i][j];
+      }
+   }
+
+}
+
 void setXminExtrap(vector<double>& var)
 {
    
@@ -541,20 +598,56 @@ void setXminExtrap(vector<double>& var)
    //var.at(0) = var.at(1);
 }
 
+void setXminExtrap(vector<vector<double>>& var)
+{
+   //const int thisnX = var.size();
+   const int thisnZ = var[0].size();
+
+   for (auto j=0; j<thisnZ; j++) {
+      //var.at(1) = 2.0*var.at(2) - var.at(3);
+      //var.at(0) = 2.0*var.at(1) - var.at(2);
+      var[1][j] = 3.0*(var[2][j] - var[3][j]) + var[4][j];
+      var[0][j] = 3.0*(var[1][j] - var[2][j]) + var[3][j];
+      //var.at(0) = var.at(1);
+   }
+
+}
+
+
 void setXmaxBoundary(vector<double>& var, const double C0, const double C1)
 {
    
+   const int thisnX = var.size();
+   
    domainGrid* mesh = domainGrid::mesh;
+   const int ishift=thisnX-mesh->nXg;
+   
    //F0[nXsub+1] = 2.0*C-F0[nXsub]; 
    //F0[nXsub+1] = C;
-   for (auto i=mesh->nXcc-mesh->nXg; i<mesh->nXcc; i++) {
-      var.at(i) = C0 + C1*var.at(mesh->nXcc-mesh->nXg-1);
+   for (auto i=ishift; i<mesh->nXcc; i++) {
+      var.at(i) = C0 + C1*var.at(2.0*ishift-i-1);
    }
-   //var.back() = C;
-   //cout << "var.size() = " var.size() << endl; 
       
 }
 
+void setXmaxBoundary(vector<vector<double>>& var, 
+		     const double C0, const double C1)
+{
+   const int thisnX = var.size();
+   const int thisnZ = var[0].size();
+
+   domainGrid* mesh = domainGrid::mesh;
+   const int ishift=thisnX-mesh->nXg;
+
+   //F0[nXsub+1] = 2.0*C-F0[nXsub]; 
+   //F0[nXsub+1] = C;
+   for (auto i=ishift; i<thisnX; i++) {
+      for (auto j=0; j<thisnZ; j++) {
+         var[i][j] = C0 + C1*var[2.0*ishift-i-1][j];
+      }
+   }
+      
+}
 
 void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
 {
