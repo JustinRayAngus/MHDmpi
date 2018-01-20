@@ -2,6 +2,15 @@
  * 
  * physics module for 1D burgers equation
  *
+ * Note: I original computed advection and diff fluxes
+ *       separately when using TVD scheme, which I only 
+ *       used for adv flux. However, I found that sometimes
+ *       I needed a smaller time step than expected or else
+ *       oscillations would occur.
+ *
+ *       When doing TVD, I now use the total flux and it works
+ *       just fine
+ *
 ***/
 
 #include <iostream>
@@ -28,13 +37,15 @@
 
 using namespace std;
 
-string advScheme0;    // advection differencing scheme
-double K;             // diffusion coefficient
+string advScheme0;   // advection differencing scheme
+double K;            // diffusion coefficient
+int order;         // order in time (1 or 2)
+int fluxDir;       // flux direction (+/-1)
 vector<double> F0, F0old;    // function
 vector<double> FluxRatio, FluxLim;
 vector<double> Flux, FluxR, FluxL;  // flux at cell-edges   
 
-void computeFluxes(const domainGrid&);
+void computeFluxes(const domainGrid&, const int);
 void setXminBoundary(const domainGrid&, const double);
 void setXmaxBoundary(const domainGrid&, const double);
 
@@ -67,15 +78,13 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    const Json::Value Phys = root.get("Physics",defValue);
    if(Phys.isObject()) {
       if(procID==0) printf("\nInitializing Physics ...\n");
-      Json::Value advScheme = Phys.get("advScheme",defValue);
-      Json::Value KVal = Phys.get("diffC",defValue);
-      if(advScheme == defValue || KVal == defValue) {
-         cout << "ERROR: advScheme or diffC is " << endl;
-         cout << "not declared in input file" << endl;
-         exit (EXIT_FAILURE);
-      } 
       
-      advScheme0 = advScheme.asString();
+      //   get advection scheme from input file
+      //
+      Json::Value advScheme  = Phys.get("advScheme",defValue);
+      if(advScheme != defValue) advScheme0 = advScheme.asString();
+      else advScheme0 = "U1";
+      
       if(advScheme0=="C2" || advScheme0=="U1" || 
          advScheme0=="QUICK" || advScheme0=="TVD") {
          if(procID==0) {
@@ -88,10 +97,44 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
          exit (EXIT_FAILURE);
       }
 
-      K = KVal.asDouble();
+      //   get diffusion coefficent from input file
+      //
+      Json::Value KVal = Phys.get("diffC",defValue);
+      if(KVal != defValue) K = KVal.asDouble();
+      else K = 0.0;
+
       if(procID==0) cout << "diffusion coefficent = " << K << endl;
       if(K < 0.0) {
          printf("ERROR: diffusion coefficient can't be < 0\n");
+         exit (EXIT_FAILURE);
+      }
+
+      //   get order in time from input file
+      //
+      Json::Value orderVal = Phys.get("order",defValue);
+      if(orderVal != defValue) order = orderVal.asInt();
+      else order = 2;
+      
+      if(procID==0) cout << "order in time is " << order << endl;
+      if(order != 1 && order != 2) {
+         printf("ERROR: order in time can only be 1 or 2\n");
+         exit (EXIT_FAILURE);
+      }
+      
+      //   get flux direction from input file
+      //
+      Json::Value fluxDirVal = Phys.get("fluxDir",defValue);
+      if(fluxDirVal != defValue) fluxDir = fluxDirVal.asInt();
+      else fluxDir = 1;
+
+      if(fluxDir==1) {
+         if(procID==0) cout << "flux direction is in +X direction" << endl;
+      } 
+      else if(fluxDir==-1) {
+         if(procID==0) cout << "flux direction is in -X direction" << endl;
+      }
+      else {
+         printf("ERROR: fluxDir can only be +/-1\n");
          exit (EXIT_FAILURE);
       }
 
@@ -107,7 +150,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    if(procID==numProcs-1) setXmaxBoundary(Xgrid, 0.0);   
    Xgrid.communicate(F0);
    F0old  = F0;
-   computeFluxes(Xgrid); // inital calculation before add to output   
+   computeFluxes(Xgrid,1); // inital calculation before add to output   
   
    dataFile.add(K, "K", 0);
    dataFile.add(F0, "F0", 1); 
@@ -142,7 +185,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
    if(procID==0) setXminBoundary(Xgrid, 0.0);   
    if(procID==numProcs-1) setXmaxBoundary(Xgrid, 0.0);   
    Xgrid.communicate(F0);
-   computeFluxes(Xgrid); // compute RHS using F0(n+1/2)
+   computeFluxes(Xgrid,order); // compute RHS using F0(n+1/2)
 
 
    // Explicit forward advance from n to n+1 using Flux(n+1/2)
@@ -157,7 +200,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
    if(procID==0) setXminBoundary(Xgrid, 0.0);   
    if(procID==numProcs-1) setXmaxBoundary(Xgrid, 0.0);   
    Xgrid.communicate(F0);
-   computeFluxes(Xgrid);
+   computeFluxes(Xgrid,1);
    
 
    //  update F0old
@@ -167,7 +210,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 } // end Physics.advance
 
 
-void computeFluxes(const domainGrid& Xgrid)
+void computeFluxes(const domainGrid& Xgrid, const int order)
 {
    // compute Flux = F0^2/2 - K*dF0/dX
    //              = FluxAdv + FluxDif
@@ -178,8 +221,9 @@ void computeFluxes(const domainGrid& Xgrid)
 
    const int nCE = Flux.size();
    const int nCC = F0.size();
-   vector<double> Cspeed, FluxAdvCC, FluxAdv, FluxDif;
+   vector<double> Cspeed, FluxAdvCC, FluxDifCC, FluxAdv, FluxDif;
    FluxAdvCC.assign(nCC,0.0);
+   FluxDifCC.assign(nCC,0.0);
    FluxAdv.assign(nCE,0.0);
    FluxDif.assign(nCE,0.0);
    
@@ -187,15 +231,20 @@ void computeFluxes(const domainGrid& Xgrid)
    // set flux freezing speed and 
    // compute advection flux at cell center
    //
-   Cspeed = F0; // adv flux jacobian
-   FluxAdvCC = F0*F0*0.5;
+   Cspeed = abs(F0); // adv flux jacobian
+   FluxAdvCC = double(fluxDir)*F0*F0*0.5;
 
 
    // compute diffusive flux using 
    // standard centered scheme
    //
+   Xgrid.DDX(FluxDifCC,F0);
+   FluxDifCC = -K*FluxDifCC;
+   Xgrid.communicate(FluxDifCC);
+
    Xgrid.DDX(FluxDif,F0);
    FluxDif = -K*FluxDif;
+   Xgrid.communicate(FluxDif);
    //FluxDif = DDX(F0,Xgrid.dX);
 
 
@@ -203,17 +252,19 @@ void computeFluxes(const domainGrid& Xgrid)
    // specified scheme from input file
    //
    if(advScheme0 == "TVD") {
-      Xgrid.computeFluxTVD(FluxAdv,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxAdvCC,Cspeed,F0,2);
+      //Xgrid.computeFluxTVD(FluxAdv,FluxL,FluxR,FluxRatio,FluxLim,
+      //                     FluxAdvCC,Cspeed,F0,order);
+      Xgrid.computeFluxTVD(Flux,FluxL,FluxR,FluxRatio,FluxLim,
+                           FluxAdvCC+FluxDifCC,Cspeed,F0,order);
    }      
    else {
       Xgrid.InterpToCellEdges(FluxAdv,FluxAdvCC,Cspeed,advScheme0);
+      Flux = FluxAdv + FluxDif;
    } 
+   Xgrid.communicate(Flux);
+   Xgrid.communicate(FluxL);
+   Xgrid.communicate(FluxR);
 
-
-   // add advective and diffusive flux together
-   //
-   Flux = FluxAdv + FluxDif;
 
 } // end computeFluxes
 
@@ -243,7 +294,7 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    
    double Umax;
-   Umax = max(F0);
+   Umax = max(abs(F0));
    //cout << "Umax = " << Umax << endl;
 
    const double dX = Xgrid.dX;
@@ -252,7 +303,6 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    double dtmax = min(dtmaxDif,dtmaxAdv);
    dtSim = min(dtmax/tDom.dtFrac,tDom.dtOut);
    if(procID==0) {
-      cout << endl; 
       cout << "max stable time step is " << dtmax << endl;
       cout << endl; 
    }
