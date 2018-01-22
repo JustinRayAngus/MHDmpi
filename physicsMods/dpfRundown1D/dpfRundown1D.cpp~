@@ -40,7 +40,7 @@ using namespace std;
 
 string advScheme0;    // advection differencing scheme
 double gamma0;        // adiabatic coefficient
-double eta0=0.008;     // resistivity (may need to decrease dt more if eta0 really low)
+double eta0=0.004;     // resistivity (may need to decrease dt more if eta0 really low)
 double delta0=1.0e-4; // relaxation const (v/c)^2
 double B0 = 0.0;      // boundary value of magnetic field
 int Nsub;             // time-solver subcycle steps
@@ -227,13 +227,17 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    }
 
    T = P/N;
-   Cs = sqrt(gamma0*P/N);
+   if(min(P)<0.0) cout << " T IS LESS THAN ZERO " << endl;
+   //Cs = sqrt(gamma0*P/N);
+   Cs = pow(gamma0*P/N,0.5);
    Xgrid.DDX(J,B); 
    Xgrid.DDX(Jcc,B); 
    Xgrid.communicate(J);
    Xgrid.communicate(Jcc);
    J0 = J;
-   eta = eta0/T/sqrt(T);
+   if(min(T)<0.0) cout << " T IS LESS THAN ZERO " << endl;
+   //eta = eta0/T/sqrt(T);
+   eta = eta0/T/pow(T,0.5);
    Xgrid.InterpToCellEdges(VBce,V*B,B,"C2");
    Xgrid.InterpToCellEdges(etace,eta,eta,"C2");
    Ez = etace*J-VBce; 
@@ -303,9 +307,9 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 	 B.at(i) = Bold.at(i) - thisdt*(FluxB.at(i)-FluxB.at(i-1))/Xgrid.dX;
 	 //B.at(i) = Bold.at(i) + thisdt*(Ezold.at(i)-Ezold.at(i-1))/Xgrid.dX;
 	 
-	 if(N.at(i)<Nthresh) N.at(i) = Nthresh;
-	 if(M.at(i)<0.0) M.at(i) = 0.0;
-	 if(S.at(i)<Sthresh) S.at(i) = Sthresh;
+	 if(N.at(i)<=Nthresh) N.at(i) = Nthresh;
+	 //if(M.at(i)<0.0) M.at(i) = 0.0;
+	 if(S.at(i)<=Sthresh) S.at(i) = Sthresh;
 
       }
 
@@ -317,7 +321,6 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       
       if(procID==0) {
          setXminBoundary(N, N.at(2), 0.0);   
-         //setXminBoundary(M, 0.0, -1.0);   
          setXminBoundary(M, M.at(2), 0.0);   
          setXminBoundary(S, S.at(2), 0.0);
          //setXminExtrap(N);
@@ -334,7 +337,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
             N.at(0) = Nthresh;
 	 }
 	 if(S.at(1)<Sthresh) {
-            S.at(0) = Sthresh/pow(Nthresh,gamma0-2);
+            S.at(0) = Sthresh/pow(Nthresh,gamma0-2.0);
             S.at(1) = Sthresh;
 	 }
 	 if(S.at(0)<Sthresh) {
@@ -342,18 +345,18 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 	 }
 	 
 	 if(M.at(1)<0.0) {
-            M.at(0) = 0.0*M.at(2);
-            M.at(1) = 0.0*M.at(2);
+            M.at(0) = M.at(2);
+            M.at(1) = M.at(2);
 	 }
 	 if(M.at(0)<0.0) {
-            M.at(0) = 0.0*M.at(1);
+            M.at(0) = M.at(1);
 	 }
 	 
       }
      
       if(procID==numProcs-1) {
          setXmaxBoundary(N, 0.0, 1.0);   
-         setXmaxBoundary(M, 0.0, -1.0);   
+         setXmaxBoundary(M, 0.0, 1.0);   
          setXmaxBoundary(S, 0.0, 1.0);   
          setXmaxBoundary(B, 0.0, 0.0);   
       }
@@ -418,8 +421,11 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    //  define derived variables
    //
    V  = M/N;
-   P  = S*pow(N,gamma0-1);
+   if(min(N)<0.0) cout << " N IS LESS THAN ZERO " << endl;
+   P  = S*pow(N,gamma0-1.0);
    T  = P/N;
+   if(min(P)<0.0) cout << " P IS LESS THAN ZERO " << endl;
+   if(min(T)<0.0) cout << " T IS LESS THAN ZERO " << endl;
    Cs = sqrt(gamma0*P/N);
    eta = eta0/T/sqrt(T); //*(1.0+10*Nthresh/N);
    Xgrid.InterpToCellEdges(etace,eta,eta,"C2");

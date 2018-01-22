@@ -529,6 +529,10 @@ double min(const vector<double> &fin);
 
 double max(const vector<double> &fin);
 
+double vanleer(const double a, const double b);
+double minmod(const double a, const double b);
+double superbee(const double a, const double b);
+
 
 // operators for vector<vector>
 //

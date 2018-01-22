@@ -882,7 +882,7 @@ void domainGrid::InterpToCellCenter(vector<vector<double>> &Fout,
 
 void domainGrid::computeFluxTVD(vector<double> &Flout, 
                                 vector<double> &FloutL,  vector<double> &FloutR, 
-                                vector<double> &Flratio, vector<double> &FlLim, 
+                                vector<double> &Flratio, vector<double> &FlLimR, 
                                 const vector<double> &Flin,
                                 const vector<double> &upC,
                                 const vector<double> &fin,
@@ -900,71 +900,83 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
    assert(FloutL.size()  == Xce.size());
    assert(FloutR.size()  == Xce.size());
    assert(Flratio.size() == Xce.size());
-   assert(FlLim.size()   == Xce.size());
+   assert(FlLimR.size()   == Xce.size());
    assert(Flin.size() == Xcc.size());
    assert(upC.size()  == Xcc.size());
    assert(fin.size()  == Xcc.size());
 
  
    vector<double> FluxL1st, FluxR1st;
-   vector<double> DeltaFluxL, DeltaFluxR;
+   vector<double> DeltaFluxRL, DeltaFluxRR;
+   vector<double> DeltaFluxLL, DeltaFluxLR;
    FluxL1st.assign(Nout,0.0);   
    FluxR1st.assign(Nout,0.0); 
-   DeltaFluxL.assign(Nout,0.0);
-   DeltaFluxR.assign(Nout,0.0);  
+   DeltaFluxRL.assign(Nout,0.0);
+   DeltaFluxRR.assign(Nout,0.0);  
+   DeltaFluxLL.assign(Nout,0.0);
+   DeltaFluxLR.assign(Nout,0.0);  
    
-   vector<double> FlratioL, FlLimL;
-   FlratioL.assign(Nout,0.0);   
+   vector<double> FlLimL, FlinR, FlinL;
    FlLimL.assign(Nout,0.0);   
+   FlinR.assign(nXcc,0.0);   
+   FlinL.assign(nXcc,0.0);   
+
+   FlinR = 0.5*(Flin + upC*fin);
+   FlinL = 0.5*(Flin - upC*fin);
+
 
    // compute first order left and right fluxes
    //
    for (auto i=0; i<Nout; i++) {
-      FluxR1st.at(i) = Flin.at(i)   + upC.at(i)*fin.at(i);
-      FluxL1st.at(i) = Flin.at(i+1) - upC.at(i+1)*fin.at(i+1);
+      FluxR1st.at(i) = FlinR.at(i);
+      FluxL1st.at(i) = FlinL.at(i+1);
    }
 
-   // compute 2nd order left and right fluxes 
+   // compute 2nd order left and right flux corrections 
    // using flux limiter
    //
    for (auto i=1; i<Nout-1; i++) {
-      //DeltaFluxR.at(i) = 0.5*(FluxR1st.at(i+1)-FluxR1st.at(i)); 
-      //DeltaFluxL.at(i) = 0.5*(FluxL1st.at(i-1)-FluxL1st.at(i)); 
-      DeltaFluxR.at(i) = 0.5*(Flin.at(i+1)-FluxR1st.at(i)); 
-      DeltaFluxL.at(i) = 0.5*(Flin.at(i)  -FluxL1st.at(i)); 
-      //Flratio.at(i) = DeltaFluxL.at(i)/DeltaFluxR.at(i);
-      //Flratio.at(i) = DeltaFluxR.at(i)/DeltaFluxL.at(i);
-      if(Flin.at(i)/fin.at(i)>=0.0) {
-         Flratio.at(i)  = (fin.at(i) -fin.at(i-1))
-		         /(fin.at(i+1)-fin.at(i)); // divide by zero?
-      } else {
-	 Flratio.at(i)  = (fin.at(i+2)-fin.at(i+1))
-		         /(fin.at(i+1)-fin.at(i)); // divide by zero?
-      }
-      if(Flratio.at(i)>100.0) Flratio.at(i) = 100.0;
-      
-      FlLim.at(i) = 2.0;
-      if(Flratio.at(i)<=2.0) FlLim.at(i) = Flratio.at(i);
-      if(Flratio.at(i)<=1.0) FlLim.at(i) = 1.0;
-      if(Flratio.at(i)<=0.5) FlLim.at(i) = 2.0*Flratio.at(i);
-      if(Flratio.at(i)<=0.0) FlLim.at(i) = 0.0;
-      //FlLim.at(i) = (abs(Flratio.at(i))+Flratio.at(i))/(abs(Flratio.at(i)) + 1.0); // van Leer
-      
-      //if(i==1) FlLim.at(i) = 0.0;
+    
+      // calculate flux corrections for right going wave
+      //
+      DeltaFluxRL.at(i) = 0.5*(FlinR.at(i)   - FlinR.at(i-1)); // B2 scheme 
+      DeltaFluxRR.at(i) = 0.5*(FlinR.at(i+1) - FlinR.at(i));   // C2 scheme
+
+      // vanleer(a,b)  = 2*a*b/(a+b) (a and b same sign) 
+      //               = 0 otherwise
+      // minmod(a,b)   = 1/2(sign(a) + sign(b))*min(|a|,|b|)
+      // superbee(a,b) = minmod(a,2b) if |a|>=|b|
+      //               = minmod(2a,b) if otherwise
+      //
+      //FlLimR.at(i) = minmod(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
+      //FlLimR.at(i) = superbee(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
+      FlLimR.at(i) = vanleer(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
+      //FlLimR.at(i) = 0.0;
+
+
+      // calculate flux corrections for left going wave
+      //
+      DeltaFluxLL.at(i) = -0.5*(FlinL.at(i+1) - FlinL.at(i));   // C2 scheme 
+      DeltaFluxLR.at(i) = -0.5*(FlinL.at(i+2) - FlinL.at(i+1)); // F2 scheme
+
+      //FlLimL.at(i) = minmod(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
+      //FlLimL.at(i) = superbee(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
+      FlLimL.at(i) = vanleer(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
+      //FlLimL.at(i) = 0.0;
 
       if(order==1) {
          FloutR.at(i) = FluxR1st.at(i);
          FloutL.at(i) = FluxL1st.at(i);
       }
       else {
-         FloutR.at(i) = FluxR1st.at(i) + FlLim.at(i)*DeltaFluxR.at(i);
-         FloutL.at(i) = FluxL1st.at(i) + FlLim.at(i)*DeltaFluxL.at(i);
+         FloutR.at(i) = FluxR1st.at(i) + FlLimR.at(i);
+         FloutL.at(i) = FluxL1st.at(i) + FlLimL.at(i);
       }
-      Flout.at(i) = (FloutR.at(i) + FloutL.at(i))/2.0;
+      Flout.at(i) = FloutR.at(i) + FloutL.at(i);
    }
-   //Flout.at(0) = (FloutR.at(0) + FloutL.at(0))/2.0;
-   //Flout.at(nCE-1) = (FluxR.at(nCE-1) + FluxL.at(nCE-1))/2.0;
- 
+   //Flout.at(0) = FloutR.at(0) + FloutL.at(0);
+   //Flout.at(nCE-1) = FluxR.at(nCE-1) + FluxL.at(nCE-1);
+   
 
 } // end function computeFluxTVD
 
@@ -1034,41 +1046,37 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
    for (auto i=1; i<Nout0-1; i++) {
       for (auto j=0; j<Nout1; j++) {
          if(dir==0) { // X-Flux
-            DeltaFluxR[i][j] = 0.5*(FluxR1st[i+1][j]-FluxR1st[i][j]); 
-            DeltaFluxL[i][j] = 0.5*(FluxL1st[i][j]-FluxL1st[i-1][j]); 
-            Flratio[i][j]  = DeltaFluxL[i][j]/DeltaFluxR[i][j];
-            FlratioL[i][j] = DeltaFluxL[i+1][j]/DeltaFluxR[i+1][j];
-            //Flratio[i][j]  = (fin[i][j] - fin[i-1][j])/(fin[i+1][j] - fin[i][j]); // divide by zero?
-            //FlratioL[i][j] = (fin[i+2][j] - fin[i+1][j])/(fin[i+1][j] - fin[i][j]); // divide by zero?
-         }
+            DeltaFluxR[i][j] = 0.5*(FluxR1st[i+1][j] - FluxR1st[i][j]); 
+            DeltaFluxL[i][j] = 0.5*(FluxL1st[i-1][j] - FluxL1st[i][j]); 
+            //Flratio[i][j]  = DeltaFluxL[i][j]/DeltaFluxR[i][j];
+	    if(Flin[i][j]/fin[i][j]>=0) {
+               Flratio[i][j] = (fin[i][j]  - fin[i-1][j])/(fin[i+1][j] - fin[i][j]);
+	    } 
+	    else {
+               Flratio[i][j] = (fin[i+2][j]- fin[i+1][j])/(fin[i+1][j] - fin[i][j]);
+	    }
+	 }
 	 if(dir==1) { // Z-flux
-            DeltaFluxR[i][j] = 0.5*(FluxR1st[i][j+1]-FluxR1st[i][j]); 
-            DeltaFluxL[i][j] = 0.5*(FluxL1st[i][j]-FluxL1st[i][j-1]); 
+            DeltaFluxR[i][j] = 0.5*(FluxR1st[i][j+1] - FluxR1st[i][j]); 
+            DeltaFluxL[i][j] = 0.5*(FluxL1st[i][j-1] - FluxL1st[i][j]); 
             Flratio[i][j]  = DeltaFluxL[i][j]/DeltaFluxR[i][j];
-            FlratioL[i][j] = DeltaFluxL[i][j+1]/DeltaFluxR[i][j+1];
-            //Flratio[i][j]  = (fin[i][j] - fin[i-1][j])/(fin[i+1][j] - fin[i][j]); // divide by zero?
-            //FlratioL[i][j] = (fin[i+2][j] - fin[i+1][j])/(fin[i+1][j] - fin[i][j]); // divide by zero?
+	    if(Flin[i][j]/fin[i][j]>=0) {
+               Flratio[i][j] = (fin[i][j]  - fin[i][j-1])/(fin[i][j+1] - fin[i][j]);
+	    } 
+	    else {
+               Flratio[i][j] = (fin[i][j+2]- fin[i][j+1])/(fin[i][j+1] - fin[i][j]);
+	    }
 	 }
 	   
 	 if(Flratio[i][j]>100.0) Flratio[i][j] = 100.0;
-         if(FlratioL[i][j]>100.0) FlratioL[i][j] = 100.0;
-         //if(Flratio[i][j]<0.0) cout << "Flratio = " << Flratio[i][j] << endl;
-         //if(upC[i][j]<0.0) cout << "upC = " << upC[i][j] << endl;
          FlLim[i][j] = 2.0;
          if(Flratio[i][j]<=2.0) FlLim[i][j] = Flratio[i][j];
          if(Flratio[i][j]<=1.0) FlLim[i][j] = 1.0;
          if(Flratio[i][j]<=0.5) FlLim[i][j] = 2.0*Flratio[i][j];
          if(Flratio[i][j]<=0.0) FlLim[i][j] = 0.0;
          //
-	 FlLimL[i][j] = 2.0;
-         if(FlratioL[i][j]<=2.0) FlLimL[i][j] = FlratioL[i][j];
-         if(FlratioL[i][j]<=1.0) FlLimL[i][j] = 1.0;
-         if(FlratioL[i][j]<=0.5) FlLimL[i][j] = 2.0*FlratioL[i][j];
-         if(FlratioL[i][j]<=0.0) FlLimL[i][j] = 0.0;
-         //FlLimL[i][j] = (abs(FlratioL[i][j])+FlratioL[i][j])/(abs(FlratioL[i][j]) + 1.0); // van Leer
-     
+         //FlLim[i][j] = (abs(Flratio[i][j])+Flratio[i][j])/(abs(Flratio[i][j]) + 1.0); // van Leer
          //if(i==1) FlLim[i][j] = 0.0;
-         //if(i==1) FlLimL[i][j] = 0.0;
       }
    }
 

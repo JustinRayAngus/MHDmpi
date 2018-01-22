@@ -298,7 +298,7 @@ vector<vector<T>> operator/(const T b, const vector<vector<T>>& a)
    vector< vector<T> > bmatrix;
    vector<T> bvector(jmax,b);
    bmatrix.assign(imax,bvector);
-   result = a/bmatrix;
+   result = bmatrix/a;
 
    return result;
 }
@@ -528,6 +528,9 @@ vector<double> abs(const vector<double> &fin);
 double min(const vector<double> &fin);
 
 double max(const vector<double> &fin);
+
+double vanleer(const double a, const double b);
+double minmod(const double a, const double b);
 
 
 // operators for vector<vector>
