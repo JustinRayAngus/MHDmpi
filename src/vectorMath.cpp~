@@ -56,10 +56,10 @@ vector<double> sqrt(const vector<double> &fin) {
 
    for (auto i=0; i<imax; i++) {
       result.at(i) = sqrt(fin.at(i));
-      if(result.at(i) != result.at(i)) {
-          cout << "ERROR: sqrt() on vector returning complex results !!! " << endl;
-          exit (EXIT_FAILURE);
-      }    
+      //if(result.at(i) != result.at(i)) {
+      //    cout << "ERROR: sqrt() on vector returning complex results !!! " << endl;
+      //    exit (EXIT_FAILURE);
+      //}    
    }
 
    return result;
@@ -127,6 +127,9 @@ vector<double> pow(const vector<double> &fin, const double exponent) {
       result.at(i) = pow(fin.at(i), exponent);
       if(result.at(i) != result.at(i)) {
           cout << "ERROR: pow() on vector returning complex results !!! " << endl;
+          cout << "ERROR: exponent = " << exponent << endl;
+          cout << "ERROR: result.at(i) = " << result.at(i) << endl;
+          cout << "ERROR: i = " << i << endl;
           exit (EXIT_FAILURE);
       }    
    }
@@ -365,5 +368,55 @@ double max(const vector<vector<double>> &fin) {
 
    return result;
 }
+
+
+double vanleer(const double a, const double b) {
+
+   // vanleer flux limiter = 2*a*b/(a+b) (if a and b same sign)
+   // zero otherwise
+   //
+   double result;
+   
+   result = 2.0*a*b/(a+b);
+
+   if(a<=0 && b>=0) result = 0.0;
+   if(a>=0 && b<=0) result = 0.0;
+
+   return result;
+}
+
+double minmod(const double a, const double b) {
+
+   // minmod flux limiter = 1/2(sign(a)+sign(b))*min(|a|,|b|)
+   //
+   double result, signa, signb;
+   
+   signa = 0.0;
+   signb = 0.0;
+   if(a>0) signa = 1.0;
+   if(a<0) signa = -1.0;
+   if(b>0) signb = 1.0;
+   if(b<0) signb = -1.0;
+
+   result = 0.5*(signa + signb)*min(abs(a),abs(b));
+
+   return result;
+}
+
+double superbee(const double a, const double b) {
+
+   // superbee flux limiter = minmod(a,2b) if |a|>=|b|
+   //                       = minmod(2a,b) otherwise
+   //
+   double result;
+   
+   if(abs(a)>=abs(b)) result = minmod(a,2*b);
+   else result = minmod(2*a,b);
+
+   return result;
+}
+
+
+
 
 

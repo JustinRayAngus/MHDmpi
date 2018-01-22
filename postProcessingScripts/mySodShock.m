@@ -4,6 +4,10 @@
 %%%
 %%%   see G.A. Sod,. J. Comp. Phys. 27, 1-31 (1978)
 %%%
+%%%   Van Leer works better than suber bee 
+%%%   see "A Primer on Eulerian Computational Fluid Dynamics for Astrophysics"
+%%%   by Hy Trac and Ue-Li Pen pg 309 (2003)
+%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
@@ -40,7 +44,7 @@ tout= hdf5read(thisFile,'tout');
 %
 
 f1=figure(1); 
-set(f1,'position',[1030 425 900 840]);
+set(f1,'position',[540 1 900 800]);
 %set(f1,'position',[341 436 900 840]);
 
 subplot(2,2,1);
@@ -96,9 +100,16 @@ title(['t=',num2str(tout(end)),': compare with sodShock BOUT++']);
 f5=figure(5); set(f5,'position', [1945 45 560 420]); 
 hold on; plot(Xcc,P(:,2),'black'); box on;
 hold on; plot(Xcc,P(:,3),'r'); box on;
-axis([-0.5 0.5 0 1.2]); grid on;
+axis([0 0.08 0.3 0.306]); grid on;
 xlabel('x');
 title('bad oscillations early on using U1 with nx>3000');
 
+
+f6=figure(6); %set(f6,'position', [1945 45 560 420]); 
+hold on; plot(Xce,FluxRatio(:,2),'black'); box on;
+hold on; plot(Xce,FluxRatio(:,end),'r'); box on;
+%axis([-0.5 0.5 0 1.2]); grid on;
+xlabel('x');
+title('flux ratio');
 end
 

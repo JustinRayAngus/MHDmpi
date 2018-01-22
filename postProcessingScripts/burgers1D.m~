@@ -4,7 +4,7 @@
 %%%
 %%%   compare results with analytical solution from Burgers1DSolution.m
 %%%
-%%%   superbee works better than Van leer
+%%%   
 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;

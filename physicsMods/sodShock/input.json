@@ -2,7 +2,7 @@
 "Xgrid":{
          "Xmin":-0.5,
          "Xmax":0.5,
-         "nX":800,
+         "nX":1600,
          "nXg":2 // number of guard cells each end
         },
 "Time":{
@@ -12,7 +12,7 @@
        },
 "Physics":{
            "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
-           "Nsub":2, // time solver subcycles (1|2 for U1|TVD)
+           "Nsub":2, // time solver order (1 or 2)
            "gammaC":1.4, // adiabatic coefficient
            "N":{
                 "type":"step", // initial profile

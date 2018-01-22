@@ -50,7 +50,7 @@ vector<double> FluxRatio, FluxLim;
 vector<double> FluxR, FluxL;  // flux at cell-edges   
 vector<double> FluxN, FluxM, FluxE;
 
-void computeFluxes(const domainGrid&);
+void computeFluxes(const domainGrid&, const int);
 void setXminBoundary(vector<double>&, const double, const double);
 void setXmaxBoundary(vector<double>&, const double, const double);
 
@@ -153,7 +153,6 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       if(procID==numProcs-1) setXmaxBoundary(N, 0.0, 1.0);   
       Xgrid.communicate(N);
       Nold  = N;
-      //computeFluxes(Xgrid); // inital calculation before add to output   
    } else {
       cout << "value for Physics variable \"N\" is not object type !" << endl;
       exit (EXIT_FAILURE);
@@ -190,7 +189,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
 
    // need inital flux calculation before add to output
    // and before first call to Physics.advance   
-   computeFluxes(Xgrid);   
+   computeFluxes(Xgrid,1);   
   
   
    dataFile.add(N, "N", 1);  // density 
@@ -253,7 +252,9 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       Xgrid.communicate(M);
       Xgrid.communicate(E);
       
-      computeFluxes(Xgrid);
+      if(n==1 && Nsub==2) computeFluxes(Xgrid,2);
+      else computeFluxes(Xgrid,1);
+      //computeFluxes(Xgrid,2);
 
    }
 
@@ -264,17 +265,19 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 } // end Physics.advance
 
 
-void computeFluxes(const domainGrid& Xgrid)
+void computeFluxes(const domainGrid& Xgrid, const int order)
 {
 
    const int nCE = FluxN.size();
    const int nCC = N.size();
-   vector<double> Cspeed, FluxNcc, FluxMcc, FluxEcc;
+   vector<double> Cspeed, Cspeed2, FluxNcc, FluxMcc, FluxEcc;
    vector<double> FluxP; 
    FluxNcc.assign(nCC,0.0);
    FluxMcc.assign(nCC,0.0);
    FluxEcc.assign(nCC,0.0);
    FluxP.assign(nCE,0.0);
+   Cspeed.assign(nCC,0.0);
+   Cspeed2.assign(nCC,0.0);
 
    //  define derived variables
    //
@@ -286,7 +289,13 @@ void computeFluxes(const domainGrid& Xgrid)
    // set flux freezing speed and 
    // compute advection flux at cell center
    //
-   Cspeed = V + Cs; // adv flux jacobian
+   
+   Cspeed  = abs(V + Cs); // adv flux jacobian
+   Cspeed2 = abs(V - Cs); // adv flux jacobian
+   const int nXcc = Cspeed.size();
+   for (auto i=0; i<nXcc; i++) {
+      if(Cspeed2.at(i)>Cspeed.at(i)) Cspeed.at(i) = Cspeed2.at(i);
+   }
    FluxNcc = M;
    FluxMcc = M*M/N + P;
    FluxEcc = V*(E + P);
@@ -297,17 +306,18 @@ void computeFluxes(const domainGrid& Xgrid)
    //
    if(advScheme0 == "TVD") {
       Xgrid.computeFluxTVD(FluxN,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxNcc,Cspeed,N,2);
+                           FluxNcc,Cspeed,N,order);
       Xgrid.computeFluxTVD(FluxM,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxMcc,Cspeed,M,2);
+                           FluxMcc,Cspeed,M,order);
       Xgrid.computeFluxTVD(FluxE,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxEcc,Cspeed,E,2);
+                           FluxEcc,Cspeed,E,order);
    }      
    else {
       Xgrid.InterpToCellEdges(FluxN,FluxNcc,N,advScheme0);
-      Xgrid.InterpToCellEdges(FluxM,FluxMcc-P,M,advScheme0);
-      Xgrid.InterpToCellEdges(FluxP,P,M,"C2");
-      FluxM = FluxM+FluxP;
+      //Xgrid.InterpToCellEdges(FluxM,FluxMcc-P,M,advScheme0);
+      //Xgrid.InterpToCellEdges(FluxP,P,M,"C2");
+      //FluxM = FluxM+FluxP;
+      Xgrid.InterpToCellEdges(FluxM,FluxMcc,M,advScheme0);
       Xgrid.InterpToCellEdges(FluxE,FluxEcc,E,advScheme0);
    } 
 
