@@ -7,7 +7,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-numProcs = 1;
+numProcs = 4;
 filePath = '../physicsMods/burgers2D/';
 %filePath = '../physicsMods/sodShock/';
 
@@ -22,25 +22,39 @@ Xce = hdf5read(thisFile,'Xce');
 
 
 F0  = hdf5read(thisFile,'F0');
-FluxLimL  = hdf5read(thisFile,'FluxLimL');
-FluxLimR  = hdf5read(thisFile,'FluxLimR');
-FluxL    = hdf5read(thisFile,'FluxL');
-FluxR    = hdf5read(thisFile,'FluxR');
-Flux  = hdf5read(thisFile,'Flux');
+FluxLimL  = hdf5read(thisFile,'FluxLimL_x');
+FluxLimR  = hdf5read(thisFile,'FluxLimR_x');
+FluxL    = hdf5read(thisFile,'FluxL_x');
+FluxR    = hdf5read(thisFile,'FluxR_x');
+Flux  = hdf5read(thisFile,'Flux_x');
 tout= hdf5read(thisFile,'tout');
 
 
-close(figure(11));
-figure(11); contourf(Xcc,Zcc,F0(:,:,1)); colorbar;
-xlabel('x direction');
-zlabel('z direction');
-
+f11=figure(11); 
+%set(f1,'position',[1030 925 1100 420]);
+set(f11,'position',[1800 360 500 760]);
+subplot(2,1,1);
+hold on; pcolor(Xcc,Zcc,F0(:,:,1)); shading flat;colorbar;
+xlabel('x direction'); axis('equal'); caxis([0,1]);
+ylabel('z direction');
+title('initial profile');
+%
+subplot(2,1,2);
+hold on; pcolor(Xcc,Zcc,F0(:,:,round(end))); colorbar;
+xlabel('x direction'); axis('equal'); caxis([0,1]);
+ylabel('z direction'); shading flat;
+title('profile at final time step');
+%
+map = colormap('jet');
+map(1,:) = [1 1 1];
+colormap(map)
+    
 %%%
 %
 %close(figure(1));
 f1=figure(1); 
 %set(f1,'position',[1030 925 1100 420]);
-set(f1,'position',[858 37 500 760]);
+set(f1,'position',[1190 360 500 760]);
 
 
 subplot(2,1,1);
