@@ -40,7 +40,7 @@ private:
    void appendIntInOutput(int*, const char*);
    void appendSclInOutput(double*, const char*);
    void appendVecInOutput(vector<double>*, const char*);
-   void appendVecVecInOutput(vector<vector<double>>*, const char*);
+   void appendVecVecInOutput(vector<vector<double>*>*, const char*);
 
    template<class T>
       struct VarStr {

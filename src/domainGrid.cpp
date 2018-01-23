@@ -959,7 +959,7 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
       DeltaFluxLL.at(i) = -0.5*(FlinL.at(i+1) - FlinL.at(i));   // C2 scheme 
       DeltaFluxLR.at(i) = -0.5*(FlinL.at(i+2) - FlinL.at(i+1)); // F2 scheme
 
-      //FlLimL.at(i) = minmod(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
+      FlLimL.at(i) = minmod(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       //FlLimL.at(i) = superbee(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       FlLimL.at(i) = vanleer(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       //FlLimL.at(i) = 0.0;
@@ -982,8 +982,10 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
 
 
 void domainGrid::computeFluxTVD(vector<vector<double>> &Flout, 
-                                vector<vector<double>> &FloutL,  vector<vector<double>> &FloutR, 
-                                vector<vector<double>> &Flratio, vector<vector<double>> &FlLim, 
+                                vector<vector<double>> &FloutL,
+				vector<vector<double>> &FloutR, 
+                                vector<vector<double>> &FlLimL, 
+                                vector<vector<double>> &FlLimR, 
                                 const vector<vector<double>> &Flin,
                                 const vector<vector<double>> &upC,
                                 const vector<vector<double>> &fin,
@@ -1024,71 +1026,88 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
    //
    vector<vector<double>> FluxL1st(Nout0,vector<double>(Nout1)); 
    vector<vector<double>> FluxR1st(Nout0,vector<double>(Nout1)); 
-   vector<vector<double>> DeltaFluxL(Nout0,vector<double>(Nout1));
-   vector<vector<double>> DeltaFluxR(Nout0,vector<double>(Nout1));
-   vector<vector<double>> FlratioL(Nout0,vector<double>(Nout1));
-   vector<vector<double>> FlLimL(Nout0,vector<double>(Nout1));
+   vector<vector<double>> DeltaFluxRL(Nout0,vector<double>(Nout1));
+   vector<vector<double>> DeltaFluxRR(Nout0,vector<double>(Nout1));
+   vector<vector<double>> DeltaFluxLL(Nout0,vector<double>(Nout1));
+   vector<vector<double>> DeltaFluxLR(Nout0,vector<double>(Nout1));
+   vector<vector<double>> FlinR(Nout0,vector<double>(Nout1));
+   vector<vector<double>> FlinL(Nout0,vector<double>(Nout1));
    
+   FlinR = 0.5*(Flin + upC*fin);
+   FlinL = 0.5*(Flin - upC*fin);
 
    //  compute first order left and right fluxes
    //
    for (auto i=0; i<Nout0; i++) {
       for (auto j=0; j<Nout1; j++) {
-         FluxR1st[i][j] = Flin[i][j]   + upC[i][j]*fin[i][j];
-         if(dir==0) FluxL1st[i][j] = Flin[i+1][j] - upC[i+1][j]*fin[i+1][j];
-         if(dir==1) FluxL1st[i][j] = Flin[i][j+1] - upC[i][j+1]*fin[i][j+1];
+         FluxR1st[i][j] = FlinR[i][j];
+         if(dir==0) FluxL1st[i][j] = FlinL[i+1][j];
+         if(dir==1) FluxL1st[i][j] = FlinL[i][j+1];
       }
    }
 
-   //  compute second order corrections to left and right going fluxes
+   //  compute second order left and right flux corrections
    //  using flux limiter
    //
    for (auto i=1; i<Nout0-1; i++) {
       for (auto j=0; j<Nout1; j++) {
          if(dir==0) { // X-Flux
-            DeltaFluxR[i][j] = 0.5*(FluxR1st[i+1][j] - FluxR1st[i][j]); 
-            DeltaFluxL[i][j] = 0.5*(FluxL1st[i-1][j] - FluxL1st[i][j]); 
-            //Flratio[i][j]  = DeltaFluxL[i][j]/DeltaFluxR[i][j];
-	    if(Flin[i][j]/fin[i][j]>=0) {
-               Flratio[i][j] = (fin[i][j]  - fin[i-1][j])/(fin[i+1][j] - fin[i][j]);
-	    } 
-	    else {
-               Flratio[i][j] = (fin[i+2][j]- fin[i+1][j])/(fin[i+1][j] - fin[i][j]);
-	    }
+
+            // calculate flux correction for right going wave
+	    //
+            DeltaFluxRL[i][j] = 0.5*(FlinR[i][j]   - FlinR[i-1][j]); // B2 scheme
+            DeltaFluxRR[i][j] = 0.5*(FlinR[i+1][j] - FlinR[i][j]);   // C2 scheme
+
+            //FlLimR[i][j] = minmod(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
+            //FlLimR[i][j] = superbee(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
+            FlLimR[i][j] = vanleer(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
+            
+	    // calculate flux correction for left going wave
+	    //
+	    DeltaFluxLL[i][j] = -0.5*(FlinL[i+1][j] - FlinL[i][j]);    // C2 scheme
+            DeltaFluxLR[i][j] = -0.5*(FlinL[i+2][j] - FlinL[i+1][j]);  // F2 scheme
+
+            //FlLimL[i][j] = minmod(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
+            //FlLimL[i][j] = superbee(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
+            FlLimL[i][j] = vanleer(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
+
 	 }
 	 if(dir==1) { // Z-flux
-            DeltaFluxR[i][j] = 0.5*(FluxR1st[i][j+1] - FluxR1st[i][j]); 
-            DeltaFluxL[i][j] = 0.5*(FluxL1st[i][j-1] - FluxL1st[i][j]); 
-            Flratio[i][j]  = DeltaFluxL[i][j]/DeltaFluxR[i][j];
-	    if(Flin[i][j]/fin[i][j]>=0) {
-               Flratio[i][j] = (fin[i][j]  - fin[i][j-1])/(fin[i][j+1] - fin[i][j]);
-	    } 
-	    else {
-               Flratio[i][j] = (fin[i][j+2]- fin[i][j+1])/(fin[i][j+1] - fin[i][j]);
-	    }
+         
+	    // calculate flux correction for right going wave
+	    //
+	    DeltaFluxRL[i][j] = 0.5*(FlinR[i][j]   - FlinR[i][j-1]); // B2 scheme 
+            DeltaFluxRR[i][j] = 0.5*(FlinR[i][j+1] - FlinR[i][j]);   // C2 scheme
+            
+	    //FlLimR[i][j] = minmod(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
+            //FlLimR[i][j] = superbee(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
+            FlLimR[i][j] = vanleer(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
+            
+	    // calculate flux correction for left going wave
+	    //
+	    DeltaFluxLL[i][j] = -0.5*(FlinL[i][j+1] - FlinL[i][j]);    // C2 scheme
+            DeltaFluxLR[i][j] = -0.5*(FlinL[i][j+2] - FlinL[i][j+1]);  // F2 scheme
+
+            //FlLimL[i][j] = minmod(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
+            //FlLimL[i][j] = superbee(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
+            FlLimL[i][j] = vanleer(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
+
 	 }
 	   
-	 if(Flratio[i][j]>100.0) Flratio[i][j] = 100.0;
-         FlLim[i][j] = 2.0;
-         if(Flratio[i][j]<=2.0) FlLim[i][j] = Flratio[i][j];
-         if(Flratio[i][j]<=1.0) FlLim[i][j] = 1.0;
-         if(Flratio[i][j]<=0.5) FlLim[i][j] = 2.0*Flratio[i][j];
-         if(Flratio[i][j]<=0.0) FlLim[i][j] = 0.0;
-         //
-         //FlLim[i][j] = (abs(Flratio[i][j])+Flratio[i][j])/(abs(Flratio[i][j]) + 1.0); // van Leer
-         //if(i==1) FlLim[i][j] = 0.0;
       }
    }
 
-   //  compute final flux
+   //  compute total flux
    //
-   FloutR = FluxR1st;
-   FloutL = FluxL1st;
-   if(order==2) {
-      FloutR = FluxR1st + FlLim*DeltaFluxR;
-      FloutL = FluxL1st + FlLim*DeltaFluxL;
+   if(order==1) {
+      FloutR = FluxR1st;
+      FloutL = FluxL1st;
    }
-   Flout = (FloutR+FloutL)/2.0;
+   else {
+      FloutR = FluxR1st + FlLimR;
+      FloutL = FluxL1st + FlLimL;
+   }
+   Flout = FloutR+FloutL;
 
 
 } // end TVD flux calculation

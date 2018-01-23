@@ -96,7 +96,21 @@ void HDF5dataFile::add(vector<vector<double>> &varData, const char *varName, int
    }
    VarStr< vector<vector<double>> > vecvec;
 
+   const int vecSize0 = varData.size();
+   const int vecSize1 = varData[0].size();
+   cout << " vecSize1 = " << vecSize1 << endl;
+
+   //vector<vector<double>*> vecPtr(vecSize0,vector<double>(vecSize1,0.0));
+   vector<vector<double>*> vecPtr;
+   vecPtr.resize(vecSize0,(vector<double>*)(vecSize1));
+   for (auto i=0; i<vecSize0; i++) {
+      vecPtr.at(i) = &varData.at(i);
+   }
+   cout << " vecSize10 = " << vecPtr.size() << endl;
+   cout << " vecSize11 = " << (vecPtr[0])->size() << endl;
+
    vecvec.ptr  = &varData;
+   //vecvec.ptr  = &vecPtr;
    vecvec.name = string(varName);
    vecvec.grow = (grow>0) ? true:false;
 

@@ -1,16 +1,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%
-%%%   look at output variables from MHD1D simulation
+%%%   look at output variables from burgers2D simulation
 %%%
-%%%   compare results with analytical solution from Burgers1DSolution.m
-%%%
-%%%   
+%%%   superbee works better than Van leer
 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-numProcs = 4;
-filePath = '../physicsMods/burgers1D/';
+numProcs = 1;
+filePath = '../physicsMods/burgers2D/';
 %filePath = '../physicsMods/sodShock/';
 
 for i=1:numProcs
@@ -19,15 +17,23 @@ thisFile = [filePath,fileName];
 procID  = hdf5read(thisFile,'procID');
 fileinfo = hdf5info(thisFile);
 Xcc = hdf5read(thisFile,'Xcc');
+Zcc = hdf5read(thisFile,'Zcc');
 Xce = hdf5read(thisFile,'Xce');
+
+
 F0  = hdf5read(thisFile,'F0');
-FluxRatio  = hdf5read(thisFile,'FluxRatio');
-FluxLim    = hdf5read(thisFile,'FluxLim');
+FluxLimL  = hdf5read(thisFile,'FluxLimL');
+FluxLimR  = hdf5read(thisFile,'FluxLimR');
 FluxL    = hdf5read(thisFile,'FluxL');
 FluxR    = hdf5read(thisFile,'FluxR');
 Flux  = hdf5read(thisFile,'Flux');
 tout= hdf5read(thisFile,'tout');
 
+
+close(figure(11));
+figure(11); contourf(Xcc,Zcc,F0(:,:,1)); colorbar;
+xlabel('x direction');
+zlabel('z direction');
 
 %%%
 %
@@ -38,9 +44,9 @@ set(f1,'position',[858 37 500 760]);
 
 
 subplot(2,1,1);
-hold on; plot(Xcc,F0(:,1)); box on;
-hold on; plot(Xcc,F0(:,round(end/2)));
-hold on; plot(Xcc,F0(:,end)); grid on;
+hold on; plot(Xcc,F0(end/2,:,1)); box on;
+hold on; plot(Xcc,F0(end/2,:,round(end/2)));
+hold on; plot(Xcc,F0(end/2,:,end)); grid on;
 set(gca,'xtick',-0.5:0.1:0.5);
 xlabel('x'); ylabel('f');
 title('function');
@@ -48,8 +54,8 @@ xlim([-0.5 0.5]);
 %
 subplot(2,1,2);
 %hold on; plot(Xce,FluxL(:,1)); box on;
-hold on; plot(Xce,FluxL(:,round(end/2)),'displayName','Left');
-hold on; plot(Xce,FluxR(:,round(end/2)),'displayName','right');
+hold on; plot(Xce,FluxL(end/2,:,round(end/2)),'displayName','Left');
+hold on; plot(Xce,FluxR(end/2,:,round(end/2)),'displayName','right');
 %hold on; plot(Xce,FluxL(:,round(end))); grid on;
 set(gca,'xtick',-0.5:0.1:0.5);
 xlabel('x'); ylabel('flux'); grid on;

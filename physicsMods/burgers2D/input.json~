@@ -1,0 +1,37 @@
+{
+"Xgrid":{
+         "Xmin":-0.5,
+         "Xmax":0.5,
+         "nX":200,
+         "nXg":2 // number of guard cells each end
+        },
+"Zgrid":{
+         "Zmin":-0.5,
+         "Zmax":0.5,
+         "nZ":4,
+         "nZg":2 // number of guard cells each end
+        },
+"Time" :{
+         "dtOut":0.02,     // output time intervals
+         "tOutSteps":20,   // number of output setps
+         "dtFrac":2.0     // dtSim = dtMax/dtFrac
+       },
+"Physics" :{
+         "Xtype":"Gaussian", // initial profile
+         "Xa":1.0,  // amplitude
+         "Xb":0.0,  // x-shift
+         "Xc":0.1,  // width
+         "Xd":0.0,  // y-shift
+         "Ztype":"constant", // initial profile
+         "Za":0.0,  // amplitude
+         "Zb":0.0,  // x-shift
+         "Zc":0.0,  // width
+         "Zd":1.0,  // y-shift
+         "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+         //"diffC":0.00, // diffusion coefficient
+         "diffC":0.002, // diffusion coefficient
+         "order":2,     // order in time (1 or 2)
+         "fluxDir":1   // flux directin (+/-1)
+       }
+}
+
