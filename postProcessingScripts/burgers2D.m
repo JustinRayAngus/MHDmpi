@@ -30,7 +30,7 @@ Flux  = hdf5read(thisFile,'Flux_x');
 tout= hdf5read(thisFile,'tout');
 
 
-f11=figure(11); 
+f11=figure(12); 
 %set(f1,'position',[1030 925 1100 420]);
 set(f11,'position',[1800 360 500 760]);
 subplot(2,1,1);
@@ -52,15 +52,18 @@ colormap(map)
 %%%
 %
 %close(figure(1));
-f1=figure(1); 
+f1=figure(2); 
 %set(f1,'position',[1030 925 1100 420]);
 set(f1,'position',[1190 360 500 760]);
 
 
 subplot(2,1,1);
-hold on; plot(Xcc,F0(end/2,:,1)); box on;
-hold on; plot(Xcc,F0(end/2,:,round(end/2)));
-hold on; plot(Xcc,F0(end/2,:,end)); grid on;
+hold on; plot(Xcc,F0(end/2,:,1),'black'); box on;
+hold on; plot(Xcc,F0(end/2,:,round(end/2)),'b');
+hold on; plot(Xcc,F0(end/2,:,end),'r'); grid on;
+%hold on; plot(Zcc,F0(:,end/2,1)); box on;
+%hold on; plot(Zcc,F0(:,end/2,round(end/2)));
+%hold on; plot(Zcc,F0(:,end/2,end)); grid on;
 set(gca,'xtick',-0.5:0.1:0.5);
 xlabel('x'); ylabel('f');
 title('function');

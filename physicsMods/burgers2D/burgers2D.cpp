@@ -168,10 +168,10 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
   
 
    Xgrid.setInitialProfile(F0,Phys);
-   if(procID==0) setXminBoundary(F0, 0.0, 0.0);   
-   if(procID==numProcs-1) setXmaxBoundary(F0, 0.0, 0.0); 
-   setZminBoundary(F0, 0.0, 0.0);  
-   setZmaxBoundary(F0, 0.0, 0.0);  
+   if(procID==0) setXminBoundary(F0, 0.0, 1.0);   
+   if(procID==numProcs-1) setXmaxBoundary(F0, 0.0, 1.0); 
+   setZminBoundary(F0, 0.0, 1.0);  
+   setZmaxBoundary(F0, 0.0, 1.0);  
    Xgrid.communicate(F0);
    F0old  = F0;
    computeFluxes(Xgrid,1); // inital calculation before add to output   
@@ -218,10 +218,10 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 
    // apply boundary conditions, communicate, compute Flux
    //
-   if(procID==0) setXminBoundary(F0, 0.0, 0.0);   
-   if(procID==numProcs-1) setXmaxBoundary(F0, 0.0, 0.0);   
-   setZminBoundary(F0, 0.0, 0.0);
-   setZmaxBoundary(F0, 0.0, 0.0);
+   if(procID==0) setXminBoundary(F0, 0.0, 1.0);   
+   if(procID==numProcs-1) setXmaxBoundary(F0, 0.0, 1.0);   
+   setZminBoundary(F0, 0.0, 1.0);
+   setZmaxBoundary(F0, 0.0, 1.0);
    Xgrid.communicate(F0);
    computeFluxes(Xgrid,order); // compute RHS using F0(n+1/2)
 
@@ -238,10 +238,10 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 
    // apply boundary conditions, communicate, compute Flux
    //
-   if(procID==0) setXminBoundary(F0, 0.0, 0.0);   
-   if(procID==numProcs-1) setXmaxBoundary(F0, 0.0, 0.0);   
-   setZminBoundary(F0, 0.0, 0.0);
-   setZmaxBoundary(F0, 0.0, 0.0);
+   if(procID==0) setXminBoundary(F0, 0.0, 1.0);   
+   if(procID==numProcs-1) setXmaxBoundary(F0, 0.0, 1.0);   
+   setZminBoundary(F0, 0.0, 1.0);
+   setZmaxBoundary(F0, 0.0, 1.0);
    Xgrid.communicate(F0);
    computeFluxes(Xgrid,1);
    

@@ -427,7 +427,7 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    const double dX = Xgrid.dX;
    const double dZ = Xgrid.dX;
    double dtmaxDif = 0.5/K*(dX*dX+dZ*dZ)/(dX*dX+dZ*dZ);
-   double dtmaxAdv = dX/Umax;
+   double dtmaxAdv = 0.5*dX*dZ/(dX+dZ)/Umax;
    double dtmax = min(dtmaxDif,dtmaxAdv);
    dtSim = min(dtmax/tDom.dtFrac,tDom.dtOut);
    if(procID==0) {

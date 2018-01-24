@@ -11,7 +11,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-numProcs = 4;
+numProcs = 1;
 filePath = '../physicsMods/sodShock/';
 %filePath = '../physicsMods/testing/';
 
@@ -43,7 +43,7 @@ tout= hdf5read(thisFile,'tout');
 %%%
 %
 
-f1=figure(1); 
+f1=figure(21); 
 set(f1,'position',[540 1 900 800]);
 %set(f1,'position',[341 436 900 840]);
 
