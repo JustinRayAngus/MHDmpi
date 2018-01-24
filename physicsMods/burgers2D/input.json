@@ -2,13 +2,13 @@
 "Xgrid":{
          "Xmin":-0.5,
          "Xmax":0.5,
-         "nX":200,
+         "nX":100,
          "nXg":2 // number of guard cells each end
         },
 "Zgrid":{
          "Zmin":-0.5,
          "Zmax":0.5,
-         "nZ":200,
+         "nZ":100,
          "nZg":2 // number of guard cells each end
         },
 "Time" :{

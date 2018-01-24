@@ -31,7 +31,7 @@
          //"diffC":0.00, // diffusion coefficient
          "diffC":0.002, // diffusion coefficient
          "order":2,     // order in time (1 or 2)
-         "XfluxDir":1   // flux directin (+/-1)
+         "XfluxDir":-1   // flux directin (+/-1)
        }
 }
 
