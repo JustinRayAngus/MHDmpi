@@ -288,7 +288,6 @@ void domainGrid::setInitialProfile(vector<vector<double>> &var,
    const int Nvar1 = var[0].size();
    Xprofile.assign(Nvar0,0.0); 
    Zprofile.assign(Nvar1,0.0); 
-   cout << "Zprofile size is " << Zprofile.size() << endl;
 
    if(Nvar0==nXce) { 
       Xvec.clear();
@@ -348,12 +347,9 @@ void domainGrid::setInitialProfile(vector<vector<double>> &var,
    
    //  set Z-profile
    //
-   cout << "Zprofile size is " << Zprofile.size() << endl;
    setInitialProfileArbDir(Zprofile,Zvec,Za,Zb,Zc,Zd,Ztype0);
 
-   cout << "Xprofile size is " << Xprofile.size() << endl;
-   cout << "Zprofile size is " << Zprofile.size() << endl;
-
+   
    //  multiply X and Z profiles together
    //
    for (auto i=0; i<Nvar0; i++) {
@@ -416,7 +412,7 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
       
       int Nmax = Xvec.size();
       for (auto i=0; i<Nmax; i++) {
-         (Xcc.at(i)<b) ? var.at(i)=a : var.at(i)=c;
+         (Xvec.at(i)<b) ? var.at(i)=a : var.at(i)=c;
       }   
    
    } else {
@@ -688,6 +684,8 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
    } // end METHOD=U1
 
    else if(METHOD == "QUICK") {   
+      
+      assert(nXg >= 2);
       // Use 2nd order QUICK upwinding
       //
       double Ui, ap, am;
@@ -937,6 +935,8 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
    //
    for (auto i=1; i<Nout-1; i++) {
     
+      assert(nXg >= 2);
+
       // calculate flux corrections for right going wave
       //
       DeltaFluxRL.at(i) = 0.5*(FlinR.at(i)   - FlinR.at(i-1)); // B2 scheme 
@@ -1053,6 +1053,8 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
       for (auto j=0; j<Nout1; j++) {
          if(dir==0) { // X-Flux
 
+            assert(nXg >= 2);
+
             // calculate flux correction for right going wave
 	    //
             DeltaFluxRL[i][j] = 0.5*(FlinR[i][j]   - FlinR[i-1][j]); // B2 scheme
@@ -1074,6 +1076,8 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
 	 }
 	 if(dir==1) { // Z-flux
          
+            assert(nZg >= 2);
+
 	    // calculate flux correction for right going wave
 	    //
 	    DeltaFluxRL[i][j] = 0.5*(FlinR[i][j]   - FlinR[i][j-1]); // B2 scheme 
