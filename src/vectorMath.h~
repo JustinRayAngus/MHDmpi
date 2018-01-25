@@ -37,8 +37,9 @@ vector<vector<T>> operator+(const vector<vector<T>>& a, const vector<vector<T>>&
    const int jmax = a[0].size();
    assert(a.size() == b.size());
    assert(a[0].size() == b[0].size());
-
-   vector< vector<T> > result;
+   
+   /*
+   vector<vector<T>> result;
    vector<T> rvec;
    
    for (auto i=0; i<imax; i++) {
@@ -53,7 +54,15 @@ vector<vector<T>> operator+(const vector<vector<T>>& a, const vector<vector<T>>&
        }
        rvec.clear();
    }
-
+   */
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   
+   for (auto i=0; i<imax; i++) {
+      for (auto j=0; j<jmax; j++) {
+         result[i][j] = a[i][j]+b[i][j];
+      }
+   }
+   
    return result;
 }
 
@@ -65,12 +74,9 @@ vector<vector<T>> operator+(const vector<vector<T>>& a, const T& b)
    const int imax = a.size();
    const int jmax = a[0].size();
 
-   vector< vector<T> > result;
-   result.assign(imax,vector<T>(jmax));
-   vector< vector<T> > bmatrix;
-   vector<T> bvector(jmax,b);
-   bmatrix.assign(imax,bvector);
-   
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   const vector<T>   bvector(jmax,b);
+   const vector<vector<T>> bmatrix(imax,bvector);
    result = a + bmatrix;
 
    return result;
@@ -84,8 +90,7 @@ vector<vector<T>> operator+(const T& b, const vector<vector<T>>& a)
    const int imax = a.size();
    const int jmax = a[0].size();
 
-   vector< vector<T> > result;
-   result.assign(imax,vector<T>(jmax));
+   vector<vector<T>> result(imax,vector<T>(jmax));
    result = a + b;
 
    return result;
@@ -101,6 +106,7 @@ vector<vector<T>> operator-(const vector<vector<T>>& a, const vector<vector<T>>&
    assert(a.size() == b.size());
    assert(a[0].size() == b[0].size());
 
+   /*
    vector< vector<T> > result;
    vector<T> rvec;
    
@@ -116,6 +122,14 @@ vector<vector<T>> operator-(const vector<vector<T>>& a, const vector<vector<T>>&
        }
        rvec.clear();
    }
+   */
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   
+   for (auto i=0; i<imax; i++) {
+      for (auto j=0; j<jmax; j++) {
+         result[i][j] = a[i][j]-b[i][j];
+      }
+   }
 
    return result;
 }
@@ -128,12 +142,9 @@ vector<vector<T>> operator-(const vector<vector<T>>& a, const T& b)
    const int imax = a.size();
    const int jmax = a[0].size();
 
-   vector< vector<T> > result;
-   result.assign(imax,vector<T>(jmax));
-   vector< vector<T> > bmatrix;
-   vector<T> bvector(jmax,b);
-   bmatrix.assign(imax,bvector);
-   
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   const vector<T>   bvector(jmax,b);
+   const vector<vector<T>> bmatrix(imax,bvector);
    result = a - bmatrix;
 
    return result;
@@ -147,12 +158,9 @@ vector<vector<T>> operator-(const T& b, const vector<vector<T>>& a)
    const int imax = a.size();
    const int jmax = a[0].size();
 
-   vector< vector<T> > result;
-   result.assign(imax,vector<T>(jmax));
-   vector< vector<T> > bmatrix;
-   vector<T> bvector(jmax,b);
-   bmatrix.assign(imax,bvector);
-   
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   const vector<T>   bvector(jmax,b);
+   const vector<vector<T>> bmatrix(imax,bvector);
    result = bmatrix - a;
 
    return result;
@@ -166,8 +174,7 @@ vector<vector<T>> operator-(const vector<vector<T>> &a)
    const int imax = a.size();
    const int jmax = a[0].size();
    
-   vector<vector<T>> result;
-   result.assign(imax,vector<T>(jmax));
+   vector<vector<T>> result(imax,vector<T>(jmax));
    result = -1.0*a;
 
    return result;
@@ -183,7 +190,8 @@ vector<vector<T>> operator*(const vector<vector<T>>& a, const vector<vector<T>>&
    assert(a.size() == b.size());
    assert(a[0].size() == b[0].size());
 
-   vector< vector<T> > result;
+   /*
+   vector<vector<T>> result;
    vector<T> rvec;
    
    for (auto i=0; i<imax; i++) {
@@ -198,6 +206,15 @@ vector<vector<T>> operator*(const vector<vector<T>>& a, const vector<vector<T>>&
        }
        rvec.clear();
    }
+   */
+
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   
+   for (auto i=0; i<imax; i++) {
+      for (auto j=0; j<jmax; j++) {
+         result[i][j] = a[i][j]*b[i][j];
+      }
+   }
 
    return result;
 }
@@ -210,11 +227,9 @@ vector<vector<T>> operator*(const T b, const vector<vector<T>>& a)
    const int imax = a.size();
    const int jmax = a[0].size();
    
-   vector<vector<T>> result;
-   result.assign(imax,vector<T>(jmax));
-   vector<vector<T>> bmatrix;
-   vector<T> bvector(jmax,b);
-   bmatrix.assign(imax,bvector);
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   const vector<T>   bvector(jmax,b);
+   const vector<vector<T>> bmatrix(imax,bvector);
    result = a*bmatrix;
 
    return result;
@@ -228,11 +243,9 @@ vector<vector<T>> operator*(const vector<vector<T>>& a, const T b)
    const int imax = a.size();
    const int jmax = a[0].size();
    
-   vector<vector<T>> result;
-   result.assign(imax,vector<T>(jmax));
-   vector< vector<T> > bmatrix;
-   vector<T> bvector(jmax,b);
-   bmatrix.assign(imax,bvector);
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   const vector<T>   bvector(jmax,b);
+   const vector<vector<T>> bmatrix(imax,bvector);
    result = a*bmatrix;
 
    return result;
@@ -247,7 +260,8 @@ vector<vector<T>> operator/(const vector<vector<T>>& a, const vector<vector<T>>&
    const int jmax = a[0].size();
    assert(a.size() == b.size());
    assert(a[0].size() == b[0].size());
-
+   
+   /*
    vector< vector<T> > result;
    vector<T> rvec;
    
@@ -263,6 +277,15 @@ vector<vector<T>> operator/(const vector<vector<T>>& a, const vector<vector<T>>&
        }
        rvec.clear();
    }
+   */
+
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   
+   for (auto i=0; i<imax; i++) {
+      for (auto j=0; j<jmax; j++) {
+         result[i][j] = a[i][j]/b[i][j];
+      }
+   }
 
    return result;
 }
@@ -275,11 +298,9 @@ vector<vector<T>> operator/(const vector<vector<T>>& a, const T b)
    const int imax = a.size();
    const int jmax = a[0].size();
    
-   vector<vector<T>> result;
-   result.assign(imax,vector<T>(jmax));
-   vector< vector<T> > bmatrix;
-   vector<T> bvector(jmax,b);
-   bmatrix.assign(imax,bvector);
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   const vector<T>   bvector(jmax,b);
+   const vector<vector<T>> bmatrix(imax,bvector);
    result = a/bmatrix;
 
    return result;
@@ -293,11 +314,9 @@ vector<vector<T>> operator/(const T b, const vector<vector<T>>& a)
    const int imax = a.size();
    const int jmax = a[0].size();
    
-   vector<vector<T>> result;
-   result.assign(imax,vector<T>(jmax));
-   vector< vector<T> > bmatrix;
-   vector<T> bvector(jmax,b);
-   bmatrix.assign(imax,bvector);
+   vector<vector<T>> result(imax,vector<T>(jmax));
+   const vector<T>   bvector(jmax,b);
+   vector<vector<T>> bmatrix(imax,bvector);
    result = bmatrix/a;
 
    return result;
@@ -531,6 +550,7 @@ double max(const vector<double> &fin);
 
 double vanleer(const double a, const double b);
 double minmod(const double a, const double b);
+double superbee(const double a, const double b);
 
 
 // operators for vector<vector>

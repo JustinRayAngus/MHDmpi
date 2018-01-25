@@ -70,7 +70,7 @@ axis([-0.5 0.5 0 1.2]);
 subplot(2,2,3);
 hold on; plot(Xcc,P(:,1),'black'); box on;
 hold on; plot(Xcc,P(:,4),'b');
-hold on; plot(Xcc,P(:,6),'r'); grid on;
+hold on; plot(Xcc,P(:,8),'r'); grid on;
 set(gca,'xtick',-0.5:0.25:0.5);
 set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('P');

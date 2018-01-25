@@ -31,6 +31,7 @@
 
 #include "json/json.h"
 #include "vectorMath.h"
+#include "matrix2D.h"
 #include "domainGrid.h"
 #include "timeDomain.h"
 #include "HDF5dataFile.h"
@@ -50,6 +51,12 @@ vector<vector<double>> FluxLimLx, FluxLimRx, FluxRx, FluxLx;  // flux at cell-ed
 vector<vector<double>> FluxLimLz, FluxLimRz, FluxRz, FluxLz;  // flux at cell-edges   
 vector<vector<double>> FluxN_x, FluxMx_x, FluxMz_x, FluxE_x;
 vector<vector<double>> FluxN_z, FluxMx_z, FluxMz_z, FluxE_z;
+
+
+matrix2D<double> matA(2,2,1);
+matrix2D<double> matB;
+matrix2D<double> matC;
+
 
 void computeFluxes(const domainGrid&, const int);
 void setXminBoundary(vector<vector<double>>&, const double, const double);
@@ -75,15 +82,33 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
 
-   domainGrid* mesh = domainGrid::mesh;
-   cout << "mesh->nXcc = " << (*mesh).nXcc << endl;
-   cout << "mesh->nXcc = " << mesh->nXcc << endl;
+   //domainGrid* mesh = domainGrid::mesh;
+   //cout << "mesh->nXcc = " << (*mesh).nXcc << endl;
+   //cout << "mesh->nXcc = " << mesh->nXcc << endl;
 
    const int nXcc = Xgrid.Xcc.size();
    const int nXce = Xgrid.Xce.size();
    const int nZcc = Xgrid.Zcc.size();
    const int nZce = Xgrid.Zce.size();
    
+
+   //matA(nXcc,nZcc,1.0);
+   //matB(nXcc,nZcc,1.0);
+   matA.initialize(nXcc,nZcc,2.0);
+   matB.initialize(nXcc,nZcc,2.0);
+   matC.initialize(nXcc,nZcc,1.0);
+   matC = matC/matB;
+
+   cout << "matB.size0() = " << matB.size0() << endl;
+   cout << "matC.size0() = " << matC.size0() << endl;
+   //cout << "matA.nX      = " << matA.nX << endl;
+   cout << "matB.size1() = " << matB.size1() << endl;
+   cout << "matC.size1() = " << matC.size1() << endl;
+   //cout << "matA.nZ      = " << matA.nZ << endl;
+   cout << "matB(2,2)    = " << matB(2,2) << endl;
+   cout << "matC(2,2)    = " << matC(2,2) << endl;
+
+
    F0.assign(nXcc,vector<double>(nZcc,0.0));
    F0old.assign(nXcc,vector<double>(nZcc,0.0));
    N.assign(nXcc,vector<double>(nZcc,0.0));
@@ -253,10 +278,10 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    dataFile.add(FluxMz_z, "FluxMz_z", 1);  
    dataFile.add(FluxE_z,  "FluxE_z",  1);  
    //
-   dataFile.add(FluxLimLx, "FluxLimLx", 1);  
-   dataFile.add(FluxLimRx, "FluxLimRx", 1);  
-   dataFile.add(FluxRx, "FluxRx", 1);
-   dataFile.add(FluxLx, "FluxLx", 1);
+   //dataFile.add(FluxLimLx, "FluxLimLx", 1);  
+   //dataFile.add(FluxLimRx, "FluxLimRx", 1);  
+   //dataFile.add(FluxRx, "FluxRx", 1);
+   //dataFile.add(FluxLx, "FluxLx", 1);
 
 } // end Physics.initilize
 
@@ -287,8 +312,8 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
                                  - thisdt*(FluxN_z[i][j] - FluxN_z[i][j-1])/Xgrid.dZ;
             Mx[i][j]= Mxold[i][j]- thisdt*(FluxMx_x[i][j]-FluxMx_x[i-1][j])/Xgrid.dX
                                  - thisdt*(FluxMx_z[i][j]-FluxMx_z[i][j-1])/Xgrid.dZ;
-            //Mz[i][j]= Mzold[i][j]- 0.0*thisdt*(FluxMz_x[i][j]-FluxMz_x[i-1][j])/Xgrid.dX
-            //                     - 0.0*thisdt*(FluxMz_z[i][j]-FluxMz_z[i][j-1])/Xgrid.dZ;
+            Mz[i][j]= Mzold[i][j]- thisdt*(FluxMz_x[i][j]-FluxMz_x[i-1][j])/Xgrid.dX
+                                 - thisdt*(FluxMz_z[i][j]-FluxMz_z[i][j-1])/Xgrid.dZ;
             E[i][j] = Eold[i][j] - thisdt*(FluxE_x[i][j] - FluxE_x[i-1][j])/Xgrid.dX
                                  - thisdt*(FluxE_z[i][j] - FluxE_z[i][j-1])/Xgrid.dZ;
          }
@@ -509,7 +534,8 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    
    vector<vector<double>> Cchar;
    double Cmax;
-   Cchar = abs(Vx)+Cs;
+   //Cchar = abs(Vx)+Cs;
+   Cchar = sqrt(Vx*Vx+Vz*Vz)+Cs;
    Cmax = max(Cchar);
    //cout << "Cmax = " << Cmax << endl;
 
@@ -518,8 +544,8 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    
    double dtmax = 0.5*dX*dZ/(dX+dZ)/Cmax;
    dtSim = min(dtmax/tDom.dtFrac,tDom.dtOut);
-   //if(procID==0) {
-   //   cout << "max stable time step is " << dtmax << endl;
-   //}
+   if(procID==0) {
+      cout << "max stable time step is " << dtmax << endl;
+   }
 }
 

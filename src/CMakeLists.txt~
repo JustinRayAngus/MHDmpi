@@ -39,7 +39,7 @@ set(CMAKE_C_COMPILER mpicc)
 set(sources 
    main.cpp
    domainGrid.cpp
-   matrix2D.cpp
+   marix2D.cpp
    vectorMath.cpp
    timeDomain.cpp
    HDF5dataFile.cpp

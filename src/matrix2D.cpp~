@@ -1,0 +1,199 @@
+/***
+ *
+ * matrix2D class source file
+ *
+***/
+
+#ifndef matrix2D_cpp
+#define matrix2D_cpp
+
+
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <math.h>
+#include <cmath>
+#include <typeinfo>
+#include <algorithm>
+#include <mpi.h>
+#include <assert.h>
+#include <vector>
+
+#include "vectorMath.h"
+//#include "domainGrid.h"
+#include "matrix2D.h"
+
+using namespace std;
+
+
+template<typename T>
+matrix2D<T>::matrix2D() 
+{
+   // do nothing for default constructor
+}
+
+template<typename T>
+matrix2D<T>::matrix2D(unsigned thisnX, unsigned thisnZ, const T& C0) 
+{
+
+   nX = thisnX;
+   nZ = thisnZ;
+   const unsigned nVec = nX*nZ;
+   
+   VecXZ.assign(nVec,C0);   
+
+}
+
+template<typename T>
+matrix2D<T>::matrix2D(const matrix2D<T>& rhs)
+{
+   VecXZ = rhs.VecXZ;
+   nX = rhs.nX;
+   nZ = rhs.nZ;
+}
+
+template<typename T>
+matrix2D<T>::~matrix2D() {}
+
+
+template<typename T>
+void matrix2D<T>::initialize(const int thisnX, const int thisnZ, const T& C0)
+{
+   //MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+   //MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
+
+   nX = thisnX;
+   nZ = thisnZ;
+   const int nVec = nX*nZ;
+   cout << "VecXZ.size() = " << VecXZ.size() << endl;
+   VecXZ.assign(nVec,C0);
+   cout << "VecXZ.size() = " << VecXZ.size() << endl;
+
+}
+
+template<typename T>
+T& matrix2D<T>::operator()(const unsigned& iX, const unsigned& jZ)
+{
+   return VecXZ.at(iX*nZ + jZ);
+}
+
+template<typename T>
+const T& matrix2D<T>::operator()(const unsigned& iX, const unsigned& jZ) const
+{
+   return VecXZ.at(iX*nZ + jZ);
+}
+
+
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator=(const matrix2D& rhs)
+{
+   unsigned rhs_nX = rhs.size0();
+   unsigned rhs_nZ = rhs.size1();
+   if(rhs_nX != nX || rhs_nZ != nZ ) {
+      cout << "tring to set matrix2D of different sizes equal to each other" << endl;
+      exit(EXIT_FAILURE);
+   }
+   else {	   
+      //unsigned rhs_nVec = rhs_nX*rhs_nZ;
+      //VecXZ.assign(rhs_nVec,rhs.VecXZ);
+      VecXZ = rhs.VecXZ;
+      return *this;
+      //return &rhs;
+   }
+   //return *this;
+}
+
+
+// add two matricies together
+//
+template<typename T>
+matrix2D<T> matrix2D<T>::operator+(const matrix2D& rhs)
+{
+   vector<T> resultVec;
+   matrix2D<T> resultMat;
+
+   unsigned rhs_nX = rhs.size0();
+   unsigned rhs_nZ = rhs.size1();
+   if(rhs_nX != nX || rhs_nZ != nZ ) {
+      cout << "tring to add two matrix2D of different sizes" << endl;
+      exit(EXIT_FAILURE);
+   }
+   else {	  
+      resultVec = VecXZ+rhs.VecXZ;
+      resultMat.nX = rhs_nX;
+      resultMat.nZ = rhs_nZ;
+      resultMat.VecXZ = resultVec;
+      return resultMat;
+   }
+   //return *this;
+}
+
+
+// subtract two matricies
+//
+template<typename T>
+matrix2D<T> matrix2D<T>::operator-(const matrix2D& rhs)
+{
+   vector<T> resultVec;
+   matrix2D<T> resultMat;
+
+   unsigned rhs_nX = rhs.size0();
+   unsigned rhs_nZ = rhs.size1();
+   if(rhs_nX != nX || rhs_nZ != nZ ) {
+      cout << "tring to subtract two matrix2D of different sizes" << endl;
+      exit(EXIT_FAILURE);
+   }
+   else {	  
+      resultVec = VecXZ-rhs.VecXZ;
+      resultMat.nX = rhs_nX;
+      resultMat.nZ = rhs_nZ;
+      resultMat.VecXZ = resultVec;
+      return resultMat;
+   }
+   //return *this;
+}
+
+
+// multiply two matricies
+//
+template<typename T>
+matrix2D<T> matrix2D<T>::operator*(const matrix2D& rhs)
+{
+   vector<T> resultVec;
+   matrix2D<T> resultMat;
+
+   unsigned rhs_nX = rhs.size0();
+   unsigned rhs_nZ = rhs.size1();
+   if(rhs_nX != nX || rhs_nZ != nZ ) {
+      cout << "tring to subtract two matrix2D of different sizes" << endl;
+      exit(EXIT_FAILURE);
+   }
+   else {	  
+      resultVec = VecXZ*rhs.VecXZ;
+      resultMat.nX = rhs_nX;
+      resultMat.nZ = rhs_nZ;
+      resultMat.VecXZ = resultVec;
+      return resultMat;
+   }
+   //return *this;
+}
+
+
+template<typename T>
+unsigned matrix2D<T>::size0() const
+{
+   return this->nX;
+   //return nX;
+}
+
+template<typename T>
+unsigned matrix2D<T>::size1() const
+{
+   return this->nZ;
+   //return nZ;
+}
+
+
+
+#endif

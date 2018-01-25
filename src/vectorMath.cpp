@@ -212,16 +212,17 @@ vector<vector<double>> sqrt(const vector<vector<double>> &fin) {
 
    const int imax = fin.size();
    const int jmax = fin[0].size();
-   vector<vector<double>> result;
-   result.assign(imax,vector<double>(jmax));
+   vector<vector<double>> result(imax,vector<double>(jmax));
 
    for (auto i=0; i<imax; i++) {
        for (auto j=0; j<jmax; j++) {
            result[i][j] = sqrt(fin[i][j]);
+	   /*
 	   if(result[i][j] != result[i][j]) {
 	       cout << "ERROR: sqrt() on matrix returning complex results !!! " << endl;
                exit (EXIT_FAILURE);
-	   }    
+	   }
+           */	   
        }
    }
 
@@ -232,8 +233,7 @@ vector<vector<double>> log(const vector<vector<double>> &fin) {
 
    const int imax = fin.size();
    const int jmax = fin[0].size();
-   vector<vector<double>> result;
-   result.assign(imax,vector<double>(jmax));
+   vector<vector<double>> result(imax,vector<double>(jmax));
 
    for (auto i=0; i<imax; i++) {
        for (auto j=0; j<jmax; j++) {
@@ -248,8 +248,7 @@ vector<vector<double>> tanh(const vector<vector<double>> &fin) {
 
    const int imax = fin.size();
    const int jmax = fin[0].size();
-   vector<vector<double>> result;
-   result.assign(imax,vector<double>(jmax));
+   vector<vector<double>> result(imax,vector<double>(jmax));
 
    for (auto i=0; i<imax; i++) {
        for (auto j=0; j<jmax; j++) {
@@ -264,8 +263,7 @@ vector<vector<double>> cos(const vector<vector<double>> &fin) {
 
    const int imax = fin.size();
    const int jmax = fin[0].size();
-   vector<vector<double>> result;
-   result.assign(imax,vector<double>(jmax));
+   vector<vector<double>> result(imax,vector<double>(jmax));
 
    for (auto i=0; i<imax; i++) {
        for (auto j=0; j<jmax; j++) {
@@ -280,8 +278,7 @@ vector<vector<double>> sin(const vector<vector<double>> &fin) {
 
    const int imax = fin.size();
    const int jmax = fin[0].size();
-   vector<vector<double>> result;
-   result.assign(imax,vector<double>(jmax));
+   vector<vector<double>> result(imax,vector<double>(jmax));
 
    for (auto i=0; i<imax; i++) {
        for (auto j=0; j<jmax; j++) {
@@ -296,17 +293,18 @@ vector<vector<double>> pow(const vector<vector<double>> &fin, const double expon
 
    const int imax = fin.size();
    const int jmax = fin[0].size();
-   vector<vector<double>> result;
-   result.assign(imax,vector<double>(jmax));
+   vector<vector<double>> result(imax,vector<double>(jmax));
 
    for (auto i=0; i<imax; i++) {
        for (auto j=0; j<jmax; j++) {
            result[i][j] = pow(fin[i][j],exponent);
 	   // check for imaginary stuff
+	   /*
 	   if(result[i][j] != result[i][j]) {
 	       cout << "ERROR: pow() on matrix returning complex results !!! " << endl;
                exit (EXIT_FAILURE);
-	   }    
+	   } 
+	   */   
        }
    }
 
@@ -317,8 +315,7 @@ vector<vector<double>> abs(const vector<vector<double>> &fin) {
 
    const int imax = fin.size();
    const int jmax = fin[0].size();
-   vector<vector<double>> result;
-   result.assign(imax,vector<double>(jmax));
+   vector<vector<double>> result(imax,vector<double>(jmax));
 
    for (auto i=0; i<imax; i++) {
        for (auto j=0; j<jmax; j++) {
