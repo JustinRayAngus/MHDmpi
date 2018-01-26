@@ -15,7 +15,7 @@ numProcs = 1;
 filePath = '../physicsMods/sodShock2D/';
 %filePath = '../physicsMods/testing/';
 
-fluxDir = 0; % 0 for x and 1 for z
+fluxDir = 1; % 0 for x and 1 for z
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
@@ -26,6 +26,8 @@ Xcc = hdf5read(thisFile,'Xcc');
 Xce = hdf5read(thisFile,'Xce');
 Zcc = hdf5read(thisFile,'Zcc');
 Zce = hdf5read(thisFile,'Zce');
+
+matA = hdf5read(thisFile,'matA');
 N  = hdf5read(thisFile,'N');
 Mx = hdf5read(thisFile,'Mx');
 Mz = hdf5read(thisFile,'Mz');

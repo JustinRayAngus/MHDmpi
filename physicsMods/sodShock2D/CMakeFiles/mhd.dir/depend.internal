@@ -68,6 +68,9 @@ CMakeFiles/mhd.dir/HDF5dataFile.cpp.o
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/hdf5.h
  /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.cpp
  /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.h
+ /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp
+ /Users/angus1/Programs/MHDmpi/src/matrix2D.h
+ /Users/angus1/Programs/MHDmpi/src/vectorMath.h
  /opt/local/include/openmpi-gcc5/mpi.h
  /opt/local/include/openmpi-gcc5/mpi_portable_platform.h
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/comm.h
@@ -105,6 +108,8 @@ CMakeFiles/mhd.dir/domainGrid.cpp.o
  /Users/angus1/Programs/MHDmpi/src/domainGrid.cpp
  /Users/angus1/Programs/MHDmpi/src/domainGrid.h
  /Users/angus1/Programs/MHDmpi/src/json/json.h
+ /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp
+ /Users/angus1/Programs/MHDmpi/src/matrix2D.h
  /Users/angus1/Programs/MHDmpi/src/vectorMath.h
  /opt/local/include/openmpi-gcc5/mpi.h
  /opt/local/include/openmpi-gcc5/mpi_portable_platform.h
@@ -212,6 +217,8 @@ CMakeFiles/mhd.dir/main.cpp.o
  /Users/angus1/Programs/MHDmpi/src/domainGrid.h
  /Users/angus1/Programs/MHDmpi/src/json/json.h
  /Users/angus1/Programs/MHDmpi/src/main.cpp
+ /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp
+ /Users/angus1/Programs/MHDmpi/src/matrix2D.h
  /Users/angus1/Programs/MHDmpi/src/timeDomain.h
  /Users/angus1/Programs/MHDmpi/src/vectorMath.h
  /opt/local/include/openmpi-gcc5/mpi.h

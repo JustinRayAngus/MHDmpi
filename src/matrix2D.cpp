@@ -2,6 +2,8 @@
  *
  * matrix2D class source file
  *
+ *https://stackoverflow.com/questions/4421706/what-are-the-basic-rules-and-idioms-for-operator-overloading/4421719#4421719
+ *
 ***/
 
 #ifndef matrix2D_cpp
@@ -73,13 +75,13 @@ void matrix2D<T>::initialize(const int thisnX, const int thisnZ, const T& C0)
 }
 
 template<typename T>
-T& matrix2D<T>::operator()(const unsigned& iX, const unsigned& jZ)
+T& matrix2D<T>::operator()(const unsigned iX, const unsigned jZ)
 {
    return VecXZ.at(iX*nZ + jZ);
 }
 
 template<typename T>
-const T& matrix2D<T>::operator()(const unsigned& iX, const unsigned& jZ) const
+const T matrix2D<T>::operator()(const unsigned iX, const unsigned jZ) const
 {
    return VecXZ.at(iX*nZ + jZ);
 }
@@ -105,6 +107,16 @@ matrix2D<T>& matrix2D<T>::operator=(const matrix2D& rhs)
 }
 
 
+// update matrix by adding another to it using +=
+//
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator+=(const matrix2D& rhs)
+{
+   matrix2D<T> result = (*this) + rhs;
+   (*this) = result;   
+   return *this;
+}
+
 // add two matricies together
 //
 template<typename T>
@@ -127,6 +139,16 @@ matrix2D<T> matrix2D<T>::operator+(const matrix2D& rhs)
       return resultMat;
    }
    //return *this;
+}
+
+// update matrix by subtracting another from it using -=
+//
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator-=(const matrix2D& rhs)
+{
+   matrix2D<T> result = (*this) - rhs;
+   (*this) = result;   
+   return *this;
 }
 
 
@@ -180,6 +202,16 @@ matrix2D<T> matrix2D<T>::operator*(const matrix2D& rhs)
 }
 
 
+// multiply matrix by another matrix using *=
+//
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator*=(const matrix2D& rhs)
+{
+   matrix2D<T> result = (*this) * rhs;
+   (*this) = result;   
+   return *this;
+}
+
 // divide two matricies
 //
 template<typename T>
@@ -205,6 +237,119 @@ matrix2D<T> matrix2D<T>::operator/(const matrix2D& rhs)
 }
 
 
+// update matrix by dividing it by another using /=
+//
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator/=(const matrix2D& rhs)
+{
+   matrix2D<T> result = (*this) / rhs;
+   (*this) = result;   
+   return *this;
+}
+
+// add a scalar value to a matrix on rhs
+//
+template<typename T>
+matrix2D<T> matrix2D<T>::operator+(const T& rhs)
+{
+   vector<T> resultVec;
+   matrix2D<T> resultMat;
+
+   resultMat.nX = this->size0();
+   resultMat.nZ = this->size1();
+   resultVec = rhs+VecXZ;
+   resultMat.VecXZ = resultVec;
+   return resultMat;
+}
+
+// add scalar to matrix on rhs
+//
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator+=(const T& rhs)
+{
+   matrix2D<T> result = (*this) + rhs;
+   (*this) = result;
+   return *this;
+}
+
+
+template<typename T>
+matrix2D<T> matrix2D<T>::operator-(const T& rhs)
+{
+   vector<T> resultVec;
+   matrix2D<T> resultMat;
+
+   resultMat.nX = this->size0();
+   resultMat.nZ = this->size1();
+   resultVec = VecXZ-rhs;
+   resultMat.VecXZ = resultVec;
+   return resultMat;
+}
+
+// subtract scalar from matrix on rhs
+//
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator-=(const T& rhs)
+{
+   matrix2D<T> result = (*this) - rhs;
+   (*this) = result;
+   return *this;
+}
+
+// multiply matrix by a scalar on rhs
+//
+template<typename T>
+matrix2D<T> matrix2D<T>::operator*(const T& rhs)
+{
+   vector<T> resultVec;
+   matrix2D<T> resultMat;
+
+   resultMat.nX = this->size0();
+   resultMat.nZ = this->size1();
+   resultVec = rhs*VecXZ;
+   resultMat.VecXZ = resultVec;
+   return resultMat;
+}
+
+// multiply matrix by a scalar on rhs
+//
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator*=(const T& rhs)
+{
+   matrix2D<T> result = (*this) * rhs;
+   (*this) = result;
+   return *this;
+}
+
+// divide matrix by scalar on rhs
+//
+template<typename T>
+matrix2D<T> matrix2D<T>::operator/(const T& rhs)
+{
+   vector<T> resultVec;
+   matrix2D<T> resultMat;
+
+   resultMat.nX = this->size0();
+   resultMat.nZ = this->size1();
+   resultVec = VecXZ/rhs;
+   resultMat.VecXZ = resultVec;
+   return resultMat;
+}
+
+// multiply matrix by a scalar on rhs
+//
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator/=(const T& rhs)
+{
+   matrix2D<T> result = (*this) / rhs;
+   (*this) = result;
+   return *this;
+}
+
+
+////
+
+
 template<typename T>
 unsigned matrix2D<T>::size0() const
 {
@@ -219,6 +364,14 @@ unsigned matrix2D<T>::size1() const
    //return nZ;
 }
 
-
+/*
+template <typename T>
+matrix2D<T> abs(const matrix2D<T> &fin)
+{
+   matrix2D<T> resultMat(fin);
+   vector<T> = resultMat.VecXZ;
+   return resultMat;
+}
+*/
 
 #endif

@@ -7,7 +7,7 @@
 #ifndef domainGrid_h
 #define domainGrid_h
 
-
+#include "matrix2D.h"
 #include "json/json.h"
 
 using namespace std;
@@ -34,6 +34,7 @@ public:
   void initialize(const Json::Value&);
   void setInitialProfile(vector<double>&, const Json::Value&) const;
   void setInitialProfile(vector<vector<double>>&, const Json::Value&) const;
+  void setInitialProfile(matrix2D<double>&, const Json::Value&) const;
   void setInitialProfileArbDir(vector<double>&, const vector<double>&,
 		         const double, const double,
 		         const double, const double,	

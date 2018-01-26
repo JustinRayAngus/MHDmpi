@@ -2,13 +2,13 @@
 "Xgrid":{
          "Xmin":-0.5,
          "Xmax":0.5,
-         "nX":200,
+         "nX":2,
          "nXg":2 // number of guard cells each end
         },
 "Zgrid":{
          "Zmin":-0.5,
          "Zmax":0.5,
-         "nZ":2,
+         "nZ":200,
          "nZg":2 // number of guard cells each end
         },
 "Time":{
@@ -21,28 +21,28 @@
            "Nsub":2, // time solver order (1 or 2)
            "gammaC":1.4, // adiabatic coefficient
            "N":{
-                "Xtype":"step", // initial profile
-                "Xa":1.0,  // amplitude
+                "Xtype":"constant", // initial profile
+                "Xa":0.0,  // amplitude
                 "Xb":0.0,  // x-shift
-                "Xc":0.125,  // width
-                "Xd":0.0,  // y-shift
-                "Ztype":"constant", // initial profile
-                "Za":0.0,  // amplitude
+                "Xc":0.0,  // width
+                "Xd":1.0,  // y-shift
+                "Ztype":"step", // initial profile
+                "Za":1.0,  // amplitude
                 "Zb":0.0,  // x-shift
-                "Zc":0.0,  // width
-                "Zd":1.0  // y-shift
+                "Zc":0.125,  // width
+                "Zd":0.0  // y-shift
                },
            "P":{
-                "Xtype":"step", // initial profile
-                "Xa":1.0,  // left value
+                "Xtype":"constant", // initial profile
+                "Xa":0.0,  // left value
                 "Xb":0.0,  // x-shift
-                "Xc":0.1,  // right value
-                "Xd":0.0,     // nothing
-                "Ztype":"constant", // initial profile
-                "Za":0.0,  // amplitude
+                "Xc":0.0,  // right value
+                "Xd":1.0,     // nothing
+                "Ztype":"step", // initial profile
+                "Za":1.0,  // amplitude
                 "Zb":0.0,  // x-shift
-                "Zc":0.0,  // width
-                "Zd":1.0  // y-shift
+                "Zc":0.1,  // width
+                "Zd":0.0  // y-shift
                },
            "Vx":{
                 "Xtype":"const", // initial profile
