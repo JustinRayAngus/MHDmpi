@@ -97,7 +97,30 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    matA.initialize(nXcc,nZcc,2.0);
    matB.initialize(nXcc,nZcc,2.0);
    matC.initialize(nXcc,nZcc,1.0);
-   matC = matB*matB;
+   matC = matC/matB;
+   matC = matC*10.0;
+   matC *= matC;
+   matC = 10.0*matC;
+   matC *= 2.0;
+   matC += matC;
+   matC -= 0.5*matC;
+   matC /= matB;
+   matC += 1.0;
+   matC = matC+1.0;
+   matC = 1.0+matC;
+   matC /= matB;
+   matC = matC/10.0;
+   matC = matC-1.0;
+   matC = -10.0/matC;
+   matC = abs(matC);
+   matC = pow(matC,3.1);
+   matC = cos(matC);
+   matC = sin(matC);
+   matC = exp(matC);
+   matC = sqrt(matC);
+   matC = log(matC);
+   matC = tanh(matC);
+   matC(1,1) = -0.1;
 
    cout << "matB.size0() = " << matB.size0() << endl;
    cout << "matC.size0() = " << matC.size0() << endl;
@@ -107,6 +130,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    //cout << "matA.nZ      = " << matA.nZ << endl;
    cout << "matB(2,2)    = " << matB(2,2) << endl;
    cout << "matC(2,2)    = " << matC(2,2) << endl;
+   cout << "min(matC)    = " << min(matC) << endl;
+   cout << "max(matC)    = " << max(matC) << endl;
 
 
    F0.assign(nXcc,vector<double>(nZcc,0.0));
@@ -197,6 +222,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    const Json::Value Nvar = Phys.get("N",defValue);
    if(Nvar.isObject()) { 
       Xgrid.setInitialProfile(N,Nvar);
+      Xgrid.setInitialProfile(matA,Nvar);
       if(procID==0) setXminBoundary(N, 0.0, 1.0);   
       //if(procID==numProcs-1) setXmaxBoundary(N, 0.125);   
       if(procID==numProcs-1) setXmaxBoundary(N, 0.0, 1.0);   
@@ -257,7 +283,11 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    // and before first call to Physics.advance   
    computeFluxes(Xgrid,1);   
   
+   cout << "matA(2,10) = " << matA(2,10) << endl;
+   cout << "matA(2,150) = " << matA(2,150) << endl;
+
   
+   dataFile.add(matA, "matA", 0);  // density 
    dataFile.add(N, "N", 1);  // density 
    dataFile.add(Mx, "Mx", 1);  // momentum density 
    dataFile.add(Mz, "Mz", 1);  // momentum density 

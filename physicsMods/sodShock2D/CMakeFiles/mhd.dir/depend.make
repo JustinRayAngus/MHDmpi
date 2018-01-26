@@ -67,6 +67,9 @@ CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf
 CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/hdf5.h
 CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.cpp
 CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.h
+CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp
+CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /Users/angus1/Programs/MHDmpi/src/matrix2D.h
+CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /Users/angus1/Programs/MHDmpi/src/vectorMath.h
 CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /opt/local/include/openmpi-gcc5/mpi.h
 CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /opt/local/include/openmpi-gcc5/mpi_portable_platform.h
 CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/comm.h
@@ -104,6 +107,8 @@ CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /opt/local/include/openmpi-gcc5/openmpi/o
 CMakeFiles/mhd.dir/domainGrid.cpp.o: /Users/angus1/Programs/MHDmpi/src/domainGrid.cpp
 CMakeFiles/mhd.dir/domainGrid.cpp.o: /Users/angus1/Programs/MHDmpi/src/domainGrid.h
 CMakeFiles/mhd.dir/domainGrid.cpp.o: /Users/angus1/Programs/MHDmpi/src/json/json.h
+CMakeFiles/mhd.dir/domainGrid.cpp.o: /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp
+CMakeFiles/mhd.dir/domainGrid.cpp.o: /Users/angus1/Programs/MHDmpi/src/matrix2D.h
 CMakeFiles/mhd.dir/domainGrid.cpp.o: /Users/angus1/Programs/MHDmpi/src/vectorMath.h
 CMakeFiles/mhd.dir/domainGrid.cpp.o: /opt/local/include/openmpi-gcc5/mpi.h
 CMakeFiles/mhd.dir/domainGrid.cpp.o: /opt/local/include/openmpi-gcc5/mpi_portable_platform.h
@@ -211,6 +216,8 @@ CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/Physics.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/domainGrid.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/json/json.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/main.cpp
+CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp
+CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/matrix2D.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/timeDomain.h
 CMakeFiles/mhd.dir/main.cpp.o: /Users/angus1/Programs/MHDmpi/src/vectorMath.h
 CMakeFiles/mhd.dir/main.cpp.o: /opt/local/include/openmpi-gcc5/mpi.h

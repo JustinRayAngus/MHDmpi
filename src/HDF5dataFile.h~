@@ -7,6 +7,7 @@
 #ifndef HDF5dataFile_h
 #define HDF5dataFile_h
 
+#include "matrix2D.h"
 #include "H5Cpp.h"
 
 using namespace std;
@@ -23,6 +24,7 @@ public:
    void add(double &sclVar, const char *varName, int grow = 0);
    void add(vector<double> &vecVar, const char *varName, int grow = 0); 
    void add(vector<vector<double>> &vecvecVar, const char *varName, int grow = 0); 
+   void add(matrix2D<double> &mat2DVar, const char *varName, int grow = 0); 
    
    void writeAll(); // appends all growing variables in output file
 
@@ -36,11 +38,13 @@ private:
    void writeScl(const double&, const char*, const bool&);   
    void writeVec(const vector<double>&, const char*, const bool&);  
    void writeVecVec(const vector<vector<double>>&, const char*, const bool&); 
+   void writemat2D(const matrix2D<double>&, const char*, const bool&); 
    
    void appendIntInOutput(int*, const char*);
    void appendSclInOutput(double*, const char*);
    void appendVecInOutput(vector<double>*, const char*);
-   void appendVecVecInOutput(vector<vector<double>*>*, const char*);
+   void appendVecVecInOutput(vector<vector<double>>*, const char*);
+   void appendmat2DInOutput(matrix2D<double>*, const char*);
 
    template<class T>
       struct VarStr {
@@ -52,6 +56,7 @@ private:
    vector< VarStr<double> > sclVar_arr;
    vector< VarStr< vector<double> > > vecVar_arr;
    vector< VarStr< vector<vector<double>> > > vecvecVar_arr;
+   vector< VarStr< matrix2D<double> > mat2DVar_arr;
 
 };
 

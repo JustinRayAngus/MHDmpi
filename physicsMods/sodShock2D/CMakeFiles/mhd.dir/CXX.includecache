@@ -427,12 +427,16 @@ Physics.h
 /Users/angus1/Programs/MHDmpi/physicsMods/sodShock2D/Physics.h
 
 /Users/angus1/Programs/MHDmpi/src/./HDF5dataFile.h
+matrix2D.h
+/Users/angus1/Programs/MHDmpi/src/./matrix2D.h
 H5Cpp.h
 /Users/angus1/Programs/MHDmpi/src/./H5Cpp.h
 
 /Users/angus1/Programs/MHDmpi/src/./Physics.h
 
 /Users/angus1/Programs/MHDmpi/src/./domainGrid.h
+matrix2D.h
+/Users/angus1/Programs/MHDmpi/src/./matrix2D.h
 json/json.h
 /Users/angus1/Programs/MHDmpi/src/./json/json.h
 
@@ -525,6 +529,8 @@ matrix2D.h
 /Users/angus1/Programs/MHDmpi/src/./matrix2D.h
 vector
 -
+mpi.h
+-
 matrix2D.cpp
 /Users/angus1/Programs/MHDmpi/src/./matrix2D.cpp
 
@@ -579,12 +585,16 @@ vector
 -
 cmath
 -
+matrix2D.h
+/Users/angus1/Programs/MHDmpi/src/matrix2D.h
 H5Cpp.h
 /Users/angus1/Programs/MHDmpi/src/H5Cpp.h
 HDF5dataFile.h
 /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.h
 
 /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.h
+matrix2D.h
+/Users/angus1/Programs/MHDmpi/src/matrix2D.h
 H5Cpp.h
 /Users/angus1/Programs/MHDmpi/src/H5Cpp.h
 
@@ -619,10 +629,14 @@ json/json.h
 /Users/angus1/Programs/MHDmpi/src/json/json.h
 vectorMath.h
 /Users/angus1/Programs/MHDmpi/src/vectorMath.h
+matrix2D.h
+/Users/angus1/Programs/MHDmpi/src/matrix2D.h
 domainGrid.h
 /Users/angus1/Programs/MHDmpi/src/domainGrid.h
 
 /Users/angus1/Programs/MHDmpi/src/domainGrid.h
+matrix2D.h
+/Users/angus1/Programs/MHDmpi/src/matrix2D.h
 json/json.h
 /Users/angus1/Programs/MHDmpi/src/json/json.h
 
@@ -834,6 +848,8 @@ matrix2D.h
 
 /Users/angus1/Programs/MHDmpi/src/matrix2D.h
 vector
+-
+mpi.h
 -
 matrix2D.cpp
 /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp

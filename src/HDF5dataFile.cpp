@@ -17,6 +17,8 @@
 #include <vector>
 #include <cmath>
 
+#include "matrix2D.h"
+
 #include "H5Cpp.h"
 
 #include "HDF5dataFile.h"
@@ -104,6 +106,22 @@ void HDF5dataFile::add(vector<vector<double>> &varData, const char *varName, int
    writeVecVec(varData, varName, grow); // add variable to the output file
 }
 
+void HDF5dataFile::add(matrix2D<double> &varData, const char *varName, int grow) 
+{
+   if(varAdded(string(varName))) {
+      cout << "ERROR: Output variable " << string(varName) << " already added to datafile " << endl;
+      exit (EXIT_FAILURE);
+   }
+   VarStr< matrix2D<double> > mat2D;
+
+   mat2D.ptr  = &varData;
+   mat2D.name = string(varName);
+   mat2D.grow = (grow>0) ? true:false;
+
+   mat2DVar_arr.push_back(mat2D); // add variable to the list
+   writemat2D(varData, varName, grow); // add variable to the output file
+}
+
 void HDF5dataFile::writeAll()
 {
    //cout << "Growing ints are: " << endl;
@@ -136,6 +154,14 @@ void HDF5dataFile::writeAll()
       if(it->grow==1) {
          //cout << it->name << endl;
          appendVecVecInOutput(it->ptr, it->name.c_str());
+      }
+   }
+   //cout << "Growing matrix2D are: " << endl;
+   for(vector< VarStr< matrix2D<double> > >::iterator it = mat2DVar_arr.begin(); 
+       it != mat2DVar_arr.end(); it++) {
+      if(it->grow==1) {
+         //cout << it->name << endl;
+         appendmat2DInOutput(it->ptr, it->name.c_str());
       }
    }
 }
@@ -490,6 +516,92 @@ void HDF5dataFile::writeVecVec(const vector<vector<double>>& varData, const char
    }
 }
 
+void HDF5dataFile::writemat2D(const matrix2D<double>& varData, const char* varName, const bool& growVar)
+{     
+   // Open file and check to see if output variable already exists
+   //
+   H5File file(outputFile.c_str(), H5F_ACC_RDWR);
+   if(varExists(file,varName)) { // redundant, already checked in parent function
+      cout << "ERROR: Output variable " << varName << " already exists " << endl;
+	  exit (EXIT_FAILURE);
+   }
+   
+   int RANK;
+   PredType varType = PredType::NATIVE_DOUBLE;
+   
+   // Need to copy matrix2D to an array for writing purposes
+   //
+   const int numVars = varData.size0(); //cout << varData.size() << endl;
+   const int Nvar = varData.size1();
+   double data[numVars][Nvar];
+   for (auto j=0; j<numVars; j++) {
+      for (int i=0; i<Nvar; i++) {
+         data[j][i] = varData(j,i);
+      } 
+   }
+    
+   if(growVar) { // create extendable dataset
+      
+      RANK = 3;
+      hsize_t dimsf[RANK];
+      dimsf[0] = 1; 
+      dimsf[1] = numVars;
+      dimsf[2] = Nvar;
+      hsize_t mdimsf[3] = {H5S_UNLIMITED, varData.size0(), varData.size1()};
+      DataSpace mdataspace(RANK, dimsf, mdimsf); // memory dataspace
+      
+      DSetCreatPropList cparms;
+      hsize_t chunk_dims[3]={1, varData.size0(), varData.size1()}; // chunk size doesn't effect here
+      cparms.setChunk(RANK,chunk_dims);
+      
+      DataType datatype(varType);
+      DataSet dataset = file.createDataSet(varName, datatype, mdataspace, cparms);
+      
+      hsize_t size[3] = {1, varData.size0(), varData.size1()};
+      dataset.extend(size);
+      DataSpace dataspace = dataset.getSpace();
+      hsize_t offset[3] = {0,0,0};
+      hsize_t dims[3] = {1, varData.size0(), varData.size1()};
+      dataspace.selectHyperslab(H5S_SELECT_SET,dims,offset); // data dataspace
+               
+      dataset.write(data, varType, mdataspace, dataspace);
+      cout << "Extendable matrix2D " << varName << " added to " << outputFile << endl;    
+
+      // close opened stuff
+      //
+      dataset.close();
+      mdataspace.close();      
+      dataspace.close();
+      file.close();
+   
+   }
+   else { // create non-extendable dataset
+  
+      RANK = 2;
+      hsize_t dimsf[RANK];
+      dimsf[0] = numVars;
+      dimsf[1] = Nvar;
+      DataSpace dataspace(RANK, dimsf);
+      DataType datatype(varType);
+      DataSet dataset = file.createDataSet(varName, datatype, dataspace);
+      dataset.write(data, varType);
+      cout << "Non-extendable matrix2D " << varName << " added to " << outputFile << endl;   
+           
+      // close opened stuff
+      //
+      dataset.close();      
+      dataspace.close();
+      file.close();    
+   }
+} 
+
+
+
+
+
+
+
+
 void HDF5dataFile::appendIntInOutput(int* varData, const char* varName)
 {  
    H5File file(outputFile.c_str(), H5F_ACC_RDWR);
@@ -736,4 +848,75 @@ void HDF5dataFile::appendVecVecInOutput(vector<vector<double>>* varData, const c
 }
 
 
+void HDF5dataFile::appendmat2DInOutput(matrix2D<double>* varData, const char* varName)
+{  
+   H5File file(outputFile.c_str(), H5F_ACC_RDWR);
+   int RANK = 3;
+   PredType varType = PredType::NATIVE_DOUBLE;
+   
+   // Need to copy vectors to an array for writing purposes
+   //
+   const int numVars = varData->size0(); //cout << varData.size() << endl;
+   //vector<double> thisvarData = (*varData)[0];
+   const int Nvar = varData->size1();
+   double data[numVars][Nvar];
+   for (auto j=0; j<numVars; j++) {
+      //thisvarData = (*varData)[j];
+      for (int i=0; i<Nvar; i++) {
+         data[j][i] = (*varData)(j,i);
+      } 
+   }
+   //cout << varName << endl;
+   //cout << "JRA varData->size0() = " << varData->size0() << endl;
+   //cout << "JRA varData->size1() = " << Nvar << endl;
 
+   // open extendable dataset and get ID's to stuff
+   //
+   DataSet dataset = file.openDataSet(varName);
+   hid_t fileID, dsetID, dspaceID;
+   fileID = H5Fopen(outputFile.c_str(), H5F_ACC_RDONLY, H5P_DEFAULT);
+   dsetID = H5Dopen(fileID, varName, H5P_DEFAULT);
+   dspaceID = H5Dget_space(dsetID);
+   
+   // get dimensions of extendable dataset
+   //
+   const int ndims = H5Sget_simple_extent_ndims(dspaceID);
+   if(ndims == 1) {
+      cout << "ERROR: Trying to extend non-extendable variable " 
+		 << varName << endl;
+	exit (EXIT_FAILURE);
+   }
+   hsize_t dims[ndims];
+   H5Sget_simple_extent_dims(dspaceID,dims,NULL); // sets dims
+  
+   // extend dataset and write
+   //
+   hsize_t offset[RANK], size[RANK];
+   offset[0] = dims[0];
+   offset[1] = 0;
+   offset[2] = 0;
+   hsize_t dimsappend[RANK];
+   dimsappend[0] = 1;
+   dimsappend[1] = numVars;
+   dimsappend[2] = Nvar;
+   dims[1] = dims[1]; //+ dimsappend[1];
+   size[0] = dims[0] + dimsappend[0];
+   size[1] = dims[1];
+   size[2] = dims[2];
+   dataset.extend(size);
+   DataSpace fspace = dataset.getSpace();
+   fspace.selectHyperslab(H5S_SELECT_SET, dimsappend, offset);
+   DataSpace mspace(RANK,dimsappend);
+   dataset.write(data, varType, mspace, fspace);
+   //cout << "Extendable vector vector " << varName << " updated in " << outputFile << endl; 
+	
+   // close opened stuff
+   //
+   H5Fclose(fileID);  
+   H5Fclose(dsetID);  
+   dataset.close();      
+   fspace.close();
+   mspace.close();
+   file.close();
+
+}

@@ -556,24 +556,16 @@ double superbee(const double a, const double b);
 // operators for vector<vector>
 //
 vector<vector<double>> exp(const vector<vector<double>> &fin);
-
 vector<vector<double>> sqrt(const vector<vector<double>> &fin);
-
 vector<vector<double>> tanh(const vector<vector<double>> &fin);
-
 vector<vector<double>> log(const vector<vector<double>> &fin);
-
 vector<vector<double>> cos(const vector<vector<double>> &fin);
-
 vector<vector<double>> sin(const vector<vector<double>> &fin);
-
 vector<vector<double>> pow(const vector<vector<double>> &fin, const double exponent);
-
 vector<vector<double>> abs(const vector<vector<double>> &fin);
-
 double min(const vector<vector<double>> &fin);
-
 double max(const vector<vector<double>> &fin);
+
 
 #endif
 

@@ -19,6 +19,7 @@
 
 #include "json/json.h"
 #include "vectorMath.h"
+#include "matrix2D.h"
 #include "domainGrid.h"
 
 using namespace std;
@@ -359,6 +360,99 @@ void domainGrid::setInitialProfile(vector<vector<double>> &var,
    }
 
 }  // end setInitialProfile
+
+void domainGrid::setInitialProfile(matrix2D<double> &var, 
+                   const Json::Value &varRoot) const
+{
+   int procID, numProcs;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+   MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
+
+   double Xa, Xb, Xc, Xd;
+   double Za, Zb, Zc, Zd;
+   vector<double> Xprofile, Zprofile, Xvec, Zvec;
+   string Xtype0, Ztype0;
+   Xvec = Xcc;
+   Zvec = Zcc;
+
+   const int Nvar0 = var.size0();
+   const int Nvar1 = var.size1();
+   Xprofile.assign(Nvar0,0.0); 
+   Zprofile.assign(Nvar1,0.0); 
+
+   if(Nvar0==nXce) { 
+      Xvec.clear();
+      Xvec = Xce;
+      //Xvec.swap(Xce);
+   }   
+   if(Nvar1==nZce) {
+      Zvec.clear();
+      Zvec = Zce;
+   }
+
+   //  get X-direction stuff
+   //
+   const Json::Value defValue; // used for default reference
+   Json::Value aVal = varRoot.get("Xa",defValue);
+   Json::Value bVal = varRoot.get("Xb",defValue);
+   Json::Value cVal = varRoot.get("Xc",defValue);
+   Json::Value dVal = varRoot.get("Xd",defValue);
+   Json::Value type = varRoot.get("Xtype",defValue);
+   if(aVal == defValue || bVal == defValue || 
+      cVal == defValue || dVal == defValue || 
+      type == defValue) {
+      cout << "ERROR: at least 1 initial profile value " << endl;
+      cout << "not declared in input file" << endl;
+      exit (EXIT_FAILURE);
+   } 
+   Xa = aVal.asDouble();
+   Xb = bVal.asDouble();
+   Xc = cVal.asDouble();
+   Xd = dVal.asDouble();   
+   Xtype0 = type.asString();
+
+   //  set X-profile
+   //
+   setInitialProfileArbDir(Xprofile,Xvec,Xa,Xb,Xc,Xd,Xtype0);
+
+
+   //  get Z-direction stuff
+   //
+   aVal = varRoot.get("Za",defValue);
+   bVal = varRoot.get("Zb",defValue);
+   cVal = varRoot.get("Zc",defValue);
+   dVal = varRoot.get("Zd",defValue);
+   type = varRoot.get("Ztype",defValue);
+   if(aVal == defValue || bVal == defValue || 
+      cVal == defValue || dVal == defValue || 
+      type == defValue) {
+      cout << "ERROR: at least 1 initial profile value " << endl;
+      cout << "not declared in input file" << endl;
+      exit (EXIT_FAILURE);
+   } 
+   Za = aVal.asDouble();
+   Zb = bVal.asDouble();
+   Zc = cVal.asDouble();
+   Zd = dVal.asDouble();   
+   Ztype0 = type.asString();
+   
+   //  set Z-profile
+   //
+   setInitialProfileArbDir(Zprofile,Zvec,Za,Zb,Zc,Zd,Ztype0);
+
+
+   //  multiply X and Z profiles together
+   //
+   for (auto i=0; i<Nvar0; i++) {
+      for (auto j=0; j<Nvar1; j++) {
+         var(i,j) = Xprofile[i]*Zprofile[j];
+      }
+   }
+
+}
+
+
+
 
 
 void domainGrid::setInitialProfileArbDir(vector<double> &var,
