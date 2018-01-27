@@ -364,14 +364,14 @@ unsigned matrix2D<T>::size1() const
    //return nZ;
 }
 
-
+/*
 template <typename T>
 matrix2D<T> abs(const matrix2D<T> &fin)
 {
    matrix2D<T> resultMat(fin);
    vector<T> = resultMat.VecXZ;
-
    return resultMat;
 }
+*/
 
 #endif

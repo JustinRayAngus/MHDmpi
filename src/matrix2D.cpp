@@ -68,9 +68,9 @@ void matrix2D<T>::initialize(const int thisnX, const int thisnZ, const T& C0)
    nX = thisnX;
    nZ = thisnZ;
    const int nVec = nX*nZ;
-   cout << "VecXZ.size() = " << VecXZ.size() << endl;
+   //cout << "VecXZ.size() = " << VecXZ.size() << endl;
    VecXZ.assign(nVec,C0);
-   cout << "VecXZ.size() = " << VecXZ.size() << endl;
+   //cout << "VecXZ.size() = " << VecXZ.size() << endl;
 
 }
 

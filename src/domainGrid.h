@@ -42,6 +42,7 @@ public:
   
   void communicate(vector<double>&) const;
   void communicate(vector<vector<double>>&) const;
+  void communicate(matrix2D<double>&) const;
 
   void InterpToCellEdges(vector<double>&, const vector<double>&,
                          const vector<double>&, const string&) const;
@@ -49,10 +50,17 @@ public:
 		   const vector<vector<double>>&,
                    const vector<vector<double>>&, 
 		   const string&, const int) const;
+  void InterpToCellEdges(matrix2D<double>&, 
+		   const matrix2D<double>&,
+                   const matrix2D<double>&, 
+		   const string&, const int) const;
+  
   
   void InterpToCellCenter(vector<double>&, const vector<double>&) const;
   void InterpToCellCenter(vector<vector<double>>&, 
 		          const vector<vector<double>>&) const;
+  void InterpToCellCenter(matrix2D<double>&, 
+		          const matrix2D<double>&) const;
   
   void computeFluxTVD(vector<double>&, vector<double>&, vector<double>&,
                       vector<double>&, vector<double>&,
@@ -67,10 +75,21 @@ public:
 		      const vector<vector<double>>&,
 		      const int,
 		      const int) const;
+  void computeFluxTVD(matrix2D<double>&, matrix2D<double>&, 
+                      matrix2D<double>&, matrix2D<double>&,
+                      matrix2D<double>&,
+                      const matrix2D<double>&, 
+		      const matrix2D<double>&,
+		      const matrix2D<double>&,
+		      const int,
+		      const int) const;
+  
   
   void DDX(vector<double>&, const vector<double>&) const;
   void DDX(vector<vector<double>>&, const vector<vector<double>>&) const;
   void DDZ(vector<vector<double>>&, const vector<vector<double>>&) const;
+  void DDX(matrix2D<double>&, const matrix2D<double>&) const;
+  void DDZ(matrix2D<double>&, const matrix2D<double>&) const;
 
 //domainGrid() {};
 

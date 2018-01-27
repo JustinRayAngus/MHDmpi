@@ -286,6 +286,14 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    cout << "matA(2,10) = " << matA(2,10) << endl;
    cout << "matA(2,150) = " << matA(2,150) << endl;
 
+   matrix2D<double> matD(nXce,nZcc,0.0);
+   matrix2D<double> matE(nXcc,nZce,0.0);
+   Xgrid.InterpToCellEdges(matD,matC,matC,"C2",0);
+   Xgrid.InterpToCellEdges(matE,matC,matC,"C2",1);
+   Xgrid.DDX(matD,matC);
+   Xgrid.DDZ(matE,matC);
+   Xgrid.InterpToCellCenter(matC,matE);
+   Xgrid.communicate(matA);
   
    dataFile.add(matA, "matA", 1);  // density 
    dataFile.add(N, "N", 1);  // density 
