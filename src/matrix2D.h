@@ -93,6 +93,35 @@ matrix2D<T> operator+(const T& thisConst, const matrix2D<T>& thisMat)
   return resultMat;
 }
 
+template <typename T>
+matrix2D<T> operator+(const matrix2D<T>& matA, const matrix2D<T>& matB)
+{
+  matrix2D<T> resultMat(matA);
+  resultMat += matB;
+
+  return resultMat;
+}
+
+template <typename T>
+matrix2D<T> operator-(const matrix2D<T>& matA, const matrix2D<T>& matB)
+{
+  matrix2D<T> resultMat(matA);
+  resultMat -= matB;
+
+  return resultMat;
+}
+
+template <typename T>
+matrix2D<T> operator*(const matrix2D<T>& matA, const matrix2D<T>& matB)
+{
+  matrix2D<T> resultMat(matA);
+  resultMat *= matB;
+
+  return resultMat;
+}
+
+
+
 // subtract matrix from scalar on the lhs
 //
 template <typename T>

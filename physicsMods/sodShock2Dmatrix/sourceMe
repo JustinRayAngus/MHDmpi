@@ -1,0 +1,2 @@
+export PHYScpp=sodShock2Dmatrix.cpp
+export PHYS_HOME="../physicsMods/sodShock2Dmatrix"
