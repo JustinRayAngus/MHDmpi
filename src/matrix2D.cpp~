@@ -44,6 +44,7 @@ matrix2D<T>::matrix2D(unsigned thisnX, unsigned thisnZ, const T& C0)
    const unsigned nVec = nX*nZ;
    
    VecXZ.assign(nVec,C0);   
+   //VecXZ.reserve(nVec);   
 
 }
 
@@ -68,9 +69,9 @@ void matrix2D<T>::initialize(const int thisnX, const int thisnZ, const T& C0)
    nX = thisnX;
    nZ = thisnZ;
    const int nVec = nX*nZ;
-   cout << "VecXZ.size() = " << VecXZ.size() << endl;
+   //cout << "VecXZ.size() = " << VecXZ.size() << endl;
    VecXZ.assign(nVec,C0);
-   cout << "VecXZ.size() = " << VecXZ.size() << endl;
+   //cout << "VecXZ.size() = " << VecXZ.size() << endl;
 
 }
 
@@ -115,6 +116,9 @@ matrix2D<T>& matrix2D<T>::operator+=(const matrix2D& rhs)
    matrix2D<T> result = (*this) + rhs;
    (*this) = result;   
    return *this;
+   
+   //transform(this->VecXZ.begin(), this->VecXZ.end(), rhs.VecXZ.begin(),
+   //	     back_inserter(resultVec),plus<T>());
 }
 
 // add two matricies together
@@ -122,7 +126,7 @@ matrix2D<T>& matrix2D<T>::operator+=(const matrix2D& rhs)
 template<typename T>
 matrix2D<T> matrix2D<T>::operator+(const matrix2D& rhs)
 {
-   vector<T> resultVec;
+   //vector<T> resultVec;
    matrix2D<T> resultMat;
 
    unsigned rhs_nX = rhs.size0();
@@ -132,10 +136,13 @@ matrix2D<T> matrix2D<T>::operator+(const matrix2D& rhs)
       exit(EXIT_FAILURE);
    }
    else {	  
-      resultVec = VecXZ+rhs.VecXZ;
       resultMat.nX = rhs_nX;
       resultMat.nZ = rhs_nZ;
-      resultMat.VecXZ = resultVec;
+      //resultVec = VecXZ+rhs.VecXZ;
+      resultMat.VecXZ = VecXZ+rhs.VecXZ;
+      //transform(VecXZ.begin(), VecXZ.end(), rhs.VecXZ.begin(),
+       // 	back_inserter(resultVec),plus<T>());
+      //resultMat.VecXZ = resultVec;
       return resultMat;
    }
    //return *this;
@@ -167,9 +174,12 @@ matrix2D<T> matrix2D<T>::operator-(const matrix2D& rhs)
       exit(EXIT_FAILURE);
    }
    else {	  
-      resultVec = VecXZ-rhs.VecXZ;
       resultMat.nX = rhs_nX;
       resultMat.nZ = rhs_nZ;
+      resultVec = VecXZ-rhs.VecXZ;
+      //resultMat.VecXZ = VecXZ-rhs.VecXZ;
+      //transform(VecXZ.begin(), VecXZ.end(), rhs.VecXZ.begin(),
+      //  	back_inserter(resultVec),minus<T>());
       resultMat.VecXZ = resultVec;
       return resultMat;
    }
@@ -192,9 +202,12 @@ matrix2D<T> matrix2D<T>::operator*(const matrix2D& rhs)
       exit(EXIT_FAILURE);
    }
    else {	  
-      resultVec = VecXZ*rhs.VecXZ;
       resultMat.nX = rhs_nX;
       resultMat.nZ = rhs_nZ;
+      resultVec = VecXZ*rhs.VecXZ;
+      //resultMat.VecXZ = VecXZ*rhs.VecXZ;
+      //transform(VecXZ.begin(), VecXZ.end(), rhs.VecXZ.begin(),
+      //          back_inserter(resultVec),multiplies<T>());
       resultMat.VecXZ = resultVec;
       return resultMat;
    }
@@ -227,10 +240,13 @@ matrix2D<T> matrix2D<T>::operator/(const matrix2D& rhs)
       exit(EXIT_FAILURE);
    }
    else {	  
-      resultVec = VecXZ/rhs.VecXZ;
       resultMat.nX = rhs_nX;
       resultMat.nZ = rhs_nZ;
+      resultVec = VecXZ/rhs.VecXZ;
+      //resultMat.VecXZ = VecXZ/rhs.VecXZ;
       resultMat.VecXZ = resultVec;
+      //transform(VecXZ.begin(), VecXZ.end(), rhs.VecXZ.begin(),
+      //	  back_inserter(resultMat.VecXZ),divides<T>());
       return resultMat;
    }
    //return *this;
@@ -259,6 +275,7 @@ matrix2D<T> matrix2D<T>::operator+(const T& rhs)
    resultMat.nZ = this->size1();
    resultVec = rhs+VecXZ;
    resultMat.VecXZ = resultVec;
+   //resultMat.VecXZ = rhs+VecXZ;
    return resultMat;
 }
 
@@ -308,6 +325,7 @@ matrix2D<T> matrix2D<T>::operator*(const T& rhs)
    resultMat.nZ = this->size1();
    resultVec = rhs*VecXZ;
    resultMat.VecXZ = resultVec;
+   //resultMat.VecXZ = rhs*VecXZ;
    return resultMat;
 }
 

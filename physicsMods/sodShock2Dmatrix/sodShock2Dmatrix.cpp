@@ -395,8 +395,6 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    FluxEcc_z = Vz*(E + P);
    
 
-   /*
-
    // compute advective flux using
    // specified scheme from input file
    //
@@ -431,7 +429,6 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       Xgrid.InterpToCellEdges(FluxE_z, FluxEcc_z,E,advScheme0,0);
    } 
 
-   */
 
 } // end computeFluxes
 
