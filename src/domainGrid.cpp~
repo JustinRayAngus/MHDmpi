@@ -1388,19 +1388,23 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
    vector<vector<double>> DeltaFluxRR(Nout0,vector<double>(Nout1));
    vector<vector<double>> DeltaFluxLL(Nout0,vector<double>(Nout1));
    vector<vector<double>> DeltaFluxLR(Nout0,vector<double>(Nout1));
-   vector<vector<double>> FlinR(Nout0,vector<double>(Nout1));
-   vector<vector<double>> FlinL(Nout0,vector<double>(Nout1));
+   vector<vector<double>> FlinR(Nin0,vector<double>(Nin1));
+   vector<vector<double>> FlinL(Nin0,vector<double>(Nin1));
    
    FlinR = 0.5*(Flin + upC*fin);
    FlinL = 0.5*(Flin - upC*fin);
 
    //  compute first order left and right fluxes
    //
+   int iup=1, jup=0;
+   if(dir==1) iup=0, jup=1;
+
    for (auto i=0; i<Nout0; i++) {
       for (auto j=0; j<Nout1; j++) {
          FluxR1st[i][j] = FlinR[i][j];
-         if(dir==0) FluxL1st[i][j] = FlinL[i+1][j];
-         if(dir==1) FluxL1st[i][j] = FlinL[i][j+1];
+         FluxL1st[i][j] = FlinL[i+iup][j+jup];
+         //if(dir==0) FluxL1st[i][j] = FlinL[i+1][j];
+         //if(dir==1) FluxL1st[i][j] = FlinL[i][j+1];
       }
    }
 
@@ -1520,25 +1524,30 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
    //
    matrix2D<double> FluxL1st(Nout0,Nout1,0.0); 
    matrix2D<double> FluxR1st(Nout0,Nout1,0.0); 
-   matrix2D<double> DeltaFluxRL(Nout0,Nout1,0.0);
-   matrix2D<double> DeltaFluxRR(Nout0,Nout1,0.0);
-   matrix2D<double> DeltaFluxLL(Nout0,Nout1,0.0);
-   matrix2D<double> DeltaFluxLR(Nout0,Nout1,0.0);
-   matrix2D<double> FlinR(Nout0,Nout1,0.0);
-   matrix2D<double> FlinL(Nout0,Nout1,0.0);
+   //matrix2D<double> DeltaFluxRL(Nout0,Nout1,0.0);
+   //matrix2D<double> DeltaFluxRR(Nout0,Nout1,0.0);
+   double DeltaFluxRL, DeltaFluxRR;
+   //matrix2D<double> DeltaFluxLL(Nout0,Nout1,0.0);
+   //matrix2D<double> DeltaFluxLR(Nout0,Nout1,0.0);
+   double DeltaFluxLL, DeltaFluxLR;
+   matrix2D<double> FlinR(Nin0,Nin1,0.0);
+   matrix2D<double> FlinL(Nin0,Nin1,0.0);
 
-   //FlinR = 0.5*(Flin + upC*fin);
-   //FlinL = 0.5*(Flin - upC*fin);
-   FlinR = Flin + fin;
-   FlinL = Flin - fin;
+   FlinR = 0.5*(Flin + upC*fin);
+   FlinL = 0.5*(Flin - upC*fin);
+   //FlinR = Flin + fin;
+   //FlinL = Flin - fin;
+   int iup=1, jup=0;
+   if(dir==1) iup=0, jup=1;
 
    //  compute first order left and right fluxes
    //
    for (auto i=0; i<Nout0; i++) {
       for (auto j=0; j<Nout1; j++) {
          FluxR1st(i,j) = FlinR(i,j);
-         if(dir==0) FluxL1st(i,j) = FlinL(i+1,j);
-         if(dir==1) FluxL1st(i,j) = FlinL(i,j+1);
+         FluxL1st(i,j) = FlinL(i+iup,j+jup);
+         //if(dir==0) FluxL1st(i,j) = FlinL(i+1,j);
+         //if(dir==1) FluxL1st(i,j) = FlinL(i,j+1);
       }
    }
 
@@ -1553,21 +1562,21 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
 
             // calculate flux correction for right going wave
 	    //
-            DeltaFluxRL(i,j) = 0.5*(FlinR(i,j)   - FlinR(i-1,j)); // B2 scheme
-            DeltaFluxRR(i,j) = 0.5*(FlinR(i+1,j) - FlinR(i,j));   // C2 scheme
+            DeltaFluxRL = 0.5*(FlinR(i,j)   - FlinR(i-1,j)); // B2 scheme
+            DeltaFluxRR = 0.5*(FlinR(i+1,j) - FlinR(i,j));   // C2 scheme
 
-            //FlLimR(i,j) = minmod(DeltaFluxRL(i,j),DeltaFluxRR(i,j));
-            //FlLimR(i,j) = superbee(DeltaFluxRL(i,j),DeltaFluxRR(i,j));
-            FlLimR(i,j) = vanleer(DeltaFluxRL(i,j),DeltaFluxRR(i,j));
+            //FlLimR(i,j) = minmod(DeltaFluxRL,DeltaFluxRR);
+            //FlLimR(i,j) = superbee(DeltaFluxRL,DeltaFluxRR);
+            FlLimR(i,j) = vanleer(DeltaFluxRL,DeltaFluxRR);
             
 	    // calculate flux correction for left going wave
 	    //
-	    DeltaFluxLL(i,j) = -0.5*(FlinL(i+1,j) - FlinL(i,j));    // C2 scheme
-            DeltaFluxLR(i,j) = -0.5*(FlinL(i+2,j) - FlinL(i+1,j));  // F2 scheme
+	    DeltaFluxLL = -0.5*(FlinL(i+1,j) - FlinL(i,j));    // C2 scheme
+            DeltaFluxLR = -0.5*(FlinL(i+2,j) - FlinL(i+1,j));  // F2 scheme
 
-            //FlLimL(i,j) = minmod(DeltaFluxLR(i,j),DeltaFluxLL(i,j));
-            //FlLimL(i,j) = superbee(DeltaFluxLR(i,j),DeltaFluxLL(i,j));
-            FlLimL(i,j) = vanleer(DeltaFluxLR(i,j),DeltaFluxLL(i,j));
+            //FlLimL(i,j) = minmod(DeltaFluxLR,DeltaFluxLL);
+            //FlLimL(i,j) = superbee(DeltaFluxLR,DeltaFluxLL);
+            FlLimL(i,j) = vanleer(DeltaFluxLR,DeltaFluxLL);
 
 	 }
 	 if(dir==1) { // Z-flux
@@ -1576,21 +1585,21 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
 
 	    // calculate flux correction for right going wave
 	    //
-	    DeltaFluxRL(i,j) = 0.5*(FlinR(i,j)   - FlinR(i,j-1)); // B2 scheme 
-            DeltaFluxRR(i,j) = 0.5*(FlinR(i,j+1) - FlinR(i,j));   // C2 scheme
+	    DeltaFluxRL = 0.5*(FlinR(i,j)   - FlinR(i,j-1)); // B2 scheme 
+            DeltaFluxRR = 0.5*(FlinR(i,j+1) - FlinR(i,j));   // C2 scheme
             
-            //FlLimR(i,j) = minmod(DeltaFluxRL(i,j),DeltaFluxRR(i,j));
-            //FlLimR(i,j) = superbee(DeltaFluxRL(i,j),DeltaFluxRR(i,j));
-            FlLimR(i,j) = vanleer(DeltaFluxRL(i,j),DeltaFluxRR(i,j));
+            //FlLimR(i,j) = minmod(DeltaFluxRL,DeltaFluxRR);
+            //FlLimR(i,j) = superbee(DeltaFluxRL,DeltaFluxRR);
+            FlLimR(i,j) = vanleer(DeltaFluxRL,DeltaFluxRR);
             
 	    // calculate flux correction for left going wave
 	    //
-	    DeltaFluxLL(i,j) = -0.5*(FlinL(i,j+1) - FlinL(i,j));    // C2 scheme
-            DeltaFluxLR(i,j) = -0.5*(FlinL(i,j+2) - FlinL(i,j+1));  // F2 scheme
+	    DeltaFluxLL = -0.5*(FlinL(i,j+1) - FlinL(i,j));    // C2 scheme
+            DeltaFluxLR = -0.5*(FlinL(i,j+2) - FlinL(i,j+1));  // F2 scheme
 
-            //FlLimL(i,j) = minmod(DeltaFluxLR(i,j),DeltaFluxLL(i,j));
-            //FlLimL(i,j) = superbee(DeltaFluxLR(i,j),DeltaFluxLL(i,j));
-            FlLimL(i,j) = vanleer(DeltaFluxLR(i,j),DeltaFluxLL(i,j));
+            //FlLimL(i,j) = minmod(DeltaFluxLR,DeltaFluxLL);
+            //FlLimL(i,j) = superbee(DeltaFluxLR,DeltaFluxLL);
+            FlLimL(i,j) = vanleer(DeltaFluxLR,DeltaFluxLL);
 
 	 }
 	   

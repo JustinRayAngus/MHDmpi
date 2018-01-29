@@ -11,11 +11,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-numProcs = 1;
+numProcs = 2;
 filePath = '../physicsMods/sodShock2Dmatrix/';
 %filePath = '../physicsMods/testing/';
 
-fluxDir = 1; % 0 for x and 1 for z
+fluxDir = 0; % 0 for x and 1 for z
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
@@ -51,7 +51,7 @@ tout= hdf5read(thisFile,'tout');
 
 
 
-f11=figure(11); 
+f11=figure(12); 
 %set(f1,'position',[1030 925 1100 420]);
 set(f11,'position',[1800 360 500 760]);
 subplot(2,1,1);
@@ -77,7 +77,7 @@ colormap(map)
 %%%
 %
 
-f1=figure(1); 
+f1=figure(2); 
 set(f1,'position',[540 1 900 800]);
 %set(f1,'position',[341 436 900 840]);
 

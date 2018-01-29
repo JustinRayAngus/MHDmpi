@@ -27,7 +27,8 @@ private:
 
 public:
    matrix2D();
-   matrix2D(unsigned thisnX, unsigned thisnZ, const T& C0);
+   matrix2D(unsigned thisnX, unsigned thisnZ);
+   //matrix2D(unsigned thisnX, unsigned thisnZ, const T& C0);
    matrix2D(const matrix2D<T>& rhs);
    virtual ~matrix2D();
  
@@ -110,6 +111,16 @@ matrix2D<T> operator-(const matrix2D<T>& matA, const matrix2D<T>& matB)
 
   return resultMat;
 }
+
+template <typename T>
+matrix2D<T> operator*(const matrix2D<T>& matA, const matrix2D<T>& matB)
+{
+  matrix2D<T> resultMat(matA);
+  resultMat *= matB;
+
+  return resultMat;
+}
+
 
 
 // subtract matrix from scalar on the lhs
