@@ -338,7 +338,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
             N.at(0) = Nthresh;
 	 }
 	 if(S.at(1)<Sthresh) {
-            S.at(0) = Sthresh/pow(Nthresh,gamma0-2.0);
+            S.at(0) = Sthresh;
             S.at(1) = Sthresh;
 	 }
 	 if(S.at(0)<Sthresh) {

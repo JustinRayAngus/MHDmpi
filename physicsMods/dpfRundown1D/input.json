@@ -8,7 +8,7 @@
 "Time":{
         "dtOut":1.5e-2,  // output time intervals
         "tOutSteps":20,  // number of output setps
-        "dtFrac":4.0     // dtSim = dtMax/dtFrac
+        "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
            "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"

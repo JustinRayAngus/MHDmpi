@@ -40,7 +40,8 @@ using namespace std;
 
 string advScheme0;    // advection differencing scheme
 double gamma0;        // adiabatic coefficient
-double eta0=0.004;     // resistivity (may need to decrease dt more if eta0 really low)
+double eta0=0.08;     // resistivity (may need to decrease dt and or dx more if eta0 really low)
+                      // I think the issue is boundary related? May need vacuum resistivity
 double delta0=1.0e-4; // relaxation const (v/c)^2
 double B0 = 0.0;      // boundary value of magnetic field
 int Nsub;             // time-solver subcycle steps

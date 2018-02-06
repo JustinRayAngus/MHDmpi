@@ -399,10 +399,8 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    // specified scheme from input file
    //
    if(advScheme0 == "TVD") {
-      cout << "ARE WE HERE 1?" << endl;
       Xgrid.computeFluxTVD(FluxN_x, FluxLx,FluxRx,FluxLimLx,FluxLimRx,
                            FluxNcc_x,Cspeed,N,0,order);
-      cout << "ARE WE HERE 2?" << endl;
       Xgrid.computeFluxTVD(FluxMx_x,FluxLx,FluxRx,FluxLimLx,FluxLimRx,
                            FluxMxcc_x,Cspeed,Mx,0,order);
       Xgrid.computeFluxTVD(FluxMz_x,FluxLx,FluxRx,FluxLimLx,FluxLimRx,

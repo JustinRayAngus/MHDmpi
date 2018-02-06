@@ -107,7 +107,6 @@ matrix2D<T>& matrix2D<T>::operator=(const matrix2D& rhs)
    //return *this;
 }
 
-
 // update matrix by adding another to it using +=
 //
 template<typename T>

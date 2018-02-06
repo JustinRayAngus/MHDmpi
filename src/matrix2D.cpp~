@@ -107,6 +107,14 @@ matrix2D<T>& matrix2D<T>::operator=(const matrix2D& rhs)
    //return *this;
 }
 
+// set matrix equal to negative of another
+//
+template<typename T>
+matrix2D<T>& matrix2D<T>::operator-(const matrix2D& rhs)
+{
+   return rhs*(-1.0);
+}
+
 
 // update matrix by adding another to it using +=
 //
@@ -126,7 +134,7 @@ matrix2D<T>& matrix2D<T>::operator+=(const matrix2D& rhs)
 template<typename T>
 matrix2D<T> matrix2D<T>::operator+(const matrix2D& rhs)
 {
-   //vector<T> resultVec;
+   vector<T> resultVec;
    matrix2D<T> resultMat;
 
    unsigned rhs_nX = rhs.size0();
@@ -138,11 +146,11 @@ matrix2D<T> matrix2D<T>::operator+(const matrix2D& rhs)
    else {	  
       resultMat.nX = rhs_nX;
       resultMat.nZ = rhs_nZ;
-      //resultVec = VecXZ+rhs.VecXZ;
-      resultMat.VecXZ = VecXZ+rhs.VecXZ;
+      resultVec = VecXZ+rhs.VecXZ;
+      //resultMat.VecXZ = VecXZ+rhs.VecXZ;
       //transform(VecXZ.begin(), VecXZ.end(), rhs.VecXZ.begin(),
        // 	back_inserter(resultVec),plus<T>());
-      //resultMat.VecXZ = resultVec;
+      resultMat.VecXZ = resultVec;
       return resultMat;
    }
    //return *this;
