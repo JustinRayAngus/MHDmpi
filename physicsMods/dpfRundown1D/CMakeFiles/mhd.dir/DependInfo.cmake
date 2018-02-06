@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/dpfRundown1D.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/CMakeFiles/mhd.dir/dpfRundown1D.cpp.o"
   "/Users/angus1/Programs/MHDmpi/src/jsoncpp.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/CMakeFiles/mhd.dir/jsoncpp.cpp.o"
   "/Users/angus1/Programs/MHDmpi/src/main.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/CMakeFiles/mhd.dir/main.cpp.o"
+  "/Users/angus1/Programs/MHDmpi/src/matrix2D.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/CMakeFiles/mhd.dir/matrix2D.cpp.o"
   "/Users/angus1/Programs/MHDmpi/src/timeDomain.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/CMakeFiles/mhd.dir/timeDomain.cpp.o"
   "/Users/angus1/Programs/MHDmpi/src/vectorMath.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/CMakeFiles/mhd.dir/vectorMath.cpp.o"
   )

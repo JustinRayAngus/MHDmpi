@@ -2,19 +2,19 @@
 "Xgrid":{
          "Xmin":0.0,
          "Xmax":1.0,
-         "nX":400,
+         "nX":200,
          "nXg":2 // number of guard cells each end
         },
 "Time":{
         "dtOut":1.5e-2,  // output time intervals
         "tOutSteps":20,  // number of output setps
-        "dtFrac":4.0     // dtSim = dtMax/dtFrac
+        "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
            "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
            "Nsub":2, // this actually refers to order
            "gammaC":1.6667, // adiabatic coefficient
-           "delta0":1.0e-4, // relaxation const (Vnorm/cvac)^2
+           "delta0":1.0e-5, // relaxation const (Vnorm/cvac)^2
            "N":{
                 "type":"const", // initial profile
                 "a":0.0,  // amplitude

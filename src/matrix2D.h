@@ -35,7 +35,6 @@ public:
    //
    matrix2D<T>& operator=(const matrix2D<T>& rhs);
 
-
    // math operators for matrix with matrix
    //
    matrix2D<T> operator+(const matrix2D<T>& rhs);
@@ -112,6 +111,15 @@ matrix2D<T> operator-(const matrix2D<T>& matA, const matrix2D<T>& matB)
 }
 
 template <typename T>
+matrix2D<T> operator-(const matrix2D<T>& matA)
+{
+  matrix2D<T> resultMat(matA);
+  resultMat *= -1.0;
+
+  return resultMat;
+}
+
+template <typename T>
 matrix2D<T> operator*(const matrix2D<T>& matA, const matrix2D<T>& matB)
 {
   matrix2D<T> resultMat(matA);
@@ -119,8 +127,6 @@ matrix2D<T> operator*(const matrix2D<T>& matA, const matrix2D<T>& matB)
 
   return resultMat;
 }
-
-
 
 // subtract matrix from scalar on the lhs
 //
