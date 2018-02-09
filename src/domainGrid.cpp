@@ -509,7 +509,27 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
          (Xvec.at(i)<b) ? var.at(i)=a : var.at(i)=c;
       }   
    
-   } else {
+   }
+   else if(type0=="bennettP") {
+      
+      Xshift = (Xvec-b)/c;
+      cout << "c = " << c << endl;
+      int Nmax = Xvec.size();
+      for (auto i=0; i<Nmax; i++) {
+         var.at(i) = a/pow(1.0+Xshift.at(i)*Xshift.at(i),2);
+      }
+
+   } 
+   else if(type0=="bennettB") {
+      
+      Xshift = (Xvec-b)/c;
+      int Nmax = Xvec.size();
+      for (auto i=0; i<Nmax; i++) {
+         var.at(i) = a*sqrt(2)*Xshift.at(i)/(1.0+Xshift.at(i)*Xshift.at(i));
+      }
+
+   } 
+   else {
       Xshift = (Xvec-b);
       var = a*Xshift*Xshift + c*Xshift + d;
    }

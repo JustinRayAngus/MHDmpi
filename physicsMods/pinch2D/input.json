@@ -2,64 +2,60 @@
 "Xgrid":{
          "Xmin":0.0,
          "Xmax":1.0,
-         "nX":20,
+         "nX":100,
          "nXg":2 // number of guard cells each end
         },
 "Zgrid":{
          "Zmin":0.0,
          "Zmax":1.0,
-         "nZ":11,
+         "nZ":2,
          "nZg":2 // number of guard cells each end
         },
 "Time":{
-        "dtOut":1.0e-2,  // output time intervals
-        "tOutSteps":20,  // number of output setps
+        "dtOut":1.0e-4,  // output time intervals
+        "tOutSteps":2,  // number of output setps
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
-           "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
-           "Nsub":2, // this actually refers to order
+           "advScheme":"C2", // "U1", "C2", "QUICK", "TVD"
+           "Nsub":1, // this actually refers to order
            "gammaC":1.6667, // adiabatic coefficient
-           "delta0":1.0e-4, // relaxation const (Vnorm/cvac)^2
-           "W":{
-                "Xtype":"Gaussian", // initial profile
-                "Xa":1.0,  // X-amplitude
-                "Xb":0.0,  // X-shift
-                "Xc":0.2,  // X-width
-                "Xd":0.0,  // X-offset
-                "Ztype":"Gaussian", // initial profile
-                "Za":1.0,  // Z-amplitude
-                "Zb":0.5,  // Z-shift
-                "Zc":0.2,  // Z-width
-                "Zd":0.0   // Z-offset
-               },
-           "N":{
-                "type":"const", // initial profile
-                "a":0.0,  // amplitude
-                "b":0.0,  // x-shift
-                "c":0.0,  // width
-                "d":1.0   // y-shift
-               },
+           "delta0":1.0e-2, // relaxation const (Vnorm/cvac)^2
            "P":{
-                "type":"const", // initial profile
-                "a":0.0,  // amplitude
-                "b":0.0,  // x-shift
-                "c":0.0,  // width
-                "d":1.0   // y-shift
+                "Xtype":"bennettP", // initial profile
+                "Xa":1.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.3333,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
                },
-           "V":{
-                "type":"const", // initial profile
-                "a":0.0,  // amplitude
-                "b":0.0,  // x-shift
-                "c":0.0,  // width
-                "d":0.0   // y-shift
+           "T":{
+                "Xtype":"const", // initial profile
+                "Xa":0.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.0,  // width
+                "Xd":1.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
                },
-           "B":{
-                "type":"const", // initial profile
-                "a":0.0, // amplitude
-                "b":0.0,  // x-shift
-                "c":0.0,  // width
-                "d":0.0   // y-shift
+           "By":{
+                "Xtype":"bennettB", // initial profile
+                "Xa":1.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.3333,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
                }
           }
 }
