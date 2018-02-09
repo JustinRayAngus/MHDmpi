@@ -509,7 +509,26 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
          (Xvec.at(i)<b) ? var.at(i)=a : var.at(i)=c;
       }   
    
-   } else {
+   }
+   else if(type0=="bennettP") {
+      
+      Xshift = (Xvec-b)/c;
+      int Nmax = Xvec.size();
+      for (auto i=0; i<Nmax; i++) {
+         var.at(i) = a/pow(1.0+Xshift.at(i)*Xshift.at(i),2);
+      }
+
+   } 
+   else if(type0=="bennettB") {
+      
+      Xshift = (Xvec-b)/c;
+      int Nmax = Xvec.size();
+      for (auto i=0; i<Nmax; i++) {
+         var.at(i) = a*sqrt(2)*Xshift.at(i)/(1.0+Xshift.at(i)*Xshift.at(i));
+      }
+
+   } 
+   else {
       Xshift = (Xvec-b);
       var = a*Xshift*Xshift + c*Xshift + d;
    }
@@ -1524,11 +1543,7 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
    //
    matrix2D<double> FluxL1st(Nout0,Nout1,0.0); 
    matrix2D<double> FluxR1st(Nout0,Nout1,0.0); 
-   //matrix2D<double> DeltaFluxRL(Nout0,Nout1,0.0);
-   //matrix2D<double> DeltaFluxRR(Nout0,Nout1,0.0);
    double DeltaFluxRL, DeltaFluxRR;
-   //matrix2D<double> DeltaFluxLL(Nout0,Nout1,0.0);
-   //matrix2D<double> DeltaFluxLR(Nout0,Nout1,0.0);
    double DeltaFluxLL, DeltaFluxLR;
    matrix2D<double> FlinR(Nin0,Nin1,0.0);
    matrix2D<double> FlinL(Nin0,Nin1,0.0);

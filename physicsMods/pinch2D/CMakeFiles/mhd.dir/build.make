@@ -105,9 +105,33 @@ CMakeFiles/mhd.dir/domainGrid.cpp.o.provides: CMakeFiles/mhd.dir/domainGrid.cpp.
 CMakeFiles/mhd.dir/domainGrid.cpp.o.provides.build: CMakeFiles/mhd.dir/domainGrid.cpp.o
 
 
+CMakeFiles/mhd.dir/matrix2D.cpp.o: CMakeFiles/mhd.dir/flags.make
+CMakeFiles/mhd.dir/matrix2D.cpp.o: /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/mhd.dir/matrix2D.cpp.o"
+	mpicxx   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mhd.dir/matrix2D.cpp.o -c /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp
+
+CMakeFiles/mhd.dir/matrix2D.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mhd.dir/matrix2D.cpp.i"
+	mpicxx  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp > CMakeFiles/mhd.dir/matrix2D.cpp.i
+
+CMakeFiles/mhd.dir/matrix2D.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mhd.dir/matrix2D.cpp.s"
+	mpicxx  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp -o CMakeFiles/mhd.dir/matrix2D.cpp.s
+
+CMakeFiles/mhd.dir/matrix2D.cpp.o.requires:
+
+.PHONY : CMakeFiles/mhd.dir/matrix2D.cpp.o.requires
+
+CMakeFiles/mhd.dir/matrix2D.cpp.o.provides: CMakeFiles/mhd.dir/matrix2D.cpp.o.requires
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/matrix2D.cpp.o.provides.build
+.PHONY : CMakeFiles/mhd.dir/matrix2D.cpp.o.provides
+
+CMakeFiles/mhd.dir/matrix2D.cpp.o.provides.build: CMakeFiles/mhd.dir/matrix2D.cpp.o
+
+
 CMakeFiles/mhd.dir/vectorMath.cpp.o: CMakeFiles/mhd.dir/flags.make
 CMakeFiles/mhd.dir/vectorMath.cpp.o: /Users/angus1/Programs/MHDmpi/src/vectorMath.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/mhd.dir/vectorMath.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/mhd.dir/vectorMath.cpp.o"
 	mpicxx   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mhd.dir/vectorMath.cpp.o -c /Users/angus1/Programs/MHDmpi/src/vectorMath.cpp
 
 CMakeFiles/mhd.dir/vectorMath.cpp.i: cmake_force
@@ -131,7 +155,7 @@ CMakeFiles/mhd.dir/vectorMath.cpp.o.provides.build: CMakeFiles/mhd.dir/vectorMat
 
 CMakeFiles/mhd.dir/timeDomain.cpp.o: CMakeFiles/mhd.dir/flags.make
 CMakeFiles/mhd.dir/timeDomain.cpp.o: /Users/angus1/Programs/MHDmpi/src/timeDomain.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/mhd.dir/timeDomain.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/mhd.dir/timeDomain.cpp.o"
 	mpicxx   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mhd.dir/timeDomain.cpp.o -c /Users/angus1/Programs/MHDmpi/src/timeDomain.cpp
 
 CMakeFiles/mhd.dir/timeDomain.cpp.i: cmake_force
@@ -155,7 +179,7 @@ CMakeFiles/mhd.dir/timeDomain.cpp.o.provides.build: CMakeFiles/mhd.dir/timeDomai
 
 CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: CMakeFiles/mhd.dir/flags.make
 CMakeFiles/mhd.dir/HDF5dataFile.cpp.o: /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/mhd.dir/HDF5dataFile.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/mhd.dir/HDF5dataFile.cpp.o"
 	mpicxx   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mhd.dir/HDF5dataFile.cpp.o -c /Users/angus1/Programs/MHDmpi/src/HDF5dataFile.cpp
 
 CMakeFiles/mhd.dir/HDF5dataFile.cpp.i: cmake_force
@@ -179,7 +203,7 @@ CMakeFiles/mhd.dir/HDF5dataFile.cpp.o.provides.build: CMakeFiles/mhd.dir/HDF5dat
 
 CMakeFiles/mhd.dir/jsoncpp.cpp.o: CMakeFiles/mhd.dir/flags.make
 CMakeFiles/mhd.dir/jsoncpp.cpp.o: /Users/angus1/Programs/MHDmpi/src/jsoncpp.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/mhd.dir/jsoncpp.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/mhd.dir/jsoncpp.cpp.o"
 	mpicxx   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mhd.dir/jsoncpp.cpp.o -c /Users/angus1/Programs/MHDmpi/src/jsoncpp.cpp
 
 CMakeFiles/mhd.dir/jsoncpp.cpp.i: cmake_force
@@ -203,7 +227,7 @@ CMakeFiles/mhd.dir/jsoncpp.cpp.o.provides.build: CMakeFiles/mhd.dir/jsoncpp.cpp.
 
 CMakeFiles/mhd.dir/pinch2D.cpp.o: CMakeFiles/mhd.dir/flags.make
 CMakeFiles/mhd.dir/pinch2D.cpp.o: pinch2D.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/mhd.dir/pinch2D.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/mhd.dir/pinch2D.cpp.o"
 	mpicxx   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mhd.dir/pinch2D.cpp.o -c /Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/pinch2D.cpp
 
 CMakeFiles/mhd.dir/pinch2D.cpp.i: cmake_force
@@ -229,6 +253,7 @@ CMakeFiles/mhd.dir/pinch2D.cpp.o.provides.build: CMakeFiles/mhd.dir/pinch2D.cpp.
 mhd_OBJECTS = \
 "CMakeFiles/mhd.dir/main.cpp.o" \
 "CMakeFiles/mhd.dir/domainGrid.cpp.o" \
+"CMakeFiles/mhd.dir/matrix2D.cpp.o" \
 "CMakeFiles/mhd.dir/vectorMath.cpp.o" \
 "CMakeFiles/mhd.dir/timeDomain.cpp.o" \
 "CMakeFiles/mhd.dir/HDF5dataFile.cpp.o" \
@@ -240,6 +265,7 @@ mhd_EXTERNAL_OBJECTS =
 
 mhd: CMakeFiles/mhd.dir/main.cpp.o
 mhd: CMakeFiles/mhd.dir/domainGrid.cpp.o
+mhd: CMakeFiles/mhd.dir/matrix2D.cpp.o
 mhd: CMakeFiles/mhd.dir/vectorMath.cpp.o
 mhd: CMakeFiles/mhd.dir/timeDomain.cpp.o
 mhd: CMakeFiles/mhd.dir/HDF5dataFile.cpp.o
@@ -249,7 +275,7 @@ mhd: CMakeFiles/mhd.dir/build.make
 mhd: /opt/local/lib/openmpi-gcc5/libmpi_cxx.dylib
 mhd: /opt/local/lib/openmpi-gcc5/libmpi.dylib
 mhd: CMakeFiles/mhd.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking CXX executable mhd"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable mhd"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mhd.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -259,6 +285,7 @@ CMakeFiles/mhd.dir/build: mhd
 
 CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/main.cpp.o.requires
 CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/domainGrid.cpp.o.requires
+CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/matrix2D.cpp.o.requires
 CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/vectorMath.cpp.o.requires
 CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/timeDomain.cpp.o.requires
 CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/HDF5dataFile.cpp.o.requires
