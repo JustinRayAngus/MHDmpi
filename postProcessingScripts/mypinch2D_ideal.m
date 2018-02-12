@@ -39,15 +39,10 @@ P0  = hdf5read(thisFile,'P0');
 Vx  = hdf5read(thisFile,'Vx');
 Vz  = hdf5read(thisFile,'Vz');
 Jz  = hdf5read(thisFile,'Jz');
-Jz0  = hdf5read(thisFile,'Jz0'); % curl(B)
-Jzcc = hdf5read(thisFile,'Jzcc');
 rcc = hdf5read(thisFile,'rcc');
 Ez  = hdf5read(thisFile,'Ez');
-Ezcc  = hdf5read(thisFile,'Ezcc');
 Ex  = hdf5read(thisFile,'Ex');
 Cs  = hdf5read(thisFile,'Cs');
-eta  = hdf5read(thisFile,'eta');
-eta_x = hdf5read(thisFile,'eta_x');
 gamma0 = hdf5read(thisFile,'gamma0');
 FluxRatio_x  = hdf5read(thisFile,'FluxRatio_x');
 FluxLim_x    = hdf5read(thisFile,'FluxLim_x');
@@ -58,7 +53,6 @@ FluxMx_x  = hdf5read(thisFile,'FluxMx_x');
 FluxMz_x  = hdf5read(thisFile,'FluxMz_x');
 FluxS_x  = hdf5read(thisFile,'FluxS_x');
 FluxBy_x  = hdf5read(thisFile,'FluxBy_x');
-FluxEz_x  = hdf5read(thisFile,'FluxEz_x');
 tout= hdf5read(thisFile,'tout');
 dX = Xcc(2)-Xcc(1);
 
@@ -125,9 +119,9 @@ ylim([0 1.2*max(max(max(P)))]);
 %
 %
 subplot(2,3,4);
-hold on; plot(Xce,Ez(index0,:,1),'black'); box on;
+hold on; plot(Xcc,Ez(index0,:,1),'black'); box on;
 %hold on; plot(Xce,Ez(index0,:,11),'b');
-hold on; plot(Xce,Ez(index0,:,end-plotBackIndex),'r'); grid on;
+hold on; plot(Xcc,Ez(index0,:,end-plotBackIndex),'r'); grid on;
 set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('Ez');
@@ -145,11 +139,9 @@ set(gca,'xtick',0.0:0.25:2);
 xlim([0 1+2*dX]);
 %
 subplot(2,3,6);
-hold on; plot(Xce,Jz(index0,:,1),'black'); box on;
+hold on; plot(Xcc,Jz(index0,:,1),'black'); box on; grid on;
 %hold on; plot(Xce,Jz(index0,:,11),'b'); grid on;
-hold on; plot(Xce,Jz(index0,:,end-plotBackIndex),'r');
-hold on; plot(Xcc,Jzcc(index0,:,end-plotBackIndex),'b');
-hold on; plot(Xcc,Jz0(index0,:,end-plotBackIndex),'g--');
+hold on; plot(Xcc,Jz(index0,:,end-plotBackIndex),'r');
 xlabel('x'); ylabel('J_z'); axis('square');
 title('current density');
 set(gca,'xtick',0:0.25:2);

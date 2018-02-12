@@ -197,7 +197,7 @@ matrix2D<T> matrix2D<T>::operator*(const matrix2D& rhs)
    unsigned rhs_nX = rhs.size0();
    unsigned rhs_nZ = rhs.size1();
    if(rhs_nX != nX || rhs_nZ != nZ ) {
-      cout << "tring to subtract two matrix2D of different sizes" << endl;
+      cout << "tring to multiply two matrix2D of different sizes" << endl;
       exit(EXIT_FAILURE);
    }
    else {	  
@@ -235,7 +235,7 @@ matrix2D<T> matrix2D<T>::operator/(const matrix2D& rhs)
    unsigned rhs_nX = rhs.size0();
    unsigned rhs_nZ = rhs.size1();
    if(rhs_nX != nX || rhs_nZ != nZ ) {
-      cout << "tring to subtract two matrix2D of different sizes" << endl;
+      cout << "tring to divide two matrix2D of different sizes" << endl;
       exit(EXIT_FAILURE);
    }
    else {	  

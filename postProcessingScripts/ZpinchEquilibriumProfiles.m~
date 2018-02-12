@@ -9,7 +9,7 @@
 %%%%%%%%%%%%%%%%%%%%
 clear all;
 
-nr = 100;
+nr = 1000;
 R  = 1;
 a  = R/3;
 dr = R/nr;
@@ -64,35 +64,50 @@ figure(3); hold on; plot(rcc,Fr0); box on; grid on;
 title('radial force');
 
 
-%%%   calculate pressure such that force balance is exact assuming C2
+%%%   recalculate force using B defined from force balance
 %
-Ptest = zeros(size(rcc));
-Ptest(1:2) = P(1:2);
-%Ptest(1:2) = Pcc(1:2); % works better at r=dr/2 for some resolutions?
+Btest = sqrt(2*(P - rcc.*divFlux));
+Btest(1) = -Btest(2);
+Btest(end) = Btest(end-1)*rcc(end-1)/rcc(end);
 
-for i=2:length(rcc)-1
-    Ptest(i+1) = -rcc(i+1)*B(i+1)^2/2 + rcc(i-1)*(Ptest(i-1) + B(i-1)^2/2) + 2*dr*(Ptest(i)-B(i)^2/2);
-    Ptest(i+1) = Ptest(i+1)/rcc(i+1);
-end
-Ptest(end) = Ptest(end-1);
-    
-figure(1); hold on; plot(rcc,Ptest,'r--'); grid on;
-
-
-%%%   recalculate force
-%
-g1 = rcc.*(Ptest+B.^2/2);
+Fr1 = 0*Fr0;
+g = rcc.*(P+Btest.^2/2);
 divFlux1 = zeros(size(rcc));
 
-
 for i=2:length(rcc)-1
-    divFlux1(i) = (g1(i+1)-g1(i-1))/2/rcc(i)/dr;
+    divFlux1(i) = (g(i+1)-g(i-1))/2/rcc(i)/dr;
 end
 
-Fr1 = -divFlux1 + (Ptest-B.^2/2)./rcc;
-Fr1(end-1) = Fr1(end-2)/3;
+Fr1 = -divFlux1 + (P-Btest.^2/2)./rcc;
+Fr1(end-1) = Fr0(end-2)/3;
 Fr1(1) = 0;
 Fr1(end) = 0;
 
-figure(3); hold on; plot(rcc,Fr1);
+figure(3); hold on; plot(rcc,Fr1,'r--');
 
+
+
+%%%   calculate pressure such that force balance is exact
+%
+Pcc2 = zeros(size(rcc));
+Pcc2(1:2) = Pcc(1:2);
+
+for i=2:length(rcc)-1
+    Pcc2(i+1) = Pcc2(i-1) - 2*dr*Jcc(i)*B(i);
+end
+Pcc2(end) = Pcc2(end-1);
+    
+figure(1); hold on; plot(rcc,Pcc2,'r'); grid on;
+
+
+%%%   calculate pressure gradient
+%
+dPcc2dr = zeros(size(rcc));
+for i=2:length(rcc)-1
+    dPcc2dr(i) = (Pcc2(i+1) - Pcc2(i-1))/2/dr;
+end
+
+Fr2 = - dPcc2dr - Jcc.*B;
+Fr2(end-1) = Fr2(end-2)/3;
+% Fr2(1) = 0;
+% Fr2(end) = 0;
