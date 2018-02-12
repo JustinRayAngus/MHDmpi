@@ -513,6 +513,7 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
    else if(type0=="bennettP") {
       
       Xshift = (Xvec-b)/c;
+      cout << "c = " << c << endl;
       int Nmax = Xvec.size();
       for (auto i=0; i<Nmax; i++) {
          var.at(i) = a/pow(1.0+Xshift.at(i)*Xshift.at(i),2);

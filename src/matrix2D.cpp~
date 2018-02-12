@@ -107,15 +107,6 @@ matrix2D<T>& matrix2D<T>::operator=(const matrix2D& rhs)
    //return *this;
 }
 
-// set matrix equal to negative of another
-//
-template<typename T>
-matrix2D<T>& matrix2D<T>::operator-(const matrix2D& rhs)
-{
-   return rhs*(-1.0);
-}
-
-
 // update matrix by adding another to it using +=
 //
 template<typename T>
