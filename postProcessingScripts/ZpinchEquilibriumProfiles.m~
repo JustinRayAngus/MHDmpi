@@ -112,6 +112,7 @@ for i=2:length(rcc)-1
     divFlux(i) = (Fluxcc(i+1)-Fluxcc(i-1))/2.0/dr;
 end
 divFlux(1) = divFlux(2);
+divFlux
 
 Force = (divFlux - f + B.^2)./rcc;
 Force(1) = 0;
@@ -120,13 +121,13 @@ Force(end-1) = Force(end-2)/3.0;
 %divFlux = rcc.*Force+f-B.^2;
 figure(3); hold on; plot(rcc,Force,'g');
 
-
-%%%   redefine magnetic field and recalculate force
-%
-B = sqrt(f-divFlux);
-B(1) = -B(2);
-B(end) = B(end-1)*rcc(end-1)/rcc(end);
-
+% 
+% %%%   redefine magnetic field and recalculate force
+% %
+% B = sqrt(f-divFlux);
+% B(1) = -B(2);
+% B(end) = B(end-1)*rcc(end-1)/rcc(end);
+% 
 % f = P+B.^2/2;
 % Fluxcc = rcc.*f;
 % for i=2:length(rcc)-1
@@ -139,6 +140,4 @@ B(end) = B(end-1)*rcc(end-1)/rcc(end);
 % Force(end-1) = Force(end-2)/3.0;
 % 
 % figure(3); hold on; plot(rcc,Force,'black');
-
-
 

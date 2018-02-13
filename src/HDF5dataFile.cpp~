@@ -156,6 +156,14 @@ void HDF5dataFile::writeAll()
          appendVecVecInOutput(it->ptr, it->name.c_str());
       }
    }
+   //cout << "Growing matrix2D are: " << endl;
+   for(vector< VarStr< matrix2D<double> > >::iterator it = mat2DVar_arr.begin(); 
+       it != mat2DVar_arr.end(); it++) {
+      if(it->grow==1) {
+         //cout << it->name << endl;
+         appendmat2DInOutput(it->ptr, it->name.c_str());
+      }
+   }
 }
 
 /***
@@ -557,8 +565,9 @@ void HDF5dataFile::writemat2D(const matrix2D<double>& varData, const char* varNa
       dataspace.selectHyperslab(H5S_SELECT_SET,dims,offset); // data dataspace
                
       dataset.write(data, varType, mdataspace, dataspace);
-      cout << "Extendable matrix2D " << varName << " added to " << outputFile << endl;    
-
+      if(procID==0) {
+         cout << "Extendable matrix2D " << varName << " added to " << outputFile << endl;    
+      }
       // close opened stuff
       //
       dataset.close();
@@ -577,8 +586,9 @@ void HDF5dataFile::writemat2D(const matrix2D<double>& varData, const char* varNa
       DataType datatype(varType);
       DataSet dataset = file.createDataSet(varName, datatype, dataspace);
       dataset.write(data, varType);
-      cout << "Non-extendable matrix2D " << varName << " added to " << outputFile << endl;   
-           
+      if(procID==0) {
+         cout << "Non-extendable matrix2D " << varName << " added to " << outputFile << endl;   
+      }  
       // close opened stuff
       //
       dataset.close();      
