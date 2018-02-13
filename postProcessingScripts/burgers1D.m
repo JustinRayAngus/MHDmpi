@@ -11,7 +11,7 @@ clear all;
 
 numProcs = 4;
 filePath = '../physicsMods/burgers1D/';
-%filePath = '../physicsMods/sodShock/';
+%filePath = '/Users/angus1/Programs/fromQuartz/burgers1D/';
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
@@ -32,7 +32,7 @@ tout= hdf5read(thisFile,'tout');
 %%%
 %
 %close(figure(1));
-f1=figure(1); 
+f1=figure(2); 
 %set(f1,'position',[1030 925 1100 420]);
 set(f1,'position',[858 37 500 760]);
 
