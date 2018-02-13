@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/mhd.dir/main.cpp.o"
   "CMakeFiles/mhd.dir/domainGrid.cpp.o"
+  "CMakeFiles/mhd.dir/matrix2D.cpp.o"
   "CMakeFiles/mhd.dir/vectorMath.cpp.o"
   "CMakeFiles/mhd.dir/timeDomain.cpp.o"
   "CMakeFiles/mhd.dir/HDF5dataFile.cpp.o"

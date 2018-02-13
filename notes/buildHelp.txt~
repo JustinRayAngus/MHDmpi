@@ -1,24 +1,8 @@
 In order to compile executable for test do the following:
 
-prerequisites for building this code are gcc, cmake, hdf5, and mpi.
+prerequisites for building this code are cmake, hdf5, and mpi.
 Below are instructions on how to build this code on my macBook pro
 and on quartz.llnl.gov
-
-
-////////////
-///
-///     macBook prerequisites instructions:
-///
-///
-
-I think I installed gcc and cmake using instructions from the book
-"Modern C++ Programming with Test-Driven Development". For mpi I 
-am using openmpi. See ://eothred.wordpress.com/2010/02/25/hello-world-
-cmakeopenmpi/PI_Finalize ();
-
-For setting up hdf5 see the instructions below.
-The rest of the instructions (including hdf5) are same as Quartz
-instructions given below.
 
 
 ////////////
@@ -27,8 +11,8 @@ instructions given below.
 ///
 ///
 
-Fortunately, gcc, cmake and mpi are already setup on quartz. So nothing
-needs to be done for these.
+Fortunately, cmake and mpi are already setup on quartz. So nothing
+needs to be done for either of these.
 
 hdf5 is also on quartz, but I need it to be configured with 
 --ennable-cxx and I'm not sure if that is a default configuration 
@@ -40,9 +24,8 @@ environment variable in ./src/CMakeLists.txt.
 i.e 
 set(ENV{HDF5_HOME} "/g/g19/angus1/MHDwithMPI/HDF5/hdf5-1.10.0-patch1/hdf5")
 
-That is it for the prerequisites. 
-The rest of the instructions for building the code and running
-a module are given below (also in READ_ME file in ./physicsMods folder)
+That is it. The rest of the instructions for building the code and running
+a module are the same as on my MacBook Pro.
 
 Go into one of the modules in the physicsMods folder and do the following
 1) Set the environment variables for the module. I have these preset in each
