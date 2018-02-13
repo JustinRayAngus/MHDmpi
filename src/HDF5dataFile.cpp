@@ -518,6 +518,9 @@ void HDF5dataFile::writeVecVec(const vector<vector<double>>& varData, const char
 
 void HDF5dataFile::writemat2D(const matrix2D<double>& varData, const char* varName, const bool& growVar)
 {     
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+   
    // Open file and check to see if output variable already exists
    //
    H5File file(outputFile.c_str(), H5F_ACC_RDWR);
@@ -565,8 +568,9 @@ void HDF5dataFile::writemat2D(const matrix2D<double>& varData, const char* varNa
       dataspace.selectHyperslab(H5S_SELECT_SET,dims,offset); // data dataspace
                
       dataset.write(data, varType, mdataspace, dataspace);
-      cout << "Extendable matrix2D " << varName << " added to " << outputFile << endl;    
-
+      if(procID==0) {
+         cout << "Extendable matrix2D " << varName << " added to " << outputFile << endl;    
+      }
       // close opened stuff
       //
       dataset.close();
@@ -585,8 +589,9 @@ void HDF5dataFile::writemat2D(const matrix2D<double>& varData, const char* varNa
       DataType datatype(varType);
       DataSet dataset = file.createDataSet(varName, datatype, dataspace);
       dataset.write(data, varType);
-      cout << "Non-extendable matrix2D " << varName << " added to " << outputFile << endl;   
-           
+      if(procID==0) {
+         cout << "Non-extendable matrix2D " << varName << " added to " << outputFile << endl;   
+      }  
       // close opened stuff
       //
       dataset.close();      

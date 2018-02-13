@@ -2,7 +2,7 @@
 "Xgrid":{
          "Xmin":0.0,
          "Xmax":1.0,
-         "nX":100,
+         "nX":200,
          "nXg":2 // number of guard cells each end
         },
 "Zgrid":{
@@ -12,8 +12,8 @@
          "nZg":2 // number of guard cells each end
         },
 "Time":{
-        "dtOut":3.0e-1,  // output time intervals
-        "tOutSteps":11,  // number of output setps
+        "dtOut":1.0e-1,  // output time intervals
+        "tOutSteps":31,  // number of output setps
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{

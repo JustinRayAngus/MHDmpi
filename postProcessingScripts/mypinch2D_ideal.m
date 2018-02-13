@@ -14,10 +14,10 @@ set(0,'defaultlinelinewidth',1.5);
 set(0,'defaultaxesfontweight','bold');
 
 
-numProcs = 1;
+numProcs = 4;
 filePath = '../physicsMods/pinch2D/';
 
-plotBackIndex = 1; % plot time will be end-plotBackIndex
+plotBackIndex = 0; % plot time will be end-plotBackIndex
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
@@ -76,13 +76,13 @@ end
 
 
 figure(10); hold on; plot(Xcc(3:end-2),Fx(index0,3:end-2,1)); grid on;
-hold on; plot(Xcc(3:end-2),Fx(index0,3:end-2,end-1));
+hold on; plot(Xcc(3:end-2),Fx(index0,3:end-2,end));
 %axis([0 1 -0.002 0.002]); grid on;
 
 
 plots=1;
 if(plots)
-f1=figure(11); 
+f1=figure(1); 
 set(f1,'position',[1030 425 1300 840]);
 %set(f1,'position',[341 436 900 840]);
 
@@ -112,10 +112,10 @@ hold on; plot(Xcc,P(index0,index1,1),'black'); box on;
 hold on; plot(Xcc,P(index0,index1,end-plotBackIndex),'r'); grid on;
 set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
-xlabel('x'); ylabel('T');
+xlabel('x'); ylabel('P');
 title('pressure'); axis('square');
 xlim([0 1]);
-ylim([0 1.2*max(max(max(P)))]);
+ylim([0 1.2]);
 %
 %
 subplot(2,3,4);

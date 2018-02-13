@@ -295,7 +295,27 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    computeFluxes(Xgrid, 1); // 1 for first order calculation   
   
 
-   cout << "ARE WE HERE 1" << endl;
+   // calculate initial radial force density for diagnostic
+   //
+   for (auto i=2; i<nXcc-2; i++) {
+      for (auto j=0; j<nZcc; j++) {
+	 
+         Fx(i,j) = - (FluxMx_x(i,j)-FluxMx_x(i-1,j))/rcc(i,j)/Xgrid.dX
+		   + (P(i,j)-By(i,j)*By(i,j)/2.0)/rcc(i,j);
+	 if(procID==numProcs-1 && i==nXcc-3) Fx(i,j) = Fx(i-1,j)/3.0;
+	 //if(i==nXcc-nXg-1) Fx(i,j) = 2.0*Fx(i-1,j)-Fx(i-2,j);
+      }
+   }
+   Xgrid.communicate(Fx);
+
+   /* no luck with this method to reduce numerical force at t=0
+   Fx = -(rcc*Fx - (P-By*By/2.0)); // this is actually divFlux*rcc
+   By = sqrt(2.0*(abs(P-Fx)));
+   if(procID==0) setXminBoundary(By,0.0,-1.0);   
+   if(procID==numProcs-1) setXmaxBy(By,-1);
+   Xgrid.communicate(By);
+   computeFluxes(Xgrid, 1); // 1 for first order calculation   
+   */
 
    // add stuff to output files
    //
@@ -361,10 +381,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 	 
          Fx(i,j) = - (FluxMx_x(i,j)-FluxMx_x(i-1,j))/Xcc.at(i)/Xgrid.dX
 		   + (P(i,j)-By(i,j)*By(i,j)/2.0)/Xcc.at(i);
-		   //+ (P(i+1,j)+P(i-1,j))/2.0/Xcc.at(i)
-		   //- (P(i+1,j)-P(i-1,j))/2.0/Xgrid.dX
-		   //- Jz(i,j)*By(i,j);
-	 if(i==nXcc-nXg-1) Fx(i,j) = Fx(i-1,j)/3.0;
+	 if(procID==numProcs-1 && i==nXcc-nXg-1) Fx(i,j) = Fx(i-1,j)/3.0;
 	 //if(i==nXcc-nXg-1) Fx(i,j) = 2.0*Fx(i-1,j)-Fx(i-2,j);
 
 	 N(i,j)  = Nold(i,j)  - thisdt*(FluxN_x(i,j)  - FluxN_x(i-1,j))/Xcc.at(i)/Xgrid.dX;
@@ -468,7 +485,6 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    //  define derived variables
    //
    Vx = Mx/N;
-   setXmaxBoundary(Vx,0.0,-1.0);
    Vz = Mz/N;
    P  = S*pow(N,gamma0-1.0);
    T  = P/N;
@@ -507,17 +523,20 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    // compute advective flux using
    // specified scheme from input file
    //
+   //Nsub = 2;
    if(advScheme0 == "TVD") {
       Xgrid.computeFluxTVD(FluxN_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
                            FluxNcc_x,Cspeed,rcc*N,0,Nsub);
-      Xgrid.computeFluxTVD(FluxMx_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
-                           FluxMxcc_x,Cspeed,rcc*Mx,0,Nsub);
+      //Xgrid.computeFluxTVD(FluxMx_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
+      //                     FluxMxcc_x,Cspeed,rcc*Mx,0,Nsub);
       Xgrid.computeFluxTVD(FluxMz_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
                            FluxMzcc_x,Cspeed,rcc*Mz,0,Nsub);
       Xgrid.computeFluxTVD(FluxS_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
                            FluxScc_x,Cspeed,rcc*S,0,Nsub);
       Xgrid.computeFluxTVD(FluxBy_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
                            FluxBycc_x,Cspeed0,By,0,Nsub);
+      Xgrid.computeFluxTVD(FluxMx_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
+                           FluxMxcc_x,Cspeed,rcc*Mx,0,Nsub);
       
       Xgrid.computeFluxTVD(FluxN_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
                            FluxNcc_z,Cspeed,N,1,Nsub);
