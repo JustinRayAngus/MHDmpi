@@ -34,7 +34,6 @@ Mz  = hdf5read(thisFile,'Mz');
 S  = hdf5read(thisFile,'S');
 By  = hdf5read(thisFile,'By');
 P  = hdf5read(thisFile,'P');
-P0  = hdf5read(thisFile,'P0');
 
 Vx  = hdf5read(thisFile,'Vx');
 Vz  = hdf5read(thisFile,'Vz');
@@ -76,7 +75,7 @@ end
 
 
 figure(10); hold on; plot(Xcc(3:end-2),Fx(index0,3:end-2,1)); grid on;
-hold on; plot(Xcc(3:end-2),Fx(index0,3:end-2,end));
+hold on; plot(Xcc(3:end-2),Fx(index0,3:end-2,2));
 %axis([0 1 -0.002 0.002]); grid on;
 
 

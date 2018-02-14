@@ -13,7 +13,7 @@
         },
 "Time":{
         "dtOut":1.0e-1,  // output time intervals
-        "tOutSteps":31,  // number of output setps
+        "tOutSteps":11,  // number of output setps
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
