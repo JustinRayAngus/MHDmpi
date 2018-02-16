@@ -44,6 +44,7 @@ string advScheme0;    // advection differencing scheme
 double gamma0;        // adiabatic coefficient
 int Nsub;             // time-solver subcycle steps
 matrix2D<double> N, Mx, Mz, S, By, Ez, Ex;  // time-evolving variables
+matrix2D<double> P0, deltaP;                    // initial perturbation
 matrix2D<double> eta, Cs, Vx, Vz, P, T;     // derived variables
 matrix2D<double> Jz, Jz0, Jx, Jx0;          // derived variables
 matrix2D<double> eta_x, eta_z, Jzcc, Ezcc, Jxcc, VxBy_x, VzBy_z;
@@ -96,6 +97,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
 
    N.initialize(nXcc,nZcc,0.0);
    Nold.initialize(nXcc,nZcc,0.0);
+   deltaP.initialize(nXcc,nZcc,0.0);
+   P0.initialize(nXcc,nZcc,0.0);
    Mx.initialize(nXcc,nZcc,0.0);
    Mxold.initialize(nXcc,nZcc,0.0);
    Mz.initialize(nXcc,nZcc,0.0);
@@ -197,10 +200,6 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    if(Pvar.isObject()) { 
       Xgrid.setInitialProfile(P,Pvar);
       if(procID==0) setXminExtrap(P, 0);   
-      //if(procID==0) setXminBoundary(P, 0.0, -1.0);   
-
-      //if(procID==numProcs-1) setXmaxBy(P,-4.0); 
-      //if(procID==numProcs-1) setXmaxExtrap(P,0); 
       if(procID==numProcs-1) setXmaxExtrap(P,0); 
       setZboundaryPeriodic(P);  
       Xgrid.communicate(P);
@@ -232,6 +231,18 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       Byold = By;
    } else {
       cout << "value for Physics variable \"By\" is not object type !" << endl;
+      exit (EXIT_FAILURE);
+   }
+   
+   const Json::Value deltaPvar = Phys.get("deltaP",defValue);
+   if(deltaPvar.isObject()) { 
+      Xgrid.setInitialProfile(deltaP,deltaPvar);
+      if(procID==0) setXminExtrap(deltaP, 0);   
+      if(procID==numProcs-1) setXmaxExtrap(deltaP,0); 
+      setZboundaryPeriodic(deltaP);  
+      Xgrid.communicate(deltaP);
+   } else {
+      cout << "value for Physics variable \"deltaP\" is not object type !" << endl;
       exit (EXIT_FAILURE);
    }
 
@@ -333,6 +344,16 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       Xgrid.communicate(Fx);
    }
 
+   // add perturbation to pressure profile
+   //
+   P0 = P;
+   P *= 1.0+deltaP;
+   N = P/T;
+   Nold = N;
+   S = P/pow(N,gamma0-1.0);
+   Sold  = S;
+   Cs = pow(gamma0*P/N + By*By/N,0.5);
+   computeFluxes(Xgrid, 2); // 1 for first order calculation   
 
 
    // add stuff to output files
@@ -340,6 +361,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    dataFile.add(rcc, "rcc", 0);  // force density x-direction 
    dataFile.add(Fx, "Fx", 1);  // force density x-direction 
    dataFile.add(N,  "N",  1);  // density 
+   dataFile.add(deltaP,  "deltaP",  1);  // density perturbation 
+   dataFile.add(P0,  "P0",  0);  // initial unperturbed pressure profile 
    dataFile.add(Mx, "Mx", 1);  // momentum density 
    dataFile.add(Mz, "Mz", 1);  // momentum density 
    dataFile.add(S,  "S",  1);  // entropy density
@@ -551,7 +574,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       Xgrid.computeFluxTVD(FluxS_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
                            FluxScc_x,Cspeed,rcc*S,0,Nsub);
       Xgrid.computeFluxTVD(FluxBy_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
-                           FluxBycc_x,Cspeed0,By,0,Nsub);
+                           FluxBycc_x,Cspeed,By,0,Nsub);
       
       Xgrid.computeFluxTVD(FluxN_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
                            FluxNcc_z,Cspeed,N,1,Nsub);
@@ -562,7 +585,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       Xgrid.computeFluxTVD(FluxS_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
                            FluxScc_z,Cspeed,S,1,Nsub);
       Xgrid.computeFluxTVD(FluxBy_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
-                           FluxBycc_z,Cspeed0,By,1,Nsub);
+                           FluxBycc_z,Cspeed,By,1,Nsub);
    }
    else {
       Xgrid.InterpToCellEdges(FluxN_x,  FluxNcc_x,  Vx, advScheme0, 0);

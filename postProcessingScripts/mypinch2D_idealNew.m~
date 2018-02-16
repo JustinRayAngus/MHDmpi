@@ -14,57 +14,40 @@ set(0,'defaultlinelinewidth',1.5);
 set(0,'defaultaxesfontweight','bold');
 colormap('jet');
 
-numProcs = 1;
+numProcs = 2;
 filePath = '../physicsMods/pinch2D/';
 
 numProcs = 10;
-% filePath = '../../fromQuartz/pinch2D_200nx/';
-% %filePath = '../../fromQuartz/pinch2D_200nx_dtFrac4/';
-% %filePath = '../../fromQuartz/pinch2D_400nx/';
 filePath = '../../fromQuartz/pinch2D_test4/';
 
+plotBackIndex = 20; % plot time will be end-plotBackIndex
 
-plotBackIndex = 0; % plot time will be end-plotBackIndex
+tout = loadData(filePath,numProcs,'tout');
+Xcc = loadData(filePath,numProcs,'Xcc');
+Xce = loadData(filePath,numProcs,'Xce');
+Zcc = loadData(filePath,numProcs,'Zcc');
+Zce = loadData(filePath,numProcs,'Zce');
+rcc = loadData(filePath,numProcs,'rcc');
 
-for i=1:numProcs
-fileName = ['output',num2str(i-1),'.h5'];
-thisFile = [filePath,fileName];
-procID  = hdf5read(thisFile,'procID');
-fileinfo = hdf5info(thisFile);
-Xcc = hdf5read(thisFile,'Xcc');
-Xce = hdf5read(thisFile,'Xce');
-Zcc = hdf5read(thisFile,'Zcc');
-Zce = hdf5read(thisFile,'Zce');
-N  = hdf5read(thisFile,'N');
-deltaP  = hdf5read(thisFile,'deltaP');
+N  = loadData(filePath,numProcs,'N');
+deltaP  = loadData(filePath,numProcs,'deltaP');
 %P0  = hdf5read(thisFile,'P0');
-Mx  = hdf5read(thisFile,'Mx');
-Mz  = hdf5read(thisFile,'Mz');
-S  = hdf5read(thisFile,'S');
-By  = hdf5read(thisFile,'By');
-P  = hdf5read(thisFile,'P');
+Mx  = loadData(filePath,numProcs,'Mx');
+Mz  = loadData(filePath,numProcs,'Mz');
+S  = loadData(filePath,numProcs,'S');
+By = loadData(filePath,numProcs,'By');
+P  = loadData(filePath,numProcs,'P');
 
-Vx  = hdf5read(thisFile,'Vx');
-Vz  = hdf5read(thisFile,'Vz');
-Jz  = hdf5read(thisFile,'Jz');
-rcc = hdf5read(thisFile,'rcc');
-Ez  = hdf5read(thisFile,'Ez');
-Ex  = hdf5read(thisFile,'Ex');
-Cs  = hdf5read(thisFile,'Cs');
-gamma0 = hdf5read(thisFile,'gamma0');
-FluxRatio_x  = hdf5read(thisFile,'FluxRatio_x');
-FluxLim_x    = hdf5read(thisFile,'FluxLim_x');
-FluxL_x    = hdf5read(thisFile,'FluxL_x');
-FluxR_x    = hdf5read(thisFile,'FluxR_x');
-FluxN_x  = hdf5read(thisFile,'FluxN_x');
-FluxMx_x  = hdf5read(thisFile,'FluxMx_x');
-FluxMz_x  = hdf5read(thisFile,'FluxMz_x');
-FluxS_x  = hdf5read(thisFile,'FluxS_x');
-FluxBy_x  = hdf5read(thisFile,'FluxBy_x');
-tout= hdf5read(thisFile,'tout');
+Vx  = loadData(filePath,numProcs,'Vx');
+Vz  = loadData(filePath,numProcs,'Vz');
+Jz  = loadData(filePath,numProcs,'Jz');
+Ez  = loadData(filePath,numProcs,'Ez');
+Ex  = loadData(filePath,numProcs,'Ex');
+Cs  = loadData(filePath,numProcs,'Cs');
+gamma0 = loadData(filePath,numProcs,'gamma0');
 dX = Xcc(2)-Xcc(1);
-
-Fx = hdf5read(thisFile,'Fx'); % - d(P+B^2/2)/dr - B^2/r
+dZ = Zcc(2)-Zcc(1);
+Fx = loadData(filePath,numProcs,'Fx'); % - d(P+B^2/2)/dr - B^2/r
 
 T = P./N;
 Ptot = P+By.^2/2+Mx.*Vx/2.0;
@@ -88,9 +71,9 @@ hold on; plot(Xcc(3:end-2),Fx(index0,3:end-2,2));
 %axis([0 1 -0.002 0.002]); grid on;
 
 
-plots=1;
+plots=0;
 if(plots)
-f1=figure(2); 
+f1=figure(1); 
 set(f1,'position',[1030 425 1300 840]);
 %set(f1,'position',[341 436 900 840]);
 
@@ -139,7 +122,7 @@ xlim([0 1]);
 subplot(2,3,5);
 hold on; plot(Xcc,By(index0,index1,1),'black'); box on;
 %hold on; plot(Xcc,By(index0,index1,11),'b'); grid on;
-hold on; plot(Xcc,By(index0,index1,end-6),'r');
+hold on; plot(Xcc,By(index0,index1,end-plotBackIndex),'r');
 xlabel('x'); ylabel('B'); axis('square');
 title('magnetic field'); grid on;
 set(gca,'xtick',0.0:0.25:2);
@@ -149,7 +132,7 @@ xlim([0 1+2*dX]);
 subplot(2,3,6);
 hold on; plot(Xcc,Jz(index0,:,1),'black'); box on; grid on;
 %hold on; plot(Xce,Jz(index0,:,11),'b'); grid on;
-hold on; plot(Xcc,Jz(index0,:,end-6),'r');
+hold on; plot(Xcc,Jz(index0,:,end-plotBackIndex),'r');
 xlabel('x'); ylabel('J_z'); axis('square');
 title('current density');
 set(gca,'xtick',0:0.25:2);
@@ -158,27 +141,55 @@ xlim([0 1]);
 end
 
 
-figure(11); hold on; plot(Xcc,P(3,:,1)); grid on; box on;
-title('density perturbation'); xlabel('x');
-
-figure(12); %hold on; plot(Zcc,deltaP(:,end/2,1)); grid on; box on;
-%title('density perturbation'); xlabel('z');
-
-
-hold on; surf(Xcc,Zcc,By(:,:,1)); colorbar; box on
-xlabel('x direction');  %caxis([0,1]);
-ylabel('z direction'); shading flat;
-title('density profile at initial time step');
-%axis([-0.5 0.5 -0.5 0.5]); axis('equal');
+%%%   plot contours
+%
+close(figure(13));
+f13=figure(13); set(f13,'position',[782 1 660 804]);
+subplot(2,1,1);
+pcolor(Zcc,Xcc,N(:,:,1)'); colorbar; box on
+xlabel('x direction'); shading flat;
+ylabel('z direction');
+title('density at t = 0 t_A');
+axis('equal'); axis([-0.5 0.5 0 1]);
+%
+%
+%
+subplot(2,1,2);
+pcolor(Zcc,Xcc,deltaP(:,:,end-plotBackIndex)'); colorbar; box on
+xlabel('z/r_0'); shading flat;
+ylabel('r/r_0'); 
+title(['density at t = ',num2str(tout(end-plotBackIndex),2),' t_A']);
+axis('equal'); axis([-0.5 0.5 0 1]); 
 colormap('jet');
 
-figure(14)
-hold on; surf(Xcc,Zcc,By(:,:,end)); colorbar; box on
-xlabel('x direction');  %caxis([0,1]);
-ylabel('z direction'); shading flat;
-title('density profile at final time step');
-%axis([-0.5 0.5 -0.5 0.5]); axis('equal');
-colormap('jet');
 
+%%%   calculate global values for conservation
+%
+dV = rcc*2*pi*dX*dZ;
+Mass = zeros(size(tout));
+Entropy = zeros(size(tout));
+zMomentum = zeros(size(tout));
+ByFlux = zeros(size(tout));
+
+for n=1:length(tout)
+    NdV  = N(:,:,n).*dV;
+    SdV  = S(:,:,n).*dV;
+    MzdV = Mz(:,:,n).*dV;
+    Mass(n) = sum(sum(NdV(3:end-2,3:end-2)));
+    Entropy(n) = sum(sum(SdV(3:end-2,3:end-2)));
+    ByFlux(n) = sum(sum(By(3:end-2,3:end-2,n)))*dX*dZ;
+    zMomentum(n) = sum(sum(MzdV(3:end-2,3:end-2)));
 end
+
+close(figure(4));
+figure(4); plot(tout,Mass,'displayName','mass');
+hold on; plot(tout,Entropy,'displayName','entropy');
+hold on; plot(tout,zMomentum,'displayName','z-momentum');
+hold on; plot(tout, ByFlux,'displayName','B_y-flux');
+xlabel('t/t_0'); title('global conservations');
+lg4 = legend('show');
+set(lg4,'location','best');
+
+
+
 
