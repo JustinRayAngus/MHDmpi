@@ -6,13 +6,13 @@
          "nXg":2 // number of guard cells each end
         },
 "Zgrid":{
-         "Zmin":0.0,
-         "Zmax":1.0,
-         "nZ":2,
+         "Zmin":-0.5,
+         "Zmax":0.5,
+         "nZ":11,
          "nZg":2 // number of guard cells each end
         },
 "Time":{
-        "dtOut":1.0e-1,  // output time intervals
+        "dtOut":1.0e-4,  // output time intervals
         "tOutSteps":3,  // number of output setps
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
@@ -55,6 +55,18 @@
                 "Zb":0.0,  // x-shift
                 "Zc":0.0,  // width
                 "Zd":1.0   // y-shift
+               },
+           "deltaP":{
+                "Xtype":"gaussian", // initial profile
+                "Xa":-1.0e-4,  // amplitude
+                "Xb":0.3333,  // x-shift
+                "Xc":0.1111,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"cos", // initial profile
+                "Za":1.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":1.0,  // width
+                "Zd":0.0   // y-shift
                }
           }
 }

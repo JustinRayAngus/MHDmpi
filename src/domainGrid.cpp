@@ -502,6 +502,15 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
       }
 
    } 
+   else if(type0=="cos") {
+      
+      var = a*cos(2.0*3.141592653589793/c*Xvec+b) + d;
+      
+      if(procID==0) {
+         cout << "Initial F0 is cos with mode number  = " << 1/c << endl;
+      }
+
+   } 
    else if(type0=="step") {
       
       int Nmax = Xvec.size();
