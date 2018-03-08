@@ -290,7 +290,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
 
    matrix2D<double> divFlux(nXcc,nZcc,0.0);
    matrix2D<double> Ptot(nXcc,nZcc,0.0);
-   for (auto n=0; n<1; n++){ 
+   for (auto n=0; n<0; n++){ 
 
       // calculate initial radial force density for diagnostic
       //
@@ -361,7 +361,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    dataFile.add(rcc, "rcc", 0);  // force density x-direction 
    dataFile.add(Fx, "Fx", 1);  // force density x-direction 
    dataFile.add(N,  "N",  1);  // density 
-   dataFile.add(deltaP,  "deltaP",  1);  // density perturbation 
+   dataFile.add(deltaP,  "deltaP",  0);  // density perturbation 
    dataFile.add(P0,  "P0",  0);  // initial unperturbed pressure profile 
    dataFile.add(Mx, "Mx", 1);  // momentum density 
    dataFile.add(Mz, "Mz", 1);  // momentum density 
@@ -550,10 +550,10 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    
    FluxNcc_x = rcc*Mx;
    FluxNcc_z = Mz;
-   FluxMxcc_x = rcc*(Mx*Vx + P+By*By/2.0);
+   FluxMxcc_x = rcc*(Mx*Vx + P + By*By/2.0);
    FluxMxcc_z = Mx*Vz;
    FluxMzcc_x = rcc*Mz*Vx;
-   FluxMzcc_z = Mz*Vz + P+By*By/2.0;
+   FluxMzcc_z = Mz*Vz + P + By*By/2.0;
    FluxScc_x = rcc*Vx*S;
    FluxScc_z = Vz*S;
    FluxBycc_x = Vx*By;
@@ -565,25 +565,28 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    //
    Nsub = 2; // hard code this for force balance at initiation
    if(advScheme0 == "TVD") {
-      Xgrid.computeFluxTVD(FluxN_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
-                           FluxNcc_x,Cspeed,rcc*N,0,Nsub);
+      Xgrid.computeFluxTVD(FluxN_x, FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
+                           FluxNcc_x, Cspeed,rcc*N, 0,Nsub);
       Xgrid.computeFluxTVD(FluxMx_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
                            FluxMxcc_x,Cspeed,rcc*Mx,0,Nsub);
       Xgrid.computeFluxTVD(FluxMz_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
                            FluxMzcc_x,Cspeed,rcc*Mz,0,Nsub);
-      Xgrid.computeFluxTVD(FluxS_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
-                           FluxScc_x,Cspeed,rcc*S,0,Nsub);
+      Xgrid.computeFluxTVD(FluxS_x, FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
+                           FluxScc_x, Cspeed,rcc*S, 0,Nsub);
       Xgrid.computeFluxTVD(FluxBy_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
-                           FluxBycc_x,Cspeed,By,0,Nsub);
-      
-      Xgrid.computeFluxTVD(FluxN_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
-                           FluxNcc_z,Cspeed,N,1,Nsub);
+                           FluxBycc_x,Cspeed,By,    0,Nsub);
+      //
+      //
+      Xgrid.computeFluxTVD(FluxN_z, FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
+                           FluxNcc_z, Cspeed,N, 1,Nsub);
+      //Nsub = 1;
       Xgrid.computeFluxTVD(FluxMx_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
                            FluxMxcc_z,Cspeed,Mx,1,Nsub);
+      //Nsub = 2;
       Xgrid.computeFluxTVD(FluxMz_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
                            FluxMzcc_z,Cspeed,Mz,1,Nsub);
-      Xgrid.computeFluxTVD(FluxS_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
-                           FluxScc_z,Cspeed,S,1,Nsub);
+      Xgrid.computeFluxTVD(FluxS_z, FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
+                           FluxScc_z, Cspeed,S, 1,Nsub);
       Xgrid.computeFluxTVD(FluxBy_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
                            FluxBycc_z,Cspeed,By,1,Nsub);
    }
@@ -601,6 +604,8 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       setXminBoundary(FluxMz_x, 0.0, 0.0);   
       setXminBoundary(FluxS_x,  0.0, 0.0);
       setXminBoundary(FluxBy_x, 0.0, 0.0);
+      
+      //setXminBoundary(FluxMx_z, 0.0, 0.0);   
    }   
    if(procID==numProcs-1)  {
       setXmaxBoundary(FluxN_x,  0.0, 0.0);   
@@ -608,6 +613,8 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       setXmaxBoundary(FluxMz_x, 0.0, 0.0);   
       setXmaxBoundary(FluxS_x,  0.0, 0.0);
       setXmaxBoundary(FluxBy_x, 0.0, 0.0);
+      
+      //setXmaxBoundary(FluxMx_z, 0.0, 0.0);   
    }   
 
 

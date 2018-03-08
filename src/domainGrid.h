@@ -37,6 +37,7 @@ public:
   void setInitialProfile(matrix2D<double>&, const Json::Value&) const;
   void setInitialProfileArbDir(vector<double>&, const vector<double>&,
 		         const double, const double,
+		         const double, const double,
 		         const double, const double,	
 		         const string&) const;
   
