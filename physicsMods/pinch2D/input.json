@@ -6,8 +6,8 @@
          "nXg":2 // number of guard cells each end
         },
 "Zgrid":{
-         "Zmin":-0.5,
-         "Zmax":0.5,
+         "Zmin":-3.14159,
+         "Zmax":3.14159,
          "nZ":11,
          "nZg":2 // number of guard cells each end
         },
@@ -58,7 +58,7 @@
                },
            "deltaP":{
                 "Xtype":"gaussian", // initial profile
-                "Xa":-1.0e-4,  // amplitude
+                "Xa":-0.0e-4,  // amplitude
                 "Xb":0.3333,  // x-shift
                 "Xc":0.1111,  // width
                 "Xd":0.0,   // y-shift

@@ -323,7 +323,7 @@ void domainGrid::setInitialProfile(vector<vector<double>> &var,
 
    //  set X-profile
    //
-   setInitialProfileArbDir(Xprofile,Xvec,Xa,Xb,Xc,Xd,Xtype0);
+   setInitialProfileArbDir(Xprofile,Xvec,Xmin,Xmax,Xa,Xb,Xc,Xd,Xtype0);
 
 
    //  get Z-direction stuff
@@ -348,7 +348,7 @@ void domainGrid::setInitialProfile(vector<vector<double>> &var,
    
    //  set Z-profile
    //
-   setInitialProfileArbDir(Zprofile,Zvec,Za,Zb,Zc,Zd,Ztype0);
+   setInitialProfileArbDir(Zprofile,Zvec,Zmin,Zmax,Za,Zb,Zc,Zd,Ztype0);
 
    
    //  multiply X and Z profiles together
@@ -413,7 +413,7 @@ void domainGrid::setInitialProfile(matrix2D<double> &var,
 
    //  set X-profile
    //
-   setInitialProfileArbDir(Xprofile,Xvec,Xa,Xb,Xc,Xd,Xtype0);
+   setInitialProfileArbDir(Xprofile,Xvec,Xmin,Xmax,Xa,Xb,Xc,Xd,Xtype0);
 
 
    //  get Z-direction stuff
@@ -438,7 +438,7 @@ void domainGrid::setInitialProfile(matrix2D<double> &var,
    
    //  set Z-profile
    //
-   setInitialProfileArbDir(Zprofile,Zvec,Za,Zb,Zc,Zd,Ztype0);
+   setInitialProfileArbDir(Zprofile,Zvec,Zmin,Zmax,Za,Zb,Zc,Zd,Ztype0);
 
 
    //  multiply X and Z profiles together
@@ -457,7 +457,8 @@ void domainGrid::setInitialProfile(matrix2D<double> &var,
 
 void domainGrid::setInitialProfileArbDir(vector<double> &var,
 	           const vector<double>& Xvec,	
-                   const double a, const double b,
+                   const double Xmin, const double Xmax,
+		   const double a, const double b,
 		   const double c, const double d,
 		   const string& type0) const
 {
@@ -469,6 +470,7 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
    const int thisNvec = Xvec.size();
    assert(thisNvar==thisNvec);
 
+   double Lvec = Xmax-Xmin;
    vector<double> Xshift;
 
    if(type0=="gaussian" || type0=="Gaussian") {
@@ -504,10 +506,10 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
    } 
    else if(type0=="cos") {
       
-      var = a*cos(2.0*3.141592653589793/c*Xvec+b) + d;
+      var = a*cos(2.0*3.141592653589793*c*Xvec/Lvec+b) + d;
       
       if(procID==0) {
-         cout << "Initial F0 is cos with mode number  = " << 1/c << endl;
+         cout << "Initial F0 is cos with mode number  = " << c << endl;
       }
 
    } 

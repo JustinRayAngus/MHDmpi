@@ -9,7 +9,7 @@
 %%%   Specified scales: N0 [1/m^3], T0 [eV], r0 [m]
 %%%
 %%%   Derived scales: 
-%%%   P0 = N0*T0*qe      [J/m^3]
+%%%   P0 = 2.0*N0*T0*qe      [J/m^3]
 %%%   B0 = sqrt(P0*mu0)  [T]
 %%%   J0 = B0/r0/mu0     [A/m^2]
 %%%   rho0 = Mi*N0;      [kg/m^3]
@@ -28,7 +28,7 @@ clear all;
 %%%   specify spatial scale, gas temp/pressure, atomic mass number, 
 %%%   and current scale
 %
-aMn = 2;      % atomic mass number
+aMn = 1.008;      % atomic mass number
 Tg  = 300;    % ambient gas temperature [K]
 Pg  = 1;      % ambient gas pressure    [Torr]
 N0 = 1.0e24; %2*2.6868e25*Pg/760*273/Tg;  % total density [1/m^3]
@@ -54,7 +54,7 @@ B0 = sqrt(mu0*P0);            % magnetic field [T]
 %B0 = I0*mu0/r0;               % magnetic field [T]
 %P0 = B0^2/mu0;                % pressure [kg/s^2/m]
 J0 = B0/r0/mu0;               % current density [A/cm^2]
-Mi = 2.00*amu;                % particle mass [kg]
+Mi = aMn*amu;                % particle mass [kg]
 rho0 = Mi*N0;                 % density [kg/m^3]
 U0 = sqrt(P0/rho0);           % velocity [m/s]
 E0 = U0*B0;                   % electric field [V/m]
@@ -80,6 +80,8 @@ delta = U0^2/cvac^2;
 eta = 1.03e-4/10/T0^1.5;  % plasma resistivity [Ohm-m]
 eta0  = r0^2*mu0/t0;
 etanorm = eta/eta0;
+VTi = 9.29e5*sqrt(T0/aMn); % ion thermal speed [cm/s] ( sqrt(kBTi/Mi) )
+
 
 display(delta);
 display(etanorm);

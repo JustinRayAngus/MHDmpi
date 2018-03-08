@@ -6,8 +6,8 @@
          "nXg":2 // number of guard cells each end
         },
 "Zgrid":{
-         "Zmin":-0.5,
-         "Zmax":0.5,
+         "Zmin":-3.14159,
+         "Zmax":3.14159,
          "nZ":11,
          "nZg":2 // number of guard cells each end
         },
