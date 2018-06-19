@@ -69,8 +69,8 @@ filePath = '../../fromQuartz/pinch2D/entropy_v0/Li1.5e-2/ka3.0/'; numProcs = 20;
 %filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.12/ka3.0/'; numProcs = 20; newDeck = 2;
 
 filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0/'; numProcs = 20; newDeck = 2;
-filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/ka3.0_taui1.0e-3/'; numProcs = 20; newDeck = 2;
-
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/ka3.0_taui1.0e-3_again/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.17/ka3.0/'; numProcs = 20; newDeck = 2;
 
 %t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
 t0 = 1.2046e-8; % using pinch radius for length scale
