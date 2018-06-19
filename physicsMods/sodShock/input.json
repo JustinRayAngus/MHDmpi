@@ -2,7 +2,7 @@
 "Xgrid":{
          "Xmin":-0.5,
          "Xmax":0.5,
-         "nX":800,
+         "nX":200,
          "nXg":2 // number of guard cells each end
         },
 "Time":{

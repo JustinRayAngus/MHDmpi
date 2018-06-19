@@ -171,7 +171,6 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       eta0 = etaVal.asDouble();
       if(procID==0) cout << "resistivity = " << eta0 << endl;
       
-      
 
    }
    else {
@@ -367,7 +366,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
      
       if(procID==numProcs-1) {
          setXmaxBoundary(N, 0.0, 1.0);   
-         setXmaxBoundary(M, 0.0, -1.0);   
+         setXmaxBoundary(M, 0.0, 1.0);   
          setXmaxBoundary(S, 0.0, 1.0);   
          setXmaxBoundary(B, 0.0, 0.0);   
       }

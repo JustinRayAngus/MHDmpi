@@ -50,6 +50,10 @@ r0 = 5.0e-5;   % reactor
 N0 = 3.0e27;   % reactor
 T0 = 4e4;      % reactor [eV]
 
+=======
+r0  = 5.0e-3; % spatial scale [m]
+T0  = 100.0;    % initial plasma temperature [eV]
+>>>>>>> 13056ff273390f0ff7ee3309583c90c1a1ea2135
 
 
 %%%   fundamental constants
