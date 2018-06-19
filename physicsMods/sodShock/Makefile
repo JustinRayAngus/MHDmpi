@@ -231,6 +231,33 @@ main.cpp.s:
 	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+matrix2D.o: matrix2D.cpp.o
+
+.PHONY : matrix2D.o
+
+# target to build an object file
+matrix2D.cpp.o:
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/matrix2D.cpp.o
+.PHONY : matrix2D.cpp.o
+
+matrix2D.i: matrix2D.cpp.i
+
+.PHONY : matrix2D.i
+
+# target to preprocess a source file
+matrix2D.cpp.i:
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/matrix2D.cpp.i
+.PHONY : matrix2D.cpp.i
+
+matrix2D.s: matrix2D.cpp.s
+
+.PHONY : matrix2D.s
+
+# target to generate assembly for a file
+matrix2D.cpp.s:
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/matrix2D.cpp.s
+.PHONY : matrix2D.cpp.s
+
 sodShock.o: sodShock.cpp.o
 
 .PHONY : sodShock.o
@@ -333,6 +360,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... matrix2D.o"
+	@echo "... matrix2D.i"
+	@echo "... matrix2D.s"
 	@echo "... sodShock.o"
 	@echo "... sodShock.i"
 	@echo "... sodShock.s"

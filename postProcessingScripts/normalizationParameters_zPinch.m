@@ -9,7 +9,7 @@
 %%%   Specified scales: N0 [1/m^3], T0 [eV], r0 [m]
 %%%
 %%%   Derived scales: 
-%%%   P0 = 2.0*N0*T0*qe      [J/m^3]
+%%%   P0 = 2.0*N0*T0*qe  [J/m^3]
 %%%   B0 = sqrt(P0*mu0)  [T]
 %%%   J0 = B0/r0/mu0     [A/m^2]
 %%%   rho0 = Mi*N0;      [kg/m^3]
@@ -32,8 +32,24 @@ aMn = 1.008;      % atomic mass number
 Tg  = 300;    % ambient gas temperature [K]
 Pg  = 1;      % ambient gas pressure    [Torr]
 N0 = 1.0e24; %2*2.6868e25*Pg/760*273/Tg;  % total density [1/m^3]
-r0  = 5.0e-3; % spatial scale [m]
+r0  = 5.0e-3/3; % spatial scale [m]
 T0  = 100.0;    % initial plasma temperature [eV]
+%
+aMn = 2.0;      % fuze deuterium
+r0 = 0.091e-2;  % fuze a=0.09 cm,
+N0 = 4.25e24;   % fuze n0 = 4e18/cc
+T0 = 1270;      % fuze temperature [eV]
+
+% aMn = 2.0;     % zap deuterium
+% r0 = 1.0e-2;   % zap a=1.0 cm, r0 = 3*a
+% N0 = 1.0e22;   % zap n0 = 1e16/cc
+% T0 = 100;      % zap [eV]
+
+aMn = 2.0;     % reactor deuterium
+r0 = 5.0e-5;   % reactor 
+N0 = 3.0e27;   % reactor
+T0 = 4e4;      % reactor [eV]
+
 
 
 %%%   fundamental constants
@@ -60,6 +76,8 @@ U0 = sqrt(P0/rho0);           % velocity [m/s]
 E0 = U0*B0;                   % electric field [V/m]
 t0 = r0/U0;                   % time [s]
 
+wci = qe*B0/Mi; % ion cyclotron frequency [Hz]
+wce = qe*B0/me; % electron cyclotron frequency [Hz]
 
 % %%%   set parameters for calculation of time-dependent magnetic field
 % %%%   boundary: B|x=0 = mu*I(t)/dy, I(t) = I0*t/100ns
@@ -80,8 +98,29 @@ delta = U0^2/cvac^2;
 eta = 1.03e-4/10/T0^1.5;  % plasma resistivity [Ohm-m]
 eta0  = r0^2*mu0/t0;
 etanorm = eta/eta0;
-VTi = 9.29e5*sqrt(T0/aMn); % ion thermal speed [cm/s] ( sqrt(kBTi/Mi) )
+VTi = 9.29e5*sqrt(T0/2/aMn)/100; % ion thermal speed [m/s] ( sqrt(kBTi/Mi) )
+rhoi = VTi/wci;                % ion gyro radius [m]
 
+
+%%%   calculate collision time (Braginskii pg 215 (1965))
+%
+Clog = 24-log(sqrt(N0*1e-6)/T0);
+Clogii = 23-log(sqrt(2*N0*1e-6)/T0^1.5);
+tau_e = 3.5e4*T0^1.5/(Clog/10)/(N0*1e-6); % electron collison time [s]
+tau_i = 3.0e6*T0^1.5/(Clogii/10)/(N0*1e-6)*sqrt(aMn/2); % ion collison time [s]
+
+nuT = me/Mi/tau_e; % thermalization rate [Hz]
+
+%%%   calculate ion and electron inertial length scales (skin depth)
+%
+Le = 5.31e5/sqrt(N0*1e-6)/100;            % c/wpe [m]
+Li = 2.28e7*sqrt(aMn)/sqrt(N0*1e-6)/100;  % c/wpi [m]
+
+
+%%%   calculate gyro-Bohm radius
+%
+Cs = sqrt(P0/rho0);
+rhos = Cs/wci; % [m]
 
 display(delta);
 display(etanorm);

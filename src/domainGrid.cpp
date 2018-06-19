@@ -1347,7 +1347,7 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
       DeltaFluxLL.at(i) = -0.5*(FlinL.at(i+1) - FlinL.at(i));   // C2 scheme 
       DeltaFluxLR.at(i) = -0.5*(FlinL.at(i+2) - FlinL.at(i+1)); // F2 scheme
 
-      FlLimL.at(i) = minmod(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
+      //FlLimL.at(i) = minmod(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       //FlLimL.at(i) = superbee(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       FlLimL.at(i) = vanleer(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       //FlLimL.at(i) = 0.0;

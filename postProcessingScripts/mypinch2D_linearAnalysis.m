@@ -17,6 +17,7 @@ colormap('hot');
 
 numProcs = 2;
 filePath = '../physicsMods/pinch2D/';
+newDeck=0;
 
 numProcs = 10;
 %filePath = '../../fromQuartz/pinch2D/data_200nx_kR10/';
@@ -28,42 +29,109 @@ numProcs = 10;
 
 %%%   kR = 1
 %
-filePath = '../../fromQuartz/pinch2D/kR1/data_80nz_200nx/'; numProcs = 10;
-filePath = '../../fromQuartz/pinch2D/kR1/data_80nz_400nx/'; numProcs = 20;
-filePath = '../../fromQuartz/pinch2D/kR1/data_160nz_800nx/'; numProcs = 80;
-filePath = '../../fromQuartz/pinch2D/kR1/data_320nz_800nx/'; numProcs = 80;
+%filePath = '../../fromQuartz/pinch2D/kR1/data_80nz_200nx/'; numProcs = 10;
+%filePath = '../../fromQuartz/pinch2D/kR1/data_80nz_400nx/'; numProcs = 20;
+%filePath = '../../fromQuartz/pinch2D/kR1/data_160nz_800nx/'; numProcs = 80;
+%filePath = '../../fromQuartz/pinch2D/kR1/data_320nz_800nx/'; numProcs = 80;
 
 %%%   kR = 5
 %
-%filePath = '../../fromQuartz/pinch2D/kR5/data_80nz_200nx/'; numProcs = 10;
-%filePath = '../../fromQuartz/pinch2D/kR5/data_80nz_400nx/'; numProcs = 20;
-%filePath = '../../fromQuartz/pinch2D/kR5/data_160nz_800nx/'; numProcs = 80;
-%filePath = '../../fromQuartz/pinch2D/kR5/data_320nz_800nx/'; numProcs = 80;
+filePath = '../../fromQuartz/pinch2D/kR5/data_80nz_200nx/'; numProcs = 10;
+filePath = '../../fromQuartz/pinch2D/kR5/data_80nz_400nx/'; numProcs = 20;
+filePath = '../../fromQuartz/pinch2D/kR5/data_160nz_800nx/'; numProcs = 80;
+filePath = '../../fromQuartz/pinch2D/kR5/data_320nz_800nx/'; numProcs = 80;
+
+
+%%%   kR = 20
+%
+%filePath = '../../fromQuartz/pinch2D/kR20/data_80nz_400nx/'; numProcs = 20;
+
+
+%%%   kR = 30
+%
+%filePath = '../../fromQuartz/pinch2D/kR30/data_80nz_400nx/'; numProcs = 20;
+
+
+%%%   kR = 40
+%
+%filePath = '../../fromQuartz/pinch2D/kR40/data_80nz_400nx/'; numProcs = 20;
 
 
 %%%   kR = 10
 %
 %filePath = '../../fromQuartz/pinch2D/kR10/data_80nz_400nx/'; numProcs = 20;
 %filePath = '../../fromQuartz/pinch2D/kR10/data_160nz_800nx/'; numProcs = 80;
-filePath = '../../fromQuartz/pinch2D/kR10/data_400nz_800nx/'; numProcs = 80;
+%filePath = '../../fromQuartz/pinch2D/kR10/data_400nz_800nx/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR10/testing/'; numProcs = 20;
 %filePath = '../../fromQuartz/pinch2D/kR10/testing2/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR10/testing3/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR10/testing4/'; numProcs = 80;
+%filePath = '../../fromQuartz/pinch2D/kR10/data_80nz_400nx_ideal1/'; numProcs = 20;
+%
+% ideal2/testing1-3 is with epsilon = 1.0e-4
+%
+%filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing1/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing2/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing3/'; numProcs = 20; newDeck = 1;
+%
+% ideal2/testing4-6 is with epsilon = 1.0e-6
+%
+%filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing4/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing5/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing6/'; numProcs = 20; newDeck = 1;
+%
+% Hall_v1/
+%
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test4_Li=0/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test4_Li=1.0e-3/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test5_Li=0/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test5_Li=1.0e-3/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test5_Li=4.6e-3/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test5_Li=1.0e-2/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test6_Li=0/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test6_Li=1.0e-3/'; numProcs = 20; newDeck = 1;
+%
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v1/test4_Li=1.0e-3/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v2/testing6/'; numProcs = 20; newDeck = 1;
+
+%
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_tauei/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_stable/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_stable_tauei/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-2/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=2.0e-2_again/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_stable/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v0/kR40/test5_Li=5.0e-3/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v0/kR40/test5_Li=5.0e-3_nuT/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v0/kR10/testing_Li0.0/'; numProcs = 20; newDeck = 2;
 
 
-plotBackIndex = 50; % plot time will be end-plotBackIndex
-thist = 9.4; %7.9;
-thist2 = 10.2; %9.4;
+filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.0/ka3.0/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/ka3.0_taui1.0e-2/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v0/Li1.5e-2/ka3.0/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v2/testing4_taui1.0e-3/'; numProcs = 20; newDeck = 2;
 
-t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
+
+%filePath = '../../fromQuartz/pinch2D/driftIdeal_v2/ka3.0_0/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/driftIdeal_v2/ka3.0_0_Li0p015/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/driftIdeal_v2/ka3.0_3_Li0p015/'; numProcs = 20; newDeck = 2;
+
+
+
+plotBackIndex = 1; % plot time will be end-plotBackIndex
+thist = 15; %9.4; %7.9;
+thist2 = 20; %10.2; %9.4;
+
+%t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
+t0 = 1.2046e-8; % using pinch radius for length scale
 tA = 2.5e-8;    % from PoP 17, 072107 (2010)
 %tA = 5.4036e-08;  % r0/VTi
 %tA = 3.8209e-08;
 
 
 tout = loadData(filePath,numProcs,'tout');
-tout = tout*t0/tA; % normalize to 2010 paper alfven time
+%tout = tout*t0/tA; % normalize to 2010 paper alfven time
 [~,tindex] = min(abs(tout-thist));
 [~,tindex2] = min(abs(tout-thist2));
 
@@ -86,6 +154,7 @@ P0  = loadData(filePath,numProcs,'P0');
 Vx  = loadData(filePath,numProcs,'Vx');
 Vz  = loadData(filePath,numProcs,'Vz');
 Jz  = loadData(filePath,numProcs,'Jz');
+Jx  = loadData(filePath,numProcs,'Jx');
 Ez  = loadData(filePath,numProcs,'Ez');
 Ex  = loadData(filePath,numProcs,'Ex');
 Cs  = loadData(filePath,numProcs,'Cs');
@@ -93,6 +162,26 @@ gamma0 = loadData(filePath,numProcs,'gamma0');
 dX = Xcc(2)-Xcc(1);
 dZ = Zcc(2)-Zcc(1);
 Fx = loadData(filePath,numProcs,'Fx'); % - d(P+B^2/2)/dr - B^2/r
+
+Jz0 = Jz;
+Ez0 = Ez;
+if(newDeck>=1)
+  Jz0  = loadData(filePath,numProcs,'Jz0');
+  Ez0  = loadData(filePath,numProcs,'Ez0');
+  if(newDeck>=2)
+      delta0 = loadData(filePath,numProcs,'delta0');
+      lambda0 = loadData(filePath,numProcs,'lambda0');
+   %   Ee_source = loadData(filePath,numProcs,'Ee_source');
+   %   Ei_source = loadData(filePath,numProcs,'Ei_source');
+      Te = loadData(filePath,numProcs,'Te');
+      Ti = loadData(filePath,numProcs,'Ti');
+      Vex = Vx - lambda0*Jx./N;
+      Vez = Vz - lambda0*Jz./N;
+   %   Ee  = loadData(filePath,numProcs,'Ee');
+   %   Ei  = loadData(filePath,numProcs,'Ei');
+  end
+end
+
 
 T = P./N;
 Ptot = P+By.^2/2+Mx.*Vx/2.0;
@@ -126,31 +215,31 @@ subplot(2,3,1);
 hold on; plot(Xcc,N(index0,index1,1),'black'); box on;
 %hold on; plot(Xcc,N(index0,index1,11),'b');
 hold on; plot(Xcc,N(index0,index1,tindex),'r'); grid on;
-set(gca,'xtick',0:0.25:2);
+%set(gca,'xtick',0:0.25:3);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('N');
 title('mass density'); axis('square');
-xlim([0 1]);
+xlim([0 Xce(end-1)]);
 %
 subplot(2,3,2);
 hold on; plot(Xcc,Vx(index0,index1,1),'black'); box on;
 %hold on; plot(Xcc,Vx(index0,index1,end/2),'b');
 hold on; plot(Xcc,Vx(index0,index1,tindex),'r'); grid on;
-set(gca,'xtick',0:0.25:2);
+%set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('V');
 title('velocity'); axis('square');
-xlim([0 1]);
+xlim([0 Xce(end-1)]);
 %
 subplot(2,3,3);
 hold on; plot(Xcc,P(index0,index1,1),'black'); box on;
 %hold on; plot(Xcc,T(index0,index1,11),'b');
 hold on; plot(Xcc,P(index0,index1,tindex),'r'); grid on;
-set(gca,'xtick',0:0.25:2);
+%set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('P');
 title('pressure'); axis('square');
-xlim([0 1]);
+xlim([0 Xce(end-1)]);
 ylim([0 1.2]);
 %
 %
@@ -158,11 +247,12 @@ subplot(2,3,4);
 hold on; plot(Xcc,Ez(index0,:,1),'black'); box on;
 %hold on; plot(Xce,Ez(index0,:,11),'b');
 hold on; plot(Xcc,Ez(index0,:,tindex),'r'); grid on;
-set(gca,'xtick',0:0.25:2);
+hold on; plot(Xcc,Ez0(index0,:,tindex),'g--');
+%set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('Ez');
 title('electric field'); axis('square');
-xlim([0 1]);
+xlim([0 Xce(end-1)]);
 %
 subplot(2,3,5);
 hold on; plot(Xcc,By(index0,index1,1),'black'); box on;
@@ -170,32 +260,33 @@ hold on; plot(Xcc,By(index0,index1,1),'black'); box on;
 hold on; plot(Xcc,By(index0,index1,tindex),'r');
 xlabel('x'); ylabel('B'); axis('square');
 title('magnetic field'); grid on;
-set(gca,'xtick',0.0:0.25:2);
+%set(gca,'xtick',0.0:0.25:2);
 %set(gca,'ytick',1:0.5:3);
-xlim([0 1+2*dX]);
+xlim([0 Xce(end-1)]);
 %
 subplot(2,3,6);
 hold on; plot(Xcc,Jz(index0,:,1),'black'); box on; grid on;
 %hold on; plot(Xce,Jz(index0,:,11),'b'); grid on;
 hold on; plot(Xcc,Jz(index0,:,tindex),'r');
+hold on; plot(Xcc,Jz0(index0,:,tindex),'g--');
 xlabel('x'); ylabel('J_z'); axis('square');
 title('current density');
-set(gca,'xtick',0:0.25:2);
+%set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',1:0.5:3);
-xlim([0 1]);
+xlim([0 Xce(end-1)]);
 end
 
 
 %%%   plot contours
 %
-close(figure(15));
-f13=figure(15); set(f13,'position',[1282 300 660 804]);
+close(figure(12));
+f13=figure(12); set(f13,'position',[1282 300 660 804]);
 subplot(2,1,1);
 pcolor(Zcc,Xcc,N(:,:,tindex)'); colorbar; box on
 xlabel('x direction'); shading flat;
 ylabel('z direction');
 title(['density at t = ',num2str(tout(tindex),3),' t_A']);
-axis('square'); axis([Zce(2) Zce(end-1) Xce(3) Xce(end-2)]);
+axis('square'); axis([Zce(2) Zce(end-1) Xce(2) Xce(end-1)]);
 %
 %
 %
@@ -205,7 +296,7 @@ pcolor(Zcc,Xcc,N(:,:,tindex2)'); colorbar; box on
 xlabel('z/r_0'); shading flat;
 ylabel('r/r_0'); 
 title(['density at t = ',num2str(tout(tindex2),3),' t_A']);
-axis('square'); axis([Zce(2) Zce(end-1) Xce(3) Xce(end-2)]);
+axis('square'); axis([Zce(2) Zce(end-1) Xce(2) Xce(end-1)]);
 colormap('jet');
 
 
@@ -217,18 +308,23 @@ Entropy = zeros(size(tout));
 zMomentum = zeros(size(tout));
 ByFlux = zeros(size(tout));
 Energy = zeros(size(tout));
-Edens = 0.5*(Mx.*Vx+Mz.*Vz) + 1.5*P + By.^2/2.0; 
+%Energy2 = zeros(size(tout));
+Edens = 0.5*(Mx.*Vx + Mz.*Vz) + P/(gamma0-1) + By.^2/2.0; 
+%Edens2 = Ee + Ei;
+S = N.*(Te+Ti)./N.^gamma0;
 
 for n=1:length(tout)
     NdV  = N(:,:,n).*dV;
-    SdV  = S(:,:,n).*dV;
+    SdV  = N(:,:,n).*log(S(:,:,n)).*dV;
     MzdV = Mz(:,:,n).*dV;
-    EdensdV = Edens.*dV;
+    EdensdV = Edens(:,:,n).*dV;
+    %Edens2dV = Edens2(:,:,n).*dV;
     Mass(n) = sum(sum(NdV(3:end-2,3:end-2)));
     Entropy(n) = sum(sum(SdV(3:end-2,3:end-2)));
     ByFlux(n) = sum(sum(By(3:end-2,3:end-2,n)))*dX*dZ;
     zMomentum(n) = sum(sum(MzdV(3:end-2,3:end-2)));
     Energy(n) = sum(sum(EdensdV(3:end-2,3:end-2)));
+    %Energy2(n) = sum(sum(Edens2dV(3:end-2,3:end-2)));
 end
 
 
@@ -237,6 +333,8 @@ figure(4); plot(tout,Mass,'displayName','mass');
 hold on; plot(tout,Entropy,'displayName','entropy');
 hold on; plot(tout,zMomentum,'displayName','z-momentum');
 hold on; plot(tout, ByFlux,'displayName','B_y-flux');
+hold on; plot(tout, Energy,'displayName','Energy');
+%hold on; plot(tout, Energy2,'r--');
 xlabel('t/t_0'); title('global conservations');
 lg4 = legend('show');
 set(lg4,'location','best');
@@ -250,8 +348,9 @@ Dz = zeros(length(Zcc)-4,length(tout)); % mass per unit length z
 
 
 for n=1:length(tout)
-  %  deltaN(:,:,n) = N(:,:,n);
-    deltaN(:,:,n) = S(:,:,n);
+    deltaN(:,:,n) = N(:,:,n);
+ %   deltaN(:,:,n) = Te(:,:,n);
+    %  deltaN(:,:,n) = S(:,:,n);
     deltaNdA = squeeze(deltaN(3:end-2,3:end-2,n).*dA(3:end-2,3:end-2));
     Dz(:,n) = sum(deltaNdA,2);
 end
@@ -279,7 +378,7 @@ DzFT_amp = abs(DzFT)/Mass(1);
 DzFT_amp_odd = abs(imag(DzFT))/Mass(1);
 
 %tout = sqrt(2)*tout;
-f11=figure(14); set(f11,'position',[1000 200 510 850]);
+f10=figure(10); set(f10,'position',[1000 200 510 850]);
 
 subplot(2,1,1);
 semilogy(tout,DzFT_amp(2,:),'displayName',['kR=',num2str(k(2))]);
@@ -330,7 +429,7 @@ hold on; plot(tout(1:end-1),mDzFT_amp(3,:));
 hold on; plot(tout(1:end-1),mDzFT_amp(4,:));
 xlabel('t/t_A'); ylabel('growth rate');
 title('derivative of log Fourier amps');
-axis([0 10 -1 5]); grid on;
+axis([0 tout(end) -1 5]); grid on;
 
 
 

@@ -20,6 +20,7 @@ for n=1:numVars
     
     if(strcmp(thisVar,thisVarName))
         Rank = dsets(n).Rank;
+       % display(Rank);
         break;
     end
     
@@ -40,12 +41,17 @@ if(Rank==0 || strcmp(thisVar,'Zcc') || strcmp(thisVar,'Zce') ...
 elseif(Rank==1) % grid vector
     
    varData = hdf5read(thisFile,thisVar);
+   Xce = hdf5read(thisFile,'Xce');
+   offset_ce = 0;
+   if(length(varData)==length(Xce))
+       offset_ce = 1;
+   end
    for j=1:numProcs-1
       fileName = ['output',num2str(j),'.h5'];
       thisFile = [dataPath,fileName];
       thisProcData = hdf5read(thisFile,thisVar);
     
-      max0 = length(varData)-2*nXg;
+      max0 = length(varData)-2*nXg+offset_ce;
       thisLength = length(thisProcData);
       varData(max0+1:max0+thisLength) = thisProcData;
    end
@@ -53,12 +59,17 @@ elseif(Rank==1) % grid vector
 elseif(Rank==2) % matrix Data not growing in time
     
    varData = hdf5read(thisFile,thisVar);
+   Xce = hdf5read(thisFile,'Xce');
+   offset_ce = 0;
+   if(length(varData(1,:))==length(Xce))
+       offset_ce = 1;
+   end
    for j=1:numProcs-1
       fileName = ['output',num2str(j),'.h5'];
       thisFile = [dataPath,fileName];
       thisProcData = hdf5read(thisFile,thisVar);
     
-      max0 = length(varData(1,:))-2*nXg;
+      max0 = length(varData(1,:))-2*nXg+offset_ce;
       thisLength = length(thisProcData(1,:));
       varData(:,max0+1:max0+thisLength) = thisProcData;
    end
@@ -66,13 +77,17 @@ elseif(Rank==2) % matrix Data not growing in time
 elseif(Rank==3) % matrix Data growing in time
     
    varData = hdf5read(thisFile,thisVar);
-   %size(varData)
+   Xce = hdf5read(thisFile,'Xce');
+   offset_ce = 0;
+   if(length(varData(1,:,1))==length(Xce))
+       offset_ce = 1;
+   end
    for j=1:numProcs-1
       fileName = ['output',num2str(j),'.h5'];
       thisFile = [dataPath,fileName];
       thisProcData = hdf5read(thisFile,thisVar);
     
-      max0 = length(varData(1,:,1))-2*nXg;
+      max0 = length(varData(1,:,1))-2*nXg+offset_ce;
       thisLength = length(thisProcData(1,:,1));
       varData(:,max0+1:max0+thisLength,:) = thisProcData;
    end

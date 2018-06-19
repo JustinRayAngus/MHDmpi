@@ -33,16 +33,52 @@ filePath = '../../fromQuartz/pinch2D/kR1/data_320nz_800nx/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR5/data_160nz_800nx/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR5/data_320nz_800nx/'; numProcs = 80;
 
-filePath = '../../fromQuartz/pinch2D/kR10/testing3/'; numProcs = 80;
-filePath = '../../fromQuartz/pinch2D/kR10/testing4/'; numProcs = 80;
+filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing1/'; numProcs = 20;
+filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing4/'; numProcs = 20;
+filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing5/'; numProcs = 20;
+%filePath = '../../fromQuartz/pinch2D/kR10/ideal2/testing5_stable/'; numProcs = 20;
 
 
-t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
+% filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test5_Li=0/'; numProcs = 20; newDeck = 1;
+% filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test5_Li=4.6e-3/'; numProcs = 20; newDeck = 1;
+% filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test5_Li=1.0e-2/'; numProcs = 20; newDeck = 1;
+% %filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test4_Li=1.0e-2/'; numProcs = 20; newDeck = 1;
+% 
+% %filePath = '../../fromQuartz/pinch2D/kR10/Hall_v0/test6_Li=1.0e-3/'; numProcs = 20; newDeck = 1;
+% %filePath = '../../fromQuartz/pinch2D/kR10/Hall_v1/test4_Li=1.0e-3/'; numProcs = 20; newDeck = 1;
+% %filePath = '../../fromQuartz/pinch2D/kR10/Hall_v1/test4_Li=1.0e-2/'; numProcs = 20; newDeck = 1;
+% filePath = '../../fromQuartz/pinch2D/kR10/Hall_v1/test4_Li=1.0e-1/'; numProcs = 20; newDeck = 1;
+% %filePath = '../../fromQuartz/pinch2D/kR10/Hall_v1/test5_Li=1.0e-2/'; numProcs = 20; newDeck = 1;
+% %
+filePath = '../../fromQuartz/pinch2D/kR10/Hall_v2/test5_Li=0.0/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v2/test5_Li=5.0e-3/'; numProcs = 20; newDeck = 1;
+%filePath = '../../fromQuartz/pinch2D/kR10/Hall_v2/test5_Li=1.0e-1/'; numProcs = 20; newDeck = 1;
+%
+filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_again/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_tauei/'; numProcs = 20; newDeck = 2;
+% filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_stable/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_stable_tauei/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-2_again/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=2.0e-2_again/'; numProcs = 20; newDeck = 2;
+
+filePath = '../../fromQuartz/pinch2D/entropy_v0/kR10/test5_Li=5.0e-3_stable/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v0/kR10/testing_Li0.0/'; numProcs = 20; newDeck = 2;
+
+filePath = '../../fromQuartz/pinch2D/entropy_v0/Li1.5e-2/ka3.0/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v0/Li5.0e-2/ka20_smallerDt/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.12/ka3.0/'; numProcs = 20; newDeck = 2;
+
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/ka3.0_taui1.0e-3/'; numProcs = 20; newDeck = 2;
+
+
+%t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
+t0 = 1.2046e-8; % using pinch radius for length scale
 tA = 2.5e-8;    % from PoP 17, 072107 (2010)
 
 
 tout = loadData(filePath,numProcs,'tout');
-tout = tout*t0/tA; % normalize to 2010 paper alfven time
+%tout = tout*t0/tA; % normalize to 2010 paper alfven time
 Xcc = loadData(filePath,numProcs,'Xcc');
 Xce = loadData(filePath,numProcs,'Xce');
 Zcc = loadData(filePath,numProcs,'Zcc');
@@ -65,6 +101,7 @@ Jz  = loadData(filePath,numProcs,'Jz');
 Ez  = loadData(filePath,numProcs,'Ez');
 Ex  = loadData(filePath,numProcs,'Ex');
 Cs  = loadData(filePath,numProcs,'Cs');
+%Te  = loadData(filePath,numProcs,'Te');
 gamma0 = loadData(filePath,numProcs,'gamma0');
 dX = Xcc(2)-Xcc(1);
 dZ = Zcc(2)-Zcc(1);
@@ -77,32 +114,43 @@ Ptot = P+By.^2/2+Mx.*Vx/2.0;
 %%%   plot contours
 %
 close(figure(1));
-f1=figure(1); set(f1,'position',[1100 300 1000 500]);
+f1=figure(1); set(f1,'position',[1100 300 1500 500]);
 %f1=figure(1); set(f1,'position',[400 400 1800 200]);
 set(gcf,'color','w');
 
 thisFigNum = 0;
-for thist=1:length(tout)
+for thist=1:length(tout)-1
 
-    subplot(1,2,1);
+    subplot(1,3,1);
     h1=pcolor(Zcc,Xcc,N(:,:,thist)'); colorbar; box on
     xlabel('z/r_0'); shading flat;
     ylabel('r/r_0'); 
-    title(['density at t = ',num2str(tout(thist),3),' t_A']);
+    title(['density at t = ',num2str(tout(thist),3),' t_0=c_s/r_0']);
     axis('equal'); 
     axis([Zce(2) Zce(end-1) Xce(3) Xce(end-2)]);
     %
     %
     %
-    subplot(1,2,2);
+    subplot(1,3,2);
     h2=pcolor(Zcc,Xcc,By(:,:,thist)'); colorbar; box on
     xlabel('z/r_0'); shading flat;
     ylabel('r/r_0'); 
-    title(['B_y at t = ',num2str(tout(thist),3),' t_A']);
+    title(['B_y at t = ',num2str(tout(thist),3),' t_0=c_s/r_0']);
     axis('equal'); 
     axis([Zce(2) Zce(end-1) Xce(3) Xce(end-2)]);
     colormap('jet');
-    
+    %
+    %
+    %
+    subplot(1,3,3);
+   % h3=pcolor(Zcc,Xcc,Te(:,:,thist)'); colorbar; box on
+    h3=pcolor(Zcc,Xcc,Ez(:,:,thist)'); colorbar; box on
+    xlabel('z/r_0'); shading flat;
+    ylabel('r/r_0'); 
+    title(['E_z at t = ',num2str(tout(thist),3),' t_0=c_s/r_0']);
+    axis('equal'); 
+    axis([Zce(2) Zce(end-1) Xce(3) Xce(end-2)]);
+    colormap('jet');    
     
 %     %%%   put time stamp on figure
 %     %
@@ -115,10 +163,11 @@ for thist=1:length(tout)
     
     M(thisFigNum+1) = getframe(f1); 
     thisFigNum = thisFigNum+1;
-    if(tout(thist)~=tout(end))
+    if(tout(thist)~=tout(end-1))
       %  delete(a1);
         delete(h1);
         delete(h2);
+        delete(h3);
     end
 
 end
@@ -126,7 +175,7 @@ end
 f1pos = get(f1,'position');
 f11=figure(11);
 set(f11,'Position',f1pos);
-movie(f11,M,2,3);
+movie(f11,M,1,3);
 %v=VideoWriter([dataPath,'movieFigs/2DrBthMovie.avi']);
 v=VideoWriter('./2Dpinch.avi');
 v.FrameRate = 4; %v.Quality=100; %v.CompressionRatio = 2;

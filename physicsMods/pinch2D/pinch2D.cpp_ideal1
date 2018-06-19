@@ -420,8 +420,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
          for (auto j=nZg; j<nZcc-nZg; j++) {
 	 
          Fx(i,j) = - (FluxMx_x(i,j)-FluxMx_x(i-1,j))/Xcc.at(i)/Xgrid.dX
-		   + (P(i,j)-0.0*By(i,j)*By(i,j)/2.0)/Xcc.at(i)
-		   - Jz(i,j)*By(i,j);
+		   + P(i,j)/Xcc.at(i) - Jz(i,j)*By(i,j);
 	 if(procID==numProcs-1 && i==nXcc-nXg-1) Fx(i,j) = Fx(i-1,j)/3.0;
 	 //if(i==nXcc-nXg-1) Fx(i,j) = 2.0*Fx(i-1,j)-Fx(i-2,j); // doesn't work well
 
@@ -431,7 +430,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
                               - thisdt*(FluxMx_z(i,j) - FluxMx_z(i,j-1))/Xgrid.dZ;
          Mz(i,j) = Mzold(i,j) - thisdt*(FluxMz_x(i,j) - FluxMz_x(i-1,j))/Xcc.at(i)/Xgrid.dX
                               - thisdt*(FluxMz_z(i,j) - FluxMz_z(i,j-1))/Xgrid.dZ
-	                      + thisdt*Jx(i,j)*By(i,j);
+                              + thisdt*Jx(i,j)*By(i,j);
          S(i,j)  = Sold(i,j)  - thisdt*(FluxS_x(i,j)  - FluxS_x(i-1,j))/Xcc.at(i)/Xgrid.dX
                               - thisdt*(FluxS_z(i,j)  - FluxS_z(i,j-1))/Xgrid.dZ;
          
@@ -530,7 +529,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    Vz = Mz/N;
    P  = S*pow(N,gamma0-1.0);
    T  = P/N;
-   Cs = sqrt(gamma0*P/N + 0.0*By*By/N);
+   Cs = sqrt(gamma0*P/N + By*By/N);
 
    Xgrid.DDX(Jz,rcc*By); 
    Jz /= rcc;
@@ -565,27 +564,28 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    // compute advective flux using
    // specified scheme from input file
    //
+   //
    Nsub = 2; // hard code this for force balance at initiation
    if(advScheme0 == "TVD") {
-      Xgrid.computeFluxTVD(FluxN_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
-                           FluxNcc_x,Cspeed,rcc*N,0,Nsub);
+      Xgrid.computeFluxTVD(FluxN_x, FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
+                           FluxNcc_x, Cspeed,rcc*N, 0,Nsub);
       Xgrid.computeFluxTVD(FluxMx_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
                            FluxMxcc_x,Cspeed,rcc*Mx,0,Nsub);
       Xgrid.computeFluxTVD(FluxMz_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
                            FluxMzcc_x,Cspeed,rcc*Mz,0,Nsub);
-      Xgrid.computeFluxTVD(FluxS_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
-                           FluxScc_x,Cspeed,rcc*S,0,Nsub);
+      Xgrid.computeFluxTVD(FluxS_x, FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
+                           FluxScc_x, Cspeed,rcc*S, 0,Nsub);
       Xgrid.computeFluxTVD(FluxBy_x,FluxL_x,FluxR_x,FluxRatio_x,FluxLim_x,
-                           FluxBycc_x,Cspeed,By,0,Nsub);
-      
-      Xgrid.computeFluxTVD(FluxN_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
-                           FluxNcc_z,Cspeed,N,1,Nsub);
+                           FluxBycc_x,Cspeed,By,    0,Nsub);
+      //
+      Xgrid.computeFluxTVD(FluxN_z, FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
+                           FluxNcc_z, Cspeed,N, 1,Nsub);
       Xgrid.computeFluxTVD(FluxMx_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
                            FluxMxcc_z,Cspeed,Mx,1,Nsub);
       Xgrid.computeFluxTVD(FluxMz_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
                            FluxMzcc_z,Cspeed,Mz,1,Nsub);
-      Xgrid.computeFluxTVD(FluxS_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
-                           FluxScc_z,Cspeed,S,1,Nsub);
+      Xgrid.computeFluxTVD(FluxS_z, FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
+                           FluxScc_z, Cspeed,S, 1,Nsub);
       Xgrid.computeFluxTVD(FluxBy_z,FluxL_z,FluxR_z,FluxRatio_z,FluxLim_z,
                            FluxBycc_z,Cspeed,By,1,Nsub);
    }
@@ -595,6 +595,12 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       Xgrid.InterpToCellEdges(FluxMz_x, FluxMzcc_x, Vx, advScheme0, 0);
       Xgrid.InterpToCellEdges(FluxS_x,  FluxScc_x,  Vx, advScheme0, 0);
       Xgrid.InterpToCellEdges(FluxBy_x, FluxBycc_x, Vx, advScheme0, 0);
+      //
+      Xgrid.InterpToCellEdges(FluxN_z,  FluxNcc_z,  Vz, advScheme0, 1);
+      Xgrid.InterpToCellEdges(FluxMx_z, FluxMxcc_z, Vz, advScheme0, 1);
+      Xgrid.InterpToCellEdges(FluxMz_z, FluxMzcc_z, Vz, advScheme0, 1);
+      Xgrid.InterpToCellEdges(FluxS_z,  FluxScc_z,  Vz, advScheme0, 1);
+      Xgrid.InterpToCellEdges(FluxBy_z, FluxBycc_z, Vz, advScheme0, 1);
    } 
 
    if(procID==0)  {
@@ -603,13 +609,15 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       setXminBoundary(FluxMz_x, 0.0, 0.0);   
       setXminBoundary(FluxS_x,  0.0, 0.0);
       setXminBoundary(FluxBy_x, 0.0, 0.0);
+      //setXminBoundary(FluxMx_z, 0.0, 0.0);   
    }   
    if(procID==numProcs-1)  {
       setXmaxBoundary(FluxN_x,  0.0, 0.0);   
-      //setXmaxBoundary(FluxMx, (P.at(2)+P.at(1))/2.0, 0.0);   
+      //setXmaxBoundary(FluxMx_x, (P.at(2)+P.at(1))/2.0, 0.0);   
       setXmaxBoundary(FluxMz_x, 0.0, 0.0);   
       setXmaxBoundary(FluxS_x,  0.0, 0.0);
       setXmaxBoundary(FluxBy_x, 0.0, 0.0);
+      //setXmaxBoundary(FluxMx_z, 0.0, 0.0);   
    }   
 
 

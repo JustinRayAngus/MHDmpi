@@ -1,0 +1,40 @@
+{
+"Xgrid":{
+         "Xmin":-0.5,
+         "Xmax":0.5,
+         "nX":400,
+         "nXg":2 // number of guard cells each end
+        },
+"Time":{
+        "dtOut":0.02,     // output time intervals
+        "tOutSteps":10,   // number of output setps
+        "dtFrac":2.0     // dtSim = dtMax/dtFrac
+       },
+"Physics":{
+           "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+           "Nsub":2, // time solver order (1 or 2)
+           "gammaC":1.4, // adiabatic coefficient
+           "N":{
+                "type":"step", // initial profile
+                "a":1.0,  // amplitude
+                "b":0.0,  // x-shift
+                "c":0.125,  // width
+                "d":0.0  // y-shift
+               },
+           "P":{
+                "type":"step", // initial profile
+                "a":1.0,  // left value
+                "b":0.0,  // x-shift
+                "c":0.1,  // right value
+                "d":0.0     // nothing
+               },
+           "V":{
+                "type":"const", // initial profile
+                "a":0.0,  // amplitude
+                "b":0.0,  // x-shift
+                "c":0.0,  // width
+                "d":0.0  // y-shift
+               }
+          }
+}
+

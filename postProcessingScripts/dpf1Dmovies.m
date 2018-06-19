@@ -21,7 +21,7 @@ set(0,'defaultaxesfontweight','bold');
 
 deleteFlag = 0;
 thisFigNum = 0;
-for it = 1:21
+for it = 1:201
 
     f1=figure(1); 
     set(f1,'position',[1030 425 1200 500]);
@@ -62,25 +62,25 @@ for it = 1:21
         
         subplot(1,3,1);
         hold on; plot(Xcc,N(:,it),'black'); box on; grid on;
-        set(gca,'xtick',0:0.25:2);
+        set(gca,'xtick',0:0.1:0.5);
         %set(gca,'ytick',0:0.3:1.2);
         xlabel('x'); ylabel('N');
         title('mass density'); axis('square');
-        axis([0 1 0 3]);
+        axis([0 0.5 0 4]);
         %
         subplot(1,3,2);
         hold on; plot(Xcc,Ptot(:,it),'black'); box on; grid on;
         hold on; plot(Xcc,B(:,it).^2/2,'b');
         hold on; plot(Xcc,P(:,it),'r');
         hold on; plot(Xcc,M(:,it).^2./N(:,it),'color',[0.47 0.67 0.19]);
-        set(gca,'xtick',0:0.25:2);
+        set(gca,'xtick',0:0.1:0.5);
         %set(gca,'ytick',0:0.3:1.2);
         xlabel('x'); ylabel('P');
         title('pressure'); axis('square');
         if(i==1)
             legend('total','magnetic','thermal','mean','location','NW');
         end
-        axis([0 1 0 10]);
+        axis([0 0.5 0 10]);
         %
         %
         %
@@ -88,9 +88,9 @@ for it = 1:21
         hold on; plot(Xce,J(:,it),'black'); box on; grid on;
         xlabel('x'); ylabel('J'); axis('square');
         title('current density');
-        set(gca,'xtick',0:0.25:2);
+        set(gca,'xtick',0:0.1:0.5);
         %set(gca,'ytick',1:0.5:3);
-        axis([0 1 -25 0]);
+        axis([0 0.5 -25 0]);
 
     end
 

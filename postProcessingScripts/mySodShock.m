@@ -11,10 +11,18 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-numProcs = 1;
-filePath = '../physicsMods/sodShock/';
-%filePath = '../physicsMods/testing/';
 
+set(0,'defaultaxesfontsize',18);
+set(0,'defaulttextfontsize',18);
+set(0,'defaultaxeslinewidth',1.5);
+set(0,'defaultlinelinewidth',1.5);
+set(0,'defaultaxesfontweight','bold');
+
+
+numProcs = 4;
+filePath = '../physicsMods/sodShock/data_nx200/';
+%filePath = '../physicsMods/sodShock/data_nx400/';
+filePath = '../physicsMods/sodShock/data_nx800/';
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
