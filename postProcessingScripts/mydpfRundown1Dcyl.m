@@ -14,10 +14,10 @@ set(0,'defaultlinelinewidth',1.5);
 set(0,'defaultaxesfontweight','bold');
 
 
-numProcs = 1;
+numProcs = 4;
 filePath = '../physicsMods/dpfRundown1Dcyl/';
 
-plotBackIndex = 1; % plot time will be end-plotBackIndex
+plotBackIndex = 0; % plot time will be end-plotBackIndex
 xp1 = 1;
 
 Xcc = loadData1DVec(filePath,numProcs,'Xcc');
@@ -50,9 +50,17 @@ Jcc = loadData1DVec(filePath,numProcs,'Jcc');
 J0  = loadData1DVec(filePath,numProcs,'J0');
 Ez  = loadData1DVec(filePath,numProcs,'Ez');
 eta = loadData1DVec(filePath,numProcs,'eta');
+etace = loadData1DVec(filePath,numProcs,'etace');
 gamma0 = loadData1DVec(filePath,numProcs,'gamma0');
 delta0 = loadData1DVec(filePath,numProcs,'delta0');
-
+%
+FluxEz  = loadData1DVec(filePath,numProcs,'FluxEz');
+FluxB  = loadData1DVec(filePath,numProcs,'FluxB');
+FluxN  = loadData1DVec(filePath,numProcs,'FluxN');
+FluxS  = loadData1DVec(filePath,numProcs,'FluxS');
+%
+rcc  = loadData1DVec(filePath,numProcs,'rcc');
+rce  = loadData1DVec(filePath,numProcs,'rce');
 
 %%%   calculate divU
 %
@@ -85,6 +93,7 @@ Edenstot = 3/2*P + N.*V.^2/2 + B.^2/2;
 
 %%%   calculate conservation stuff
 %
+dV     = 2*pi*Xcc(3:end-2)*dX;
 JdotE  = sum(Jcc(3:end-2,:).*Ezcc(3:end-2,:))*dX;
 Etot   = sum(Edenstot(3:end-2,:))*dX;
 Etherm = sum(1.5*P(3:end-2,:))*dX;
@@ -92,9 +101,9 @@ Emean  = sum(0.5*M(3:end-2,:).*V(3:end-2,:))*dX;
 Efield = sum(B(3:end-2,:).^2/2)*dX;
 EEztot = delta0*sum(Ez(2:end-2,:).^2/2.0)*dX;
 %
-Entropy  = sum(S(3:end-2,:))*dX;
-Momentum = sum(M(3:end-2,:))*dX;
-Mass     = sum(N(3:end-2,:))*dX;
+Entropy  = sum(S(3:end-2,:).*dV);
+Momentum = sum(M(3:end-2,:).*dV);
+Mass     = sum(N(3:end-2,:).*dV);
 
 for n=1:length(tout)
 
@@ -156,7 +165,7 @@ hold on; plot(Xcc,N(:,round(end/2)),'b');
 hold on; plot(Xcc,N(:,end-plotBackIndex),'r'); grid on;
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
-xlabel('x'); ylabel('N');
+xlabel('r'); ylabel('N');
 title('mass density'); axis('square');
 xlim([0 xp1]);
 %
@@ -166,7 +175,7 @@ hold on; plot(Xcc,V(:,round(end/2)),'b');
 hold on; plot(Xcc,V(:,end-plotBackIndex),'r'); grid on;
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
-xlabel('x'); ylabel('V');
+xlabel('r'); ylabel('V');
 title('velocity'); axis('square');
 xlim([0 xp1]);
 %
@@ -177,7 +186,7 @@ hold on; plot(Xcc,P(:,end-plotBackIndex),'r'); grid on;
 hold on; plot(Xcc,T(:,end-plotBackIndex),'g');
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
-xlabel('x'); ylabel('P');
+xlabel('r'); ylabel('P');
 title('thermal pressure'); axis('square');
 xlim([0 xp1]);
 %
@@ -189,7 +198,7 @@ hold on; plot(Xce,Ez(:,end-plotBackIndex),'r'); grid on;
 hold on; plot(Xcc,Ez0(:,end-plotBackIndex),'g--'); 
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
-xlabel('x'); ylabel('Ez');
+xlabel('r'); ylabel('Ez');
 title('electric field'); axis('square');
 xlim([0 xp1]);
 %
@@ -197,7 +206,7 @@ subplot(2,3,5);
 hold on; plot(Xcc,B(:,1),'black'); box on;
 hold on; plot(Xcc,B(:,round(end/2)),'b'); grid on;
 hold on; plot(Xcc,B(:,end-plotBackIndex),'r');
-xlabel('x'); ylabel('B'); axis('square');
+xlabel('r'); ylabel('B'); axis('square');
 title('magnetic field');
 %set(gca,'xtick',0.0:0.25:2);
 %set(gca,'ytick',1:0.5:3);
@@ -207,9 +216,9 @@ subplot(2,3,6);
 hold on; plot(Xce,J(:,1),'black'); box on;
 hold on; plot(Xce,J(:,round(end/2)),'b'); grid on;
 hold on; plot(Xce,J(:,end-plotBackIndex),'r');
-%hold on; plot(Xce,J0(:,end-plotBackIndex),'g--');
-hold on; plot(Xcc,Jcc(:,end-plotBackIndex),'g--');
-xlabel('x'); ylabel('J'); axis('square');
+hold on; plot(Xce,J0(:,end-plotBackIndex),'g--');
+%hold on; plot(Xcc,Jcc(:,end-plotBackIndex),'g--');
+xlabel('r'); ylabel('J'); axis('square');
 title('current density');
 %set(gca,'xtick',0:0.05:2);
 %set(gca,'ytick',1:0.5:3);
@@ -236,7 +245,7 @@ title('Mach Number'); xlim([0 xp1]);
 %%%
 
 
-f8=figure(8); set(f8,'position',[1000 560 1400 800]);
+% f8=figure(8); set(f8,'position',[1000 560 1400 800]);
 
 
 % %%%   plot mass conservation

@@ -44,7 +44,7 @@ double gamma0;        // adiabatic coefficient
 double eta0=0.08;     // resistivity (may need to decrease dt and or dx more if eta0 really low)
                       // I think the issue is boundary related? May need vacuum resistivity
 double delta0=1.0e-4; // relaxation const (v/c)^2
-double B0 = 0.0;      // boundary value of magnetic field
+double B00 = 0.0;     // boundary value of magnetic field
 int Nsub;             // time-solver subcycle steps
 vector<double> N, M, S, B, Ez;   // time-evolving variables
 vector<double> eta, Cs, V, P, T, J, J0; // derived variables
@@ -132,6 +132,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       Json::Value NsubVal   = Phys.get("Nsub",defValue);
       Json::Value deltaVal  = Phys.get("delta0",defValue);
       Json::Value etaVal    = Phys.get("eta0",defValue);
+      Json::Value B00Val    = Phys.get("B00",defValue);
       if(advScheme == defValue || gammaVal == defValue ||
 	 NsubVal == defValue || deltaVal == defValue) {
          cout << "ERROR: advScheme or gamma " << endl;
@@ -178,6 +179,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       eta0 = etaVal.asDouble();
       if(procID==0) cout << "resistivity = " << eta0 << endl;
       
+      B00 = B00Val.asDouble();
+      if(procID==0) cout << "B00 = " << B00 << endl;
 
    }
    else {
@@ -229,7 +232,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    const Json::Value Bvar = Phys.get("B",defValue);
    if(Bvar.isObject()) { 
       Xgrid.setInitialProfile(B,Bvar);
-      if(procID==0) setXminBoundary(B, B0, 0.0);   
+      if(procID==0) setXminBoundary(B, 0.0*B00, 0.0);   
       if(procID==numProcs-1) setXmaxBoundary(B, 0.0, 0.0);
       Xgrid.communicate(B);
       Bold = B;
@@ -280,6 +283,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    dataFile.add(P, "P", 1);  // pressure
    dataFile.add(T, "T", 1);  // temperature
    dataFile.add(eta, "eta", 1);  // resistivity
+   dataFile.add(etace, "etace", 1);  // resistivity
    dataFile.add(V, "V", 1);  // velocity
    dataFile.add(J, "J", 1);  // current density
    dataFile.add(Jcc, "Jcc", 1);  // current density at cell-center
@@ -294,6 +298,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    dataFile.add(FluxS, "FluxS", 1);  
    dataFile.add(FluxB, "FluxB", 1);  
    dataFile.add(FluxEz, "FluxEz", 1);  
+   dataFile.add(rcc, "rcc", 0);  
+   dataFile.add(rce, "rce", 0);  
    //
    dataFile.add(FluxRatio, "FluxRatio", 1);  
    dataFile.add(FluxLim, "FluxLim", 1);  
@@ -340,7 +346,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       timeDomain* tmesh = timeDomain::tmesh;
       //cout << "thist = " << tmesh->tSim << endl;
       double thist = tmesh->tSim;
-      B0 = thist*4.0;
+      double B0 = thist*B00;
       if(B0>4.0) B0 = 4.0;
       
       if(procID==0) {
@@ -403,7 +409,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
    //
    //Xgrid.InterpToCellEdges(VBce,M/N*B,B,"C2");
    //for (auto i=nXg-1; i<nMax-nXg; i++) {
-   for (auto i=nXg; i<nMax-nXg+1; i++) {
+   for (auto i=nXg-1; i<nMax-nXg+1; i++) {
       if(thisdt/delta0/etace.at(i)<=1.0e-3) {
          expFact = 1.0-thisdt/delta0/etace.at(i)+0.5*pow(thisdt/delta0/etace.at(i),2);
       }
@@ -411,15 +417,20 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
          expFact = exp(-thisdt/delta0/etace.at(i));
       }
       Ez.at(i) = Ezold.at(i)*expFact 
-    	       - ( VBce.at(i) - etace.at(i)*(rcc.at(i+1)*B.at(i+1)-rcc.at(i)*B.at(i))/rce.at(i)/Xgrid.dX 
+    	      // - ( VBce.at(i) - etace.at(i)*(rcc.at(i+1)*B.at(i+1)-rcc.at(i)*B.at(i))/rce.at(i)/Xgrid.dX 
+    	       - ( VBce.at(i) + etace.at(i)*(FluxEz.at(i+1)-FluxEz.at(i))/rce.at(i)/Xgrid.dX 
 	         )*(1.0-expFact); 
    }
+   //cout << Ez.size() << endl;
+   //cout << rce.at(nMax-nXg) << endl;
+   //cout << "nMax-nXg = " << nMax-nXg << endl;
+   //cout << "rce(nMax-nXg) =" << rce.at(nMax-nXg) << endl;
    if(procID==0) {
       setXminBoundaryEz(Ez);   
    }
-   //if(procID==numProcs-1) {
-   //   setXmaxExtrap(Ez, 0.0);   
-   //}
+   if(procID==numProcs-1) {
+      Ez.at(nMax-nXg) = Ez.at(nMax-nXg-1);   
+   }
    Xgrid.communicate(Ez);
 
    // update old fields
@@ -464,7 +475,8 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    if(min(P)<0.0) cout << " P IS LESS THAN ZERO " << endl;
    if(min(T)<0.0) cout << " T IS LESS THAN ZERO " << endl;
    Cs = sqrt(gamma0*P/N + B*B/N);
-   eta = eta0/T/sqrt(T)*(1.0+1000.0*pow(100.0*Nthresh/N,4));
+   eta = eta0/T/sqrt(T);
+   //eta = eta0/T/sqrt(T)*(1.0+1000.0*pow(100.0*Nthresh/N,4));
    Xgrid.InterpToCellEdges(etace,eta,eta,"C2");
    Xgrid.communicate(etace);
    Xgrid.communicate(eta);
@@ -509,6 +521,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       setXminBoundary(FluxM, 0.0, 0.0);   
       //setXminBoundary(FluxM, (FluxMcc.at(2)+FluxMcc.at(1))/2.0, 0.0);   
       setXminBoundary(FluxS, 0.0, 0.0);
+      setXminBoundary(VBce, 0.0, 0.0);
       //setXminBoundary(VBce, (FluxB0cc.at(2)+FluxB0cc.at(1))/2.0, 0.0);
    }
    if(procID==numProcs-1) {
@@ -517,6 +530,11 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    }   
    //FluxB = FluxB-Eprime;
    FluxB = -Ez;
+   Xgrid.communicate(FluxN);
+   Xgrid.communicate(FluxM);
+   Xgrid.communicate(FluxS);
+   Xgrid.communicate(FluxB);
+   Xgrid.communicate(FluxEz);
 
    Xgrid.communicate(VBce);
    Eprime = Ez+VBce;
@@ -527,7 +545,10 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    Xgrid.DDX(J0,rcc*B);
    //cout << rcc.size() << endl; 
    //cout << J0.size() << endl; 
-   //J0 = J0/rcc; 
+   J0 = J0/rce;
+   if(procID==0) {
+      setXminBoundary(J0,2.0*B.at(2)/rcc.at(2),0.0);
+   } 
    Xgrid.communicate(J0);
 
    Xgrid.communicate(FluxL);   
@@ -582,11 +603,11 @@ void setXmaxBoundary(vector<double>& var, const double C0, const double C1)
 
 void setXminBoundaryEz(vector<double>& var)
 {
-   const int thisnX = var.size();
+   //const int thisnX = var.size();
    domainGrid* mesh = domainGrid::mesh;
-   const int ishift = thisnX-mesh->nXg;
+   const int ishift = mesh->nXg;
    
-   var.at(ishift-1) = 4.0/3.0*var.at(ishift) - 1.0/3.0*var.at(ishift+1);
+   var.at(ishift-1) = (3.0*var.at(ishift) - var.at(ishift+1))/2.0;
 
 }
 

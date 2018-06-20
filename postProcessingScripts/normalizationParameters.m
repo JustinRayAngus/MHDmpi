@@ -30,8 +30,7 @@ clear all;
 aMn = 2;      % atomic mass number
 Tg  = 300;    % ambient gas temperature [K]
 Pg  = 1;      % ambient gas pressure    [Torr]
-N0 = 2*2.6868e25*Pg/760*273/Tg;  % total density [1/m^3]
-r0  = 1.0e-2; % spatial scale [m]
+N0 = 3*2*2.6868e25*Pg/760*273/Tg;  % total density [1/m^3]
 T0  = 1.0;    % initial plasma temperature [eV]
 
 
@@ -40,6 +39,11 @@ T0  = 1.0;    % initial plasma temperature [eV]
 %
 I0  = 1e5;         % current magnitude [A]
 dy  = 2*pi*1.5e-2; % in-plane thickness [m]
+r0  = 1.0e-2; % spatial scale [m]
+
+I0  = 2e6;       % current magnitude [A]
+dy  = 2*pi*3*r0; % in-plane thickness [m]
+r0  = 3.0e-2;    % spatial scale [m]
 
 
 %%%   fundamental constants
