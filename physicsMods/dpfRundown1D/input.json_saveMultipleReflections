@@ -1,0 +1,50 @@
+{
+"Xgrid":{
+         "Xmin":0.0,
+         "Xmax":0.5,
+         "nX":400,
+         "nXg":2 // number of guard cells each end
+        },
+"Time":{
+        "dtOut":1.0e-2,  // output time intervals
+        "tOutSteps":100,  // number of output setps
+        "dtFrac":4.0     // dtSim = dtMax/dtFrac
+       },
+"Physics":{
+           "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+           "Nsub":2, // this actually refers to order
+           "gammaC":1.6667, // adiabatic coefficient
+           "eta0":0.01, // normalized resistivity
+           "etaVis0":5.0e-4, // numerical viscosity
+           "delta0":1.0e-4, // relaxation const (Vnorm/cvac)^2
+           "N":{
+                "type":"const", // initial profile
+                "a":0.0,  // amplitude
+                "b":0.0,  // x-shift
+                "c":0.0,  // width
+                "d":1.0   // y-shift
+               },
+           "P":{
+                "type":"const", // initial profile
+                "a":0.0,  // amplitude
+                "b":0.0,  // x-shift
+                "c":0.0,  // width
+                "d":1.0   // y-shift
+               },
+           "V":{
+                "type":"const", // initial profile
+                "a":0.0,  // amplitude
+                "b":0.0,  // x-shift
+                "c":0.0,  // width
+                "d":0.0   // y-shift
+               },
+           "B":{
+                "type":"const", // initial profile
+                "a":0.0, // amplitude
+                "b":0.0,  // x-shift
+                "c":0.0,  // width
+                "d":0.0   // y-shift
+               }
+          }
+}
+

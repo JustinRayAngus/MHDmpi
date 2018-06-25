@@ -42,11 +42,12 @@ string advScheme0;    // advection differencing scheme
 double gamma0;        // adiabatic coefficient
 double eta0=0.08;     // resistivity (may need to decrease dt and or dx more if eta0 really low)
                       // I think the issue is boundary related? May need vacuum resistivity
+double etaVis0=0.0;   // numerical viscosity
 double delta0=1.0e-4; // relaxation const (v/c)^2
 double B0 = 0.0;      // boundary value of magnetic field
 int Nsub;             // time-solver subcycle steps
 vector<double> N, M, S, B, Ez;   // time-evolving variables
-vector<double> eta, Cs, V, P, T, J, J0; // derived variables
+vector<double> eta, Cs, V, P, T, J, J0, Qvisc; // derived variables
 vector<double> etace, Jcc, VBce;
 vector<double> Nold, Mold, Sold, Bold, Ezold, Ezhalf;
 vector<double> FluxRatio, FluxLim;
@@ -101,6 +102,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    etace.assign(nXce,0.0);
    VBce.assign(nXce,0.0);
    J0.assign(nXce,0.0);
+   Qvisc.assign(nXcc,0.0);
    // Ez is defined on cell edges
    Ez.assign(nXce,0.0);
    Ezold.assign(nXce,0.0);
@@ -125,6 +127,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       Json::Value NsubVal   = Phys.get("Nsub",defValue);
       Json::Value deltaVal  = Phys.get("delta0",defValue);
       Json::Value etaVal    = Phys.get("eta0",defValue);
+      Json::Value etaVisVal    = Phys.get("etaVis0",defValue);
       if(advScheme == defValue || gammaVal == defValue ||
 	 NsubVal == defValue || deltaVal == defValue) {
          cout << "ERROR: advScheme or gamma " << endl;
@@ -171,6 +174,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       eta0 = etaVal.asDouble();
       if(procID==0) cout << "resistivity = " << eta0 << endl;
       
+      etaVis0 = etaVisVal.asDouble();
+      if(procID==0) cout << "viscosity = " << etaVis0 << endl;
 
    }
    else {
@@ -309,8 +314,8 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 		 - thisdt*Jcc.at(i)*Bold.at(i);
 		// - thisdt*(Jcc.at(i)-J0.at(i))*Bold.at(i);
          S.at(i) = Sold.at(i) - thisdt*(FluxS.at(i)-FluxS.at(i-1))/Xgrid.dX
-		 + thisdt*(gamma0-1.0)*eta.at(i)*pow(Nold.at(i),1.0-gamma0)*Jcc.at(i)*Jcc.at(i);
-         
+		 + thisdt*(gamma0-1.0)/pow(Nold.at(i),gamma0-1.0)*
+		          (eta.at(i)*Jcc.at(i)*Jcc.at(i) + Qvisc.at(i)); 
 	 B.at(i) = Bold.at(i) - thisdt*(FluxB.at(i)-FluxB.at(i-1))/Xgrid.dX;
 	 //B.at(i) = Bold.at(i) + thisdt*(Ezold.at(i)-Ezold.at(i-1))/Xgrid.dX;
 	 
@@ -323,13 +328,13 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       timeDomain* tmesh = timeDomain::tmesh;
       //cout << "thist = " << tmesh->tSim << endl;
       double thist = tmesh->tSim;
-      B0 = thist*40.0;
-      if(B0>4.0) B0 = 4.0;
+      B0 = thist*100.0;
+      if(B0>10.0) B0 = 10.0;
       
       if(procID==0) {
          setXminBoundary(N, N.at(2), 0.0);   
-         setXminBoundary(M, M.at(2), 0.0);   
-         //setXminBoundary(M, 0.0, -1.0);   
+         //setXminBoundary(M, M.at(2), 0.0);   
+         setXminBoundary(M, 0.0, -1.0);   
          setXminBoundary(S, S.at(2), 0.0);
          //setXminExtrap(N);
          //setXminExtrap(M);
@@ -366,7 +371,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
      
       if(procID==numProcs-1) {
          setXmaxBoundary(N, 0.0, 1.0);   
-         setXmaxBoundary(M, 0.0, 1.0);   
+         setXmaxBoundary(M, 0.0, -1.0);   
          setXmaxBoundary(S, 0.0, 1.0);   
          setXmaxBoundary(B, 0.0, 0.0);   
       }
@@ -424,12 +429,15 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
    vector<double> Cspeed, FluxNcc, FluxMcc, FluxScc;
-   vector<double> Cspeed2, Cvaceff, FluxB0cc, Eprime; 
+   vector<double> Cspeed2, Cvaceff, FluxB0cc, Eprime;
+   vector<double> FluxVisc, dVdx; 
    FluxNcc.assign(nCC,0.0);
    FluxMcc.assign(nCC,0.0);
    FluxScc.assign(nCC,0.0);
    FluxB0cc.assign(nCC,0.0);
    Eprime.assign(nCE,0.0);
+   FluxVisc.assign(nCC,0.0);
+   dVdx.assign(nCC,0.0);
 
    //  define derived variables
    //
@@ -458,6 +466,20 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    FluxScc = V*S;
    FluxB0cc = V*B;
    FluxEz = -B;
+   
+   
+   // compute viscous terms
+   //
+   vector<double> etaVisc;
+   etaVisc.assign(nCC,0.0); 
+   etaVisc = N*etaVis0;
+   //Xgrid.DDX(FluxVisc,-4.0*etaVisc/3.0*V);
+   Xgrid.DDX(dVdx,V);
+   //Xgrid.communicate(FluxVisc);
+   Xgrid.communicate(dVdx);
+   Qvisc = 4.0/3.0*etaVisc*dVdx*dVdx;
+   FluxVisc = -4.0/3.0*etaVisc*dVdx;
+   FluxMcc = FluxMcc + FluxVisc;
 
    // compute advective flux using
    // specified scheme from input file
@@ -484,11 +506,12 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       //Xgrid.InterpToCellEdges(FluxEz,FluxEzcc,Ez,"C2");
    } 
    Xgrid.InterpToCellEdges(VBce,FluxB0cc,B,"C2");
+   //FluxM = FluxM + FluxVisc;
 
    if(procID==0) {
       setXminBoundary(FluxN, 0.0, 0.0);   
-      setXminBoundary(FluxM, (P.at(2)+P.at(1))/2.0, 0.0);   
-      //setXminBoundary(FluxM, (FluxMcc.at(2)+FluxMcc.at(1))/2.0, 0.0);   
+      //setXminBoundary(FluxM, (P.at(2)+P.at(1))/2.0, 0.0);   
+      setXminBoundary(FluxM, (FluxMcc.at(2)+FluxMcc.at(1))/2.0, 0.0);   
       setXminBoundary(FluxS, 0.0, 0.0);
       //setXminBoundary(VBce, (FluxB0cc.at(2)+FluxB0cc.at(1))/2.0, 0.0);
    }

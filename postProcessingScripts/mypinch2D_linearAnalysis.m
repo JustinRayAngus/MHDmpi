@@ -104,12 +104,12 @@ filePath = '../../fromQuartz/pinch2D/kR5/data_320nz_800nx/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_stable/'; numProcs = 20; newDeck = 2;
 %filePath = '../../fromQuartz/pinch2D/entropy_v0/kR40/test5_Li=5.0e-3/'; numProcs = 20; newDeck = 2;
 %filePath = '../../fromQuartz/pinch2D/entropy_v0/kR40/test5_Li=5.0e-3_nuT/'; numProcs = 20; newDeck = 2;
-%filePath = '../../fromQuartz/pinch2D/entropy_v0/kR10/testing_Li0.0/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.0/ka100/'; numProcs = 20; newDeck = 2;
 
 
-filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.0/ka3.0/'; numProcs = 20; newDeck = 2;
-%filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/ka3.0_taui1.0e-2/'; numProcs = 20; newDeck = 2;
-%filePath = '../../fromQuartz/pinch2D/entropy_v0/Li1.5e-2/ka3.0/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.17/ka3.0_taui1.0e-3/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0_noGyroVisc_taui1.0e-2_smallerDt/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/ka3.0_new/'; numProcs = 20; newDeck = 2;
 %filePath = '../../fromQuartz/pinch2D/entropy_v2/testing4_taui1.0e-3/'; numProcs = 20; newDeck = 2;
 
 
@@ -285,7 +285,7 @@ subplot(2,1,1);
 pcolor(Zcc,Xcc,N(:,:,tindex)'); colorbar; box on
 xlabel('x direction'); shading flat;
 ylabel('z direction');
-title(['density at t = ',num2str(tout(tindex),3),' t_A']);
+title(['density at t = ',num2str(tout(tindex),3),' t_0']);
 axis('square'); axis([Zce(2) Zce(end-1) Xce(2) Xce(end-1)]);
 %
 %

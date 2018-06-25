@@ -44,6 +44,7 @@ M  = loadData1DVec(filePath,numProcs,'M');
 S  = loadData1DVec(filePath,numProcs,'S');
 B  = loadData1DVec(filePath,numProcs,'B');
 P  = loadData1DVec(filePath,numProcs,'P');
+T  = loadData1DVec(filePath,numProcs,'T');
 V  = loadData1DVec(filePath,numProcs,'V');
 J  = loadData1DVec(filePath,numProcs,'J');
 Jcc = loadData1DVec(filePath,numProcs,'Jcc');
@@ -83,7 +84,6 @@ end
 
 %figure(77); hold on; plot(Xcc,divV(:,100)); box on;
 
-T = P./N;
 Ptot = P + B.^2/2 + M.*V/2.0;
 PdV = P.*divV;
 VdP = V.*dPdx;
@@ -128,7 +128,8 @@ for n=1:length(tout)
    
 end
 Cs = sqrt(gamma0*P./N);
-Mach = V./Cs;
+Mach = abs(V./Cs);
+Cspeed = abs(V) + sqrt(gamma0*P./N + B.^2./N);
 
 
 % rho2/rho1 = v1/v2 = (gamma0+1)/(gamma0-1+2/M1^2)

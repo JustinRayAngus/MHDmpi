@@ -56,47 +56,47 @@ T = P./N;
 Ptot = P+B.^2/2+M.^2./N;
 
 Cs = sqrt(gamma0*P./N);
-Mach = V./Cs;
+Mach = abs(V)./Cs;
 
 %%% calculate 
 
 
 deleteFlag = 0;
 thisFigNum = 0;
-for it = 1:length(tout)
+for it = 1:2:length(tout)
     
-f1=figure(1); 
+f1=figure(11); 
 set(f1,'position',[450 80 1340 730]);
 set(gcf,'color','w');
     
 subplot(2,3,1);
 plot(Xcc,N(:,it),'black'); box on; grid on;
-set(gca,'xtick',0:0.1:0.5);
+set(gca,'xtick',0:0.2:1);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('N');
 title('mass density'); axis('square');
-axis([0 0.5 0 4]); axis('square');
+axis([0 1 0 10]); axis('square');
 %
 subplot(2,3,2);
 h4=plot(Xcc,B(:,it).^2/2+P(:,it),'black'); box on; grid on;
 hold on; plot(Xcc,B(:,it).^2/2,'b');
 hold on; plot(Xcc,P(:,it),'r');
-set(gca,'xtick',0:0.1:0.5);
+set(gca,'xtick',0:0.2:1);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('P');
 title('pressure'); axis('square');
 legend('total','magnetic','thermal','location','best');
-axis([0 0.5 0 10]);  axis('square');
+axis([0 1 0 80]);  axis('square');
 %
 %
 %
 subplot(2,3,3);
-h3=plot(Xcc,Mach(:,it),'black'); box on; grid on;
+h3=plot(Xcc,V(:,it)./Cs(:,it),'black'); box on; grid on;
 xlabel('x'); ylabel('V/C_s'); axis('square');
 title('local Mach Number');
-set(gca,'xtick',0:0.1:0.5);
+set(gca,'xtick',0:0.2:1);
 %set(gca,'ytick',1:0.5:3);
-axis([0 0.5 0 1.5]);  axis('square');
+axis([0 1 -1 10]);  axis('square');
 %
 %
 %
@@ -107,7 +107,7 @@ xlabel('time'); ylabel('energy'); axis('square');
 title('kinetic energy conservation');
 %set(gca,'xtick',0:0.1:0.2);
 %set(gca,'ytick',1:0.5:3);
-axis([0 tout(end) 0 2.5]);  axis('square');
+axis([0 tout(end) 0 max(Jheating)]);  axis('square');
 lg4 = legend('show','location','best');
 
 

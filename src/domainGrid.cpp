@@ -1336,9 +1336,9 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
       // superbee(a,b) = minmod(a,2b) if |a|>=|b|
       //               = minmod(2a,b) if otherwise
       //
-      //FlLimR.at(i) = minmod(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
+      FlLimR.at(i) = minmod(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
       //FlLimR.at(i) = superbee(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
-      FlLimR.at(i) = vanleer(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
+      //FlLimR.at(i) = vanleer(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
       //FlLimR.at(i) = 0.0;
 
 
@@ -1347,9 +1347,9 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
       DeltaFluxLL.at(i) = -0.5*(FlinL.at(i+1) - FlinL.at(i));   // C2 scheme 
       DeltaFluxLR.at(i) = -0.5*(FlinL.at(i+2) - FlinL.at(i+1)); // F2 scheme
 
-      //FlLimL.at(i) = minmod(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
+      FlLimL.at(i) = minmod(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       //FlLimL.at(i) = superbee(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
-      FlLimL.at(i) = vanleer(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
+      //FlLimL.at(i) = vanleer(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       //FlLimL.at(i) = 0.0;
 
       if(order==1) {

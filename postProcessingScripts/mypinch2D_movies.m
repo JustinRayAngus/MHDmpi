@@ -66,10 +66,10 @@ filePath = '../../fromQuartz/pinch2D/entropy_v0/kR10/testing_Li0.0/'; numProcs =
 
 filePath = '../../fromQuartz/pinch2D/entropy_v0/Li1.5e-2/ka3.0/'; numProcs = 20; newDeck = 2;
 %filePath = '../../fromQuartz/pinch2D/entropy_v0/Li5.0e-2/ka20_smallerDt/'; numProcs = 20; newDeck = 2;
-%filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.12/ka3.0/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.12/ka3.0/'; numProcs = 20; newDeck = 2;
 
-filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0/'; numProcs = 20; newDeck = 2;
-filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/ka3.0_taui1.0e-3_again/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0_noGyroVisc_taui1.0e-2/'; numProcs = 20; newDeck = 2;
 %filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.17_withVisc/ka3.0/'; numProcs = 20; newDeck = 2;
 
 %t0 = 3.6137e-8; % see normalizationParameters_zPinch.m

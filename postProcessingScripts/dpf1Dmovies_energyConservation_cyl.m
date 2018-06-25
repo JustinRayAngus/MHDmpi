@@ -76,7 +76,7 @@ set(gca,'xtick',0:0.2:1);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('r'); ylabel('N');
 title('mass density'); axis('square');
-axis([0 1 0 20]); axis('square');
+axis([0 1 0 40]); axis('square');
 %
 subplot(2,3,2);
 h4=plot(Xcc,B(:,it).^2/2+P(:,it),'black'); box on; grid on;

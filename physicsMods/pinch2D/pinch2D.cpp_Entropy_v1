@@ -8,8 +8,8 @@
  * dN/dt  + d(r*Mr)/r/dr + d(Mz)/dz = 0
  * dMr/dt + d(r*(Mr*Ur + P))/r/dr -P/r + d(Mr*Uz)/dz = -Jz*By
  * dMz/dt + d(Mz*Uz + P)/dz  + d(r*Mz*Ur)/r/dr = Jr*By
- * dSe/dt + d(r*Se*Uer)/r/dr + d(Se*Uez)/dz = -(divqe - Qei)/N^(gamma0-1)
- * dSi/dt + d(r*Si*Ur)/r/dr  + d(Si*Uz)/dz  = -(divqi + Qei)/N^(gamma0-1)  
+ * dSe/dt + d(r*Se*Uer)/r/dr + d(Se*Uez)/dz = (gamma0-1)*(-divqe + Qe)/N^(gamma0-1)
+ * dSi/dt + d(r*Si*Ur)/r/dr  + d(Si*Uz)/dz  = (gamma0-1)*(-divqi + Qi)/N^(gamma0-1)  
  * dBy/dt + d(-Ez)/dr + d(Er)/dr = 0
  *
  * dEr/dt = 1/delta0*(Jr0 - Jr)
@@ -32,7 +32,8 @@
  * qe = -gamma0*lambda0*Pe*B x nabla Te / B^2
  * qi =  gamma0*lambda0*Pi*B x nabla Ti / B^2
  *
- * Qei = nuT*(Ti-Te)/2
+ * Qi = 3*nuT*N*(Te-Ti)
+ * Qe = -Qi
  *
 ***/
 
@@ -65,7 +66,7 @@ string advScheme0;    // advection differencing scheme
 double gamma0;        // adiabatic coefficient
 double lambda0, epsilon0, delta0, taui0;
 double nuTherm0, TempRatio0;
-int Nsub;             // time-solver subcycle steps
+int Nsub, modelGyroVisc;
 matrix2D<double> N, Mx, Mz, Se, Si, By, Ez, Ex, Jz, Jx;  // time-evolving variables
 matrix2D<double> P0, deltaP;                    // initial perturbation
 matrix2D<double> eta, Cs, Vx, Vz, P, T, S;     // derived variables
@@ -81,9 +82,8 @@ matrix2D<double> FluxEz_x2, FluxEx_z2, Jx02;
 matrix2D<double> Fx, rcc, rce_z, rce_x;
 //
 matrix2D<double> Ve_drift_x, Ve_drift_z, Vi_drift_x, Vi_drift_z;
-matrix2D<double> Pe, Pi, Te, Ti, Se_source, Si_source;
-matrix2D<double> Vx_source, Vz_source;
-matrix2D<double> Ue0_x, Ue0_z, Ui0_x, Ui0_z;
+matrix2D<double> Pe, Pi, Te, Ti, divqe, divqi, Qe, Qi;
+matrix2D<double> Vex, Vez;
 matrix2D<double> qe_x, qe_z, qi_x, qi_z;
 matrix2D<double> Fluxqe_x, Fluxqe_z, Fluxqi_x, Fluxqi_z;
 //
@@ -163,14 +163,12 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    Te.initialize(nXcc,nZcc,0.0);
    Pi.initialize(nXcc,nZcc,0.0);
    Ti.initialize(nXcc,nZcc,0.0);
-   Ue0_x.initialize(nXcc,nZcc,0.0);
-   Ue0_z.initialize(nXcc,nZcc,0.0);
-   Ui0_x.initialize(nXcc,nZcc,0.0);
-   Ui0_z.initialize(nXcc,nZcc,0.0);
-   Se_source.initialize(nXcc,nZcc,0.0);   
-   Si_source.initialize(nXcc,nZcc,0.0);   
-   Vx_source.initialize(nXcc,nZcc,0.0);   
-   Vz_source.initialize(nXcc,nZcc,0.0);   
+   Vex.initialize(nXcc,nZcc,0.0);
+   Vez.initialize(nXcc,nZcc,0.0);
+   divqe.initialize(nXcc,nZcc,0.0);   
+   divqi.initialize(nXcc,nZcc,0.0);   
+   Qe.initialize(nXcc,nZcc,0.0);   
+   Qi.initialize(nXcc,nZcc,0.0);   
    qe_x.initialize(nXcc,nZcc,0.0);
    qe_z.initialize(nXcc,nZcc,0.0);
    qi_x.initialize(nXcc,nZcc,0.0);
@@ -242,6 +240,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       Json::Value epsilonVal = Phys.get("epsilon",defValue);
       Json::Value deltaVal   = Phys.get("delta",defValue);
       Json::Value tauiVal    = Phys.get("taui",defValue);
+      Json::Value modelGyroViscVal    = Phys.get("modelGyroVisc",defValue);
       Json::Value nuThermVal = Phys.get("nuTherm",defValue);
       Json::Value TempRatioVal  = Phys.get("TempRatio",defValue);
       Json::Value NsubVal    = Phys.get("Nsub",defValue);
@@ -316,6 +315,18 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       }
       Sthresh = Nthresh*Tthresh/pow(Nthresh,gamma0-1);
       
+      modelGyroVisc = modelGyroViscVal.asInt();
+      if(procID==0) {
+         if(modelGyroVisc==0) { 
+            cout << "Not modeling gyro viscosity"<< endl;
+         }
+         else if(modelGyroVisc==1) { 
+            cout << "modeling gyro viscosity"<< endl;
+         }
+         else{   
+            printf("ERROR: modelGyroVisc should be 0 or 1 \n");
+         }
+      }
 
    }
    else {
@@ -492,10 +503,10 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    dataFile.add(FluxR_x, "FluxR_x", 1);
    dataFile.add(FluxL_x, "FluxL_x", 1);
    //
-   dataFile.add(Se_source,"Se_source",1);
-   dataFile.add(Si_source,"Si_source",1);
-   dataFile.add(Vx_source,"Vx_source",1);
-   dataFile.add(Vz_source,"Vz_source",1);
+   dataFile.add(divqe,"divqe",1);
+   dataFile.add(divqi,"divqi",1);
+   dataFile.add(Qe,"Qe",1);
+   dataFile.add(Qi,"Qi",1);
    //
    dataFile.add(Qvis,"Qvis",1);  
 
@@ -513,9 +524,10 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
    Xcc = Xgrid.Xcc;
    Xce = Xgrid.Xce;
    
-   matrix2D<double> dPedx, dPedz;
+   matrix2D<double> dPedx, dPedz, Nhalf;
    dPedx.initialize(nXcc,nZcc,0.0);
    dPedz.initialize(nXcc,nZcc,0.0);
+   Nhalf.initialize(nXcc,nZcc,0.0);
 
    int procID, numProcs;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
@@ -525,6 +537,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 
    // Explicit forward advance from n to n+1 using subcycling in time 
    //  
+   Nhalf = N;
    double thisdt;
    for (auto n=1; n<Nsub+1; n++) {
       thisdt = dt*n/Nsub;
@@ -533,11 +546,6 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       for (auto i=nXg; i<nXcc-nXg; i++) {
          for (auto j=nZg; j<nZcc-nZg; j++) {
 
-         //Se_source(i,j) = -(Fluxqe_x(i,j) - Fluxqe_x(i-1,j))/Xcc.at(i)/Xgrid.dX/pow(N(i,j),gamma0-1)
-         //                 -(Fluxqe_z(i,j) - Fluxqe_z(i,j-1))/Xgrid.dZ/pow(N(i,j),gamma0-1);
-         //Si_source(i,j) = -(Fluxqi_x(i,j) - Fluxqi_x(i-1,j))/Xcc.at(i)/Xgrid.dX/pow(N(i,j),gamma0-1)
-         //                 -(Fluxqi_z(i,j) - Fluxqi_z(i,j-1))/Xgrid.dZ/pow(N(i,j),gamma0-1);
-	 
          Fx(i,j) = - (FluxMx_x(i,j)-FluxMx_x(i-1,j))/Xcc.at(i)/Xgrid.dX
 		   + P(i,j)/Xcc.at(i) - Jz(i,j)*By(i,j);
 	 if(procID==numProcs-1 && i==nXcc-nXg-1) Fx(i,j) = Fx(i-1,j)/3.0;
@@ -554,10 +562,12 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
                               + thisdt*Jx(i,j)*By(i,j);
          Se(i,j) = Seold(i,j) - thisdt*(FluxSe_x(i,j) - FluxSe_x(i-1,j))/Xcc.at(i)/Xgrid.dX
                               - thisdt*(FluxSe_z(i,j) - FluxSe_z(i,j-1))/Xgrid.dZ
-                              + thisdt*(Se_source(i,j) - nuTherm0/2.0*(Te(i,j)-Ti(i,j))/pow(N(i,j),gamma0-1) );
+                              + thisdt*(-divqe(i,j) + Qe(i,j))
+                                      *(gamma0-1.0)/pow(Nhalf(i,j),gamma0-1);
          Si(i,j) = Siold(i,j) - thisdt*(FluxSi_x(i,j) - FluxSi_x(i-1,j))/Xcc.at(i)/Xgrid.dX
                               - thisdt*(FluxSi_z(i,j) - FluxSi_z(i,j-1))/Xgrid.dZ
-                              + thisdt*(Si_source(i,j) + (Qvis(i,j) - nuTherm0/2.0*(Ti(i,j)-Te(i,j)))/pow(N(i,j),gamma0-1) );
+                              + thisdt*(-divqi(i,j) + Qi(i,j) + Qvis(i,j))
+                                      *(gamma0-1.0)/pow(Nhalf(i,j),gamma0-1.0);
 	 By(i,j) = Byold(i,j) - thisdt*(FluxBy_x(i,j) - FluxBy_x(i-1,j))/Xgrid.dX
 	                      - thisdt*(FluxBy_z(i,j) - FluxBy_z(i,j-1))/Xgrid.dZ;
 	 
@@ -832,10 +842,6 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    Xgrid.communicate(dPedx);
    Xgrid.communicate(dPidx);
 
-   //Se_source = -Se*Ve_drift_x*(dPedx/Pe + gamma0*dTedx/Te)
-   //            -Se*Ve_drift_z*(dPedz/Pe + gamma0*dTedz/Te);
-   //Si_source = -Si*Vi_drift_x*(dPidx/Pi + gamma0*dTidx/Ti)
-   //            -Si*Vi_drift_z*(dPidz/Pi + gamma0*dTidz/Ti);
 
    //omegatau = 0.0213*1.84e3*By*pow(Te,1.5); // omega_ce*tau_ei
    //omegatau2 = omegatau*omegatau;
@@ -848,10 +854,10 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    omegatauFactor  = omegatau2;
    omegatauFactor /= omegatau2 + 3.7703;   
 
-   qe_x = -gamma0*Pe*lambda0/By*dTedz*omegatauFactor;  
-   qe_z =  gamma0*Pe*lambda0/By*dTedx*omegatauFactor;  
-   qi_x =  gamma0*Pi*lambda0/By*dTidz*omegatauFactor;  
-   qi_z = -gamma0*Pi*lambda0/By*dTidx*omegatauFactor;  
+   qe_x = -gamma0/(gamma0-1.0)*Pe*lambda0/By*dTedz*omegatauFactor;  
+   qe_z =  gamma0/(gamma0-1.0)*Pe*lambda0/By*dTedx*omegatauFactor;  
+   qi_x =  gamma0/(gamma0-1.0)*Pi*lambda0/By*dTidz*omegatauFactor;  
+   qi_z = -gamma0/(gamma0-1.0)*Pi*lambda0/By*dTidx*omegatauFactor;  
 
    Fluxqe_x_cc = qe_x*rcc;
    Fluxqe_z_cc = qe_z;
@@ -863,14 +869,14 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    Xgrid.DDX(Sqi_x,qi_x*rcc);
    Xgrid.DDZ(Sqi_z,qi_z);
 
-   Se_source = -(Sqe_x/rcc + Sqe_z);
-   Se_source /= pow(N,gamma0-1);
-   Si_source = -(Sqi_x/rcc + Sqi_z);
-   Si_source /= pow(N,gamma0-1);
+   divqe = Sqe_x/rcc + Sqe_z;
+   divqi = Sqi_x/rcc + Sqi_z;
    
-   Xgrid.communicate(Se_source);
-   Xgrid.communicate(Si_source);
+   Xgrid.communicate(divqe);
+   Xgrid.communicate(divqi);
 
+   Qi = 3.0*nuTherm0*N*(Te-Ti);
+   Qe = -Qi;
 
    //   compute ion gyro-viscosicity fluxes
    //
@@ -885,50 +891,32 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    Wzz.initialize(nXcc,nZcc,0.0);
    divV.initialize(nXcc,nZcc,0.0);
 
-   Xgrid.DDX(dVxdx,Vx);
-   Xgrid.DDX(dVzdx,Vz);
-   Xgrid.DDZ(dVxdz,Vx);
-   Xgrid.DDZ(dVzdz,Vz);
-   setXminBoundary(dVxdx, 0.0, 0.0);   
-   setXmaxBoundary(dVxdx, 0.0, 0.0);   
-   setXminBoundary(dVzdx, 0.0, 0.0);   
-   setXmaxBoundary(dVzdx, 0.0, 0.0);   
-   Xgrid.communicate(dVxdx);
-   Xgrid.communicate(dVzdx);
-   Wrz = dVxdz + dVzdx;
-   Wrr = 2.0*dVxdx - 2.0/3.0*divV;
-   Wzz = 2.0*dVzdz - 2.0/3.0*divV;
-   eta3 = lambda0*Pi/By/2.0*omegatauFactor;   
+   if(modelGyroVisc) {
+      Xgrid.DDX(dVxdx,Vx);
+      Xgrid.DDX(dVzdx,Vz);
+      Xgrid.DDZ(dVxdz,Vx);
+      Xgrid.DDZ(dVzdz,Vz);
+      setXminBoundary(dVxdx, 0.0, 0.0);   
+      setXmaxBoundary(dVxdx, 0.0, 0.0);   
+      setXminBoundary(dVzdx, 0.0, 0.0);   
+      setXmaxBoundary(dVzdx, 0.0, 0.0);   
+      Xgrid.communicate(dVxdx);
+      Xgrid.communicate(dVzdx);
+      Wrz = dVxdz + dVzdx;
+      Wrr = 2.0*dVxdx - 2.0/3.0*divV;
+      Wzz = 2.0*dVzdz - 2.0/3.0*divV;
+      eta3 = 0.0*lambda0*Pi/By/2.0*omegatauFactor;   
+   }
 
-
-   //   compute electron and ion fluid velocities less diamagnetic
-   //
-   /*
-   matrix2D<double> dPdx, dPdz;
-   dPdx.initialize(nXcc,nZcc,0.0);
-   dPdz.initialize(nXcc,nZcc,0.0);
-   Xgrid.DDZ(dPdz,P);
-   Xgrid.DDX(dPdx,P);
-   Xgrid.communicate(dPdz);
-   Xgrid.communicate(dPdx);
-  
-   Ue0_z =  Ex/By;
-   Ue0_x = -Ez/By;
-   Ui0_z =  Ex/By - lambda0/N*(Jz - dPdx/By); 
-   Ui0_x = -Ez/By + lambda0/N*(Jx - dPdz/By);
-   */
-
-   Ui0_z = Vz + 0.0*lambda0/N*dPidx/By; 
-   Ui0_x = Vx - 0.0*lambda0/N*dPidz/By;
-   Ue0_z = Vz - lambda0/N*Jz - 0.0*lambda0/N*dPedx/By;
-   Ue0_x = Vx - lambda0/N*Jx + 0.0*lambda0/N*dPedx/By;
+   Vez = Vz - lambda0/N*Jz;
+   Vex = Vx - lambda0/N*Jx;
 
   
    // set flux freezing speed and 
    // compute advection flux at cell center
    //
    Cspeed0i  = sqrt(Vx*Vx +Vz*Vz) + Cs; // adv flux jacobian for magnetic field
-   Cspeed0e  = sqrt(Ue0_x*Ue0_x + Ue0_z*Ue0_z) + Cs; // adv flux jacobian for magnetic field
+   Cspeed0e  = sqrt(Vex*Vex + Vez*Vez) + Cs; // adv flux jacobian for magnetic field
    Cspeed   = Cspeed0i + Cs;      // adv flux jacobian for all other variables
 
    /*
@@ -947,10 +935,10 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    FluxMxcc_z = Mx*Vz - eta3/2.0*(Wzz-Wrr);
    FluxMzcc_x = rcc*(Mz*Vx - eta3/2.0*(Wzz-Wrr));
    FluxMzcc_z = Mz*Vz + P + eta3*Wrz;
-   FluxSecc_x = rcc*Ue0_x*Se;
-   FluxSicc_x = rcc*Ui0_x*Si;
-   FluxSecc_z = Ue0_z*Se;
-   FluxSicc_z = Ui0_z*Si;
+   FluxSecc_x = rcc*Vex*Se;
+   FluxSicc_x = rcc*Vx*Si;
+   FluxSecc_z = Vez*Se;
+   FluxSicc_z = Vz*Si;
    
    FluxBycc_x = -Ez;
    FluxBycc_z = Ex;
@@ -1156,8 +1144,8 @@ void computeViscousStress(const domainGrid& Xgrid)
 
    //   compute tensor values at cell-center
    //
-   eta0 = 0.96*Pi*taui0/N;
-   eta1 = 0.96*Pi*taui0/N;
+   eta0 = 0.96*Pi*taui0;
+   eta1 = 0.96*Pi*taui0;
    Xgrid.DDX(dVxdx,Vx);
    Xgrid.DDZ(dVzdz,Vz);
    Xgrid.DDX(dVzdx,Vz);

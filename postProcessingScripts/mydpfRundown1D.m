@@ -19,8 +19,8 @@ set(0,'defaultaxesfontweight','bold');
 numProcs = 4;
 filePath = '../physicsMods/dpfRundown1D/';
 
-plotBackIndex = 1; % plot time will be end-plotBackIndex
-xp1 = 0.5;
+plotBackIndex = 0; % plot time will be end-plotBackIndex
+xp1 = 1;
 
 Xcc = loadData1DVec(filePath,numProcs,'Xcc');
 Xce = loadData1DVec(filePath,numProcs,'Xce');
@@ -121,7 +121,7 @@ for n=1:length(tout)
    
 end
 Cs = sqrt(gamma0*P./N);
-Mach = V./Cs;
+Mach = abs(V)./Cs;
 
 
 % rho2/rho1 = v1/v2 = (gamma0+1)/(gamma0-1+2/M1^2)
@@ -308,7 +308,7 @@ xlim([0 tout(end)]);
 %%%   plot JdotE and energy in gas
 %
 Jheating = cumtrapz(tout,JdotE);
-figure(12); 
+f12= figure(12); 
 hold on; plot(tout,Emean+Etherm-Etherm(1),'displayName', '\int (3/2P + \rhoV^2/2) dx');
 hold on; plot(tout,Jheating,'displayName','\int \int J\cdot E dx dt');
 xlabel('time'); ylabel('energy'); title('kinetic energy conservation');

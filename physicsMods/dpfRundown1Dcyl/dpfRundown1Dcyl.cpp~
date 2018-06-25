@@ -56,7 +56,7 @@ vector<double> FluxN, FluxM, FluxS, FluxB, FluxEz;
 vector<double> rcc, rce;
 
 // Set lower threshold values for N, T, and S
-double Nthresh=1.0e-4, Tthresh=2.5e-2, Sthresh;
+double Nthresh=1.0e-2, Tthresh=0.025, Sthresh;
 
 void computeFluxes(const domainGrid&, const int);
 void setXminBoundary(vector<double>&, const double, const double);
@@ -347,7 +347,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       //cout << "thist = " << tmesh->tSim << endl;
       double thist = tmesh->tSim;
       double B0 = thist*B00;
-      if(B0>4.0) B0 = 4.0;
+      if(B0>10.0) B0 = 10.0;
       
       if(procID==0) {
          setXminBoundary(N, N.at(2), 0.0);   
@@ -388,6 +388,9 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       }
      
       if(procID==numProcs-1) {
+         //setXmaxBoundary(N, 0.0, Nthresh);   
+         //setXmaxBoundary(M, 0.0, 0.0);   
+         //setXmaxBoundary(S, 0.0, Sthresh);   
          setXmaxBoundary(N, 0.0, 1.0);   
          setXmaxBoundary(M, 0.0, 1.0);   
          setXmaxBoundary(S, 0.0, 1.0);   
@@ -462,6 +465,8 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    FluxScc.assign(nCC,0.0);
    FluxB0cc.assign(nCC,0.0);
    Eprime.assign(nCE,0.0);
+   vector<double> Ptest;
+   Ptest.assign(nCC,0.0);
 
    //  define derived variables
    //
@@ -470,13 +475,15 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    //   setXminBoundary(V, 0.0, 0.0);   
    //}   
    if(min(N)<0.0) cout << " N IS LESS THAN ZERO " << endl;
+   //Ptest  = pow(N,gamma0-1.01);
    P  = S*pow(N,gamma0-1.0);
    T  = P/2.0/N;
    if(min(P)<0.0) cout << " P IS LESS THAN ZERO " << endl;
    if(min(T)<0.0) cout << " T IS LESS THAN ZERO " << endl;
    Cs = sqrt(gamma0*P/N + B*B/N);
    eta = eta0/T/sqrt(T);
-   //eta = eta0/T/sqrt(T)*(1.0+1000.0*pow(100.0*Nthresh/N,4));
+   //eta = eta0/T/sqrt(T)*(1.0+100.0*pow(10.0*Nthresh/N,4));
+   //eta = eta0/T/sqrt(T)*(1.0+10.0*pow(1.0*Nthresh/N,4));
    Xgrid.InterpToCellEdges(etace,eta,eta,"C2");
    Xgrid.communicate(etace);
    Xgrid.communicate(eta);
@@ -495,7 +502,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    // compute advective flux using
    // specified scheme from input file
    //
-   //Nsub = 2;
+   Nsub = 2;
    if(advScheme0 == "TVD") {
       Xgrid.computeFluxTVD(FluxN,FluxL,FluxR,FluxRatio,FluxLim,
                            FluxNcc,Cspeed,rcc*N,Nsub);
@@ -618,7 +625,8 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    
    vector<double> Cchar;
    double Cmax;
-   Cchar = abs(V)+Cs;
+   //Cchar = abs(V)+Cs;
+   Cchar = abs(V)+sqrt(gamma0*P/N + B*B/N);
    Cmax = max(Cchar);
    //cout << "Cmax = " << Cmax << endl;
    //cout << "abs(V) = " << max(abs(V))<< endl;
