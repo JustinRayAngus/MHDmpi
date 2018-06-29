@@ -40,6 +40,8 @@ gamma0 = loadData1DVec(filePath,numProcs,'gamma0');
 delta0 = loadData1DVec(filePath,numProcs,'delta0');
 dX = Xcc(2)-Xcc(1);
 %
+FluxM = loadData1DVec(filePath,numProcs,'FluxM');
+%
 %%%   calcualte Ez at cell-center
 %
 Ezcc = zeros(size(N));
@@ -63,7 +65,7 @@ Mach = abs(V)./Cs;
 
 deleteFlag = 0;
 thisFigNum = 0;
-for it = 1:2:length(tout)
+for it = 1:1:length(tout)
     
 f1=figure(11); 
 set(f1,'position',[450 80 1340 730]);
@@ -75,7 +77,7 @@ set(gca,'xtick',0:0.2:1);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('N');
 title('mass density'); axis('square');
-axis([0 1 0 10]); axis('square');
+axis([0 1 0 20]); axis('square');
 %
 subplot(2,3,2);
 h4=plot(Xcc,B(:,it).^2/2+P(:,it),'black'); box on; grid on;
@@ -86,7 +88,7 @@ set(gca,'xtick',0:0.2:1);
 xlabel('x'); ylabel('P');
 title('pressure'); axis('square');
 legend('total','magnetic','thermal','location','best');
-axis([0 1 0 80]);  axis('square');
+axis([0 1 0 400]);  axis('square');
 %
 %
 %

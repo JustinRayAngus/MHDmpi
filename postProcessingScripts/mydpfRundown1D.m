@@ -94,7 +94,9 @@ Emean  = sum(0.5*M(3:end-2,:).*V(3:end-2,:))*dX;
 Efield = sum(B(3:end-2,:).^2/2)*dX;
 EEztot = delta0*sum(Ez(2:end-2,:).^2/2.0)*dX;
 %
-Entropy  = sum(S(3:end-2,:))*dX;
+
+EntropyDensity = 2.0*N.*log(P./N.^gamma0);
+Entropy  = sum(EntropyDensity(3:end-2,:))*dX;
 Momentum = sum(M(3:end-2,:))*dX;
 Mass     = sum(N(3:end-2,:))*dX;
 
@@ -262,12 +264,13 @@ lg9 = legend('show'); set(lg9,'location','best');
 xlim([0 tout(end)]);
 
 
-%%%   plot entropy conservation
+%%%   plot entropy conservation 
+%%%   (note most entropy comes from viscosity in shock front )
 %
 subplot(2,3,3);
 EntropyGain = cumtrapz(tout,Ssource);
 hold on; plot(tout,Entropy-Entropy(1),'displayName','\int S dX'); box on;
-hold on; plot(tout,EntropyGain,'linestyle','--','displayName','time-integrated source');
+hold on; plot(tout,EntropyGain,'linestyle','--','displayName','time-integrated \eta J^2');
 xlabel('time'); ylabel('entropy'); title('entropy conservation');
 lg9 = legend('show'); set(lg9,'location','best');
 xlim([0 tout(end)]);
@@ -297,9 +300,11 @@ xlim([0 tout(end)]);
 
 subplot(2,3,6);
 EthermGain = cumtrapz(tout,Psource);
-hold on; plot(tout,Etherm-Etherm(1),'displayName','thermal energy'); box on;
-hold on; plot(tout,EthermGain,'linestyle','--','displayName','\int \eta J^2-P\nabla U flux');
-xlabel('time'); ylabel('energy'); title('thermal energy conservation');
+hold on; plot(tout,Etherm-Etherm(1),'displayName','thermal'); box on;
+hold on; plot(tout,Emean,'displayName','mean');
+hold on; plot(tout,Efield,'displayName','magnetic'); box on;
+
+xlabel('time'); ylabel('energy'); title('energy partition');
 lg9 = legend('show'); set(lg9,'location','northwest');
 xlim([0 tout(end)]);
 
