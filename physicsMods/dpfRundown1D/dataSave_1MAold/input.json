@@ -14,19 +14,10 @@
            "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
            "Nsub":2, // this actually refers to order
            "gammaC":1.6667, // adiabatic coefficient
+           "eta0":2.78e-2, // normalized resistivity
            "etaVis0":0.0e-30, // numerical viscosity
-           //"eta0":0.0278, // will override calculated resistivity
-           "epsilonRel":1.0e2, // c_eff  = cvac/sqrt(epsilonRel)
-           "meRel":1.0,        // me_eff = me*meRel
+           "delta0":1.0e-7, // relaxation const (Vnorm/cvac)^2
            "epsilon0":1.6e-7, // relaxation const (Vnorm/cvac)^2
-           "DensScale_invmc":1.93e23,
-           "TempScale_eV":1.0,
-           "SpatScale_m":0.03,
-           "CurrScale_Amps":1.0e6,
-           "dyCurrScale_m":0.1885, // 2*pi*r0
-           "dtCurrScale_ns":1.0,   // rise time
-           "Amass":2.0,            // atomic mass
-           "Nthresh":1.0e-4,       // density threshold (normalized)
            "N":{
                 "type":"const", // initial profile
                 "a":0.0,  // amplitude

@@ -1,0 +1,3 @@
+/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/2TempVersion/CMakeFiles/rebuild_cache.dir
+/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/2TempVersion/CMakeFiles/edit_cache.dir
+/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown1D/2TempVersion/CMakeFiles/mhd.dir

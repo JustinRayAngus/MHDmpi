@@ -17,11 +17,12 @@ set(0,'defaultaxesfontweight','bold');
 
 
 numProcs = 4;
-filePath = '../physicsMods/dpfRundown1D/';
+filePath = '../physicsMods/dpfRundown1D/'; TwoTempVersion=0;
+filePath = '../physicsMods/dpfRundown1D/2TempVersion/'; TwoTempVersion=1;
 %filePath = '../physicsMods/dpfRundown1D/dataSave_1MA/';
 %filePath = '../physicsMods/dpfRundown1Dcyl_Econs/';
 
-plotBackIndex = 35; % plot time will be end-plotBackIndex
+plotBackIndex = 0*35; % plot time will be end-plotBackIndex
 xp1 = 1;
 
 Xcc = loadData1DVec(filePath,numProcs,'Xcc');
@@ -47,7 +48,14 @@ N  = loadData1DVec(filePath,numProcs,'N');
 M  = loadData1DVec(filePath,numProcs,'M');
 B  = loadData1DVec(filePath,numProcs,'B');
 P  = loadData1DVec(filePath,numProcs,'P');
-T  = loadData1DVec(filePath,numProcs,'T');
+if(TwoTempVersion)
+    Pe  = loadData1DVec(filePath,numProcs,'Pe');
+    Pi  = loadData1DVec(filePath,numProcs,'Pi');
+    Te  = loadData1DVec(filePath,numProcs,'Te');
+    Ti  = loadData1DVec(filePath,numProcs,'Ti');
+else
+    T  = loadData1DVec(filePath,numProcs,'T');
+end
 V  = loadData1DVec(filePath,numProcs,'V');
 J  = loadData1DVec(filePath,numProcs,'J');
 Jcc = loadData1DVec(filePath,numProcs,'Jcc');
@@ -58,6 +66,7 @@ gamma0 = loadData1DVec(filePath,numProcs,'gamma0');
 delta0 = loadData1DVec(filePath,numProcs,'delta0');
 FluxM = loadData1DVec(filePath,numProcs,'FluxM');
 
+T = P/2.0./N; % average temperature
 
 %%%   calculate divU
 %
