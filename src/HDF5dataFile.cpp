@@ -246,7 +246,7 @@ void HDF5dataFile::writeInt(const int& varData, const char* varName, const bool&
       dataspace.selectHyperslab(H5S_SELECT_SET,dims,offset); // data dataspace
       dataset.write(&varData, varType, mdataspace, dataspace);
       if(procID==0) {
-         cout << "Extendable scalar " << varName << " added to " << outputFile << endl;    
+         //cout << "Extendable scalar " << varName << " added to " << outputFile << endl;    
       }
      
       // close opened stuff
@@ -321,7 +321,7 @@ void HDF5dataFile::writeScl(const double& varData, const char* varName, const bo
                
       dataset.write(&varData, varType, mdataspace, dataspace);
       if(procID==0) {
-         cout << "Extendable scalar " << varName << " added to " << outputFile << endl;    
+         //cout << "Extendable scalar " << varName << " added to " << outputFile << endl;    
       }
      
       // close opened stuff
@@ -403,8 +403,8 @@ void HDF5dataFile::writeVec(const vector<double>& varData, const char* varName, 
                
       dataset.write(data, varType, mdataspace, dataspace);
       if(procID==0) {
-         cout << "Extendable vector " << varName 
-              << " added to " << outputFile << endl;    
+         //cout << "Extendable vector " << varName 
+         //     << " added to " << outputFile << endl;    
       }   
       // close opened stuff
       //
@@ -486,7 +486,7 @@ void HDF5dataFile::writeVecVec(const vector<vector<double>>& varData, const char
       dataspace.selectHyperslab(H5S_SELECT_SET,dims,offset); // data dataspace
                
       dataset.write(data, varType, mdataspace, dataspace);
-      cout << "Extendable vector vector " << varName << " added to " << outputFile << endl;    
+      //cout << "Extendable vector vector " << varName << " added to " << outputFile << endl;    
            
       // close opened stuff
       //
@@ -569,7 +569,7 @@ void HDF5dataFile::writemat2D(const matrix2D<double>& varData, const char* varNa
                
       dataset.write(data, varType, mdataspace, dataspace);
       if(procID==0) {
-         cout << "Extendable matrix2D " << varName << " added to " << outputFile << endl;    
+         //cout << "Extendable matrix2D " << varName << " added to " << outputFile << endl;    
       }
       // close opened stuff
       //

@@ -18,8 +18,10 @@ set(0,'defaultaxesfontweight','bold');
 
 numProcs = 4;
 filePath = '../physicsMods/dpfRundown1D/';
+%filePath = '../physicsMods/dpfRundown1D/dataSave_1MA/';
+%filePath = '../physicsMods/dpfRundown1Dcyl_Econs/';
 
-plotBackIndex = 0; % plot time will be end-plotBackIndex
+plotBackIndex = 35; % plot time will be end-plotBackIndex
 xp1 = 1;
 
 Xcc = loadData1DVec(filePath,numProcs,'Xcc');
@@ -43,9 +45,9 @@ EEztot = 0*tout;
 
 N  = loadData1DVec(filePath,numProcs,'N');
 M  = loadData1DVec(filePath,numProcs,'M');
-S  = loadData1DVec(filePath,numProcs,'S');
 B  = loadData1DVec(filePath,numProcs,'B');
 P  = loadData1DVec(filePath,numProcs,'P');
+T  = loadData1DVec(filePath,numProcs,'T');
 V  = loadData1DVec(filePath,numProcs,'V');
 J  = loadData1DVec(filePath,numProcs,'J');
 Jcc = loadData1DVec(filePath,numProcs,'Jcc');
@@ -54,6 +56,7 @@ Ez  = loadData1DVec(filePath,numProcs,'Ez');
 eta = loadData1DVec(filePath,numProcs,'eta');
 gamma0 = loadData1DVec(filePath,numProcs,'gamma0');
 delta0 = loadData1DVec(filePath,numProcs,'delta0');
+FluxM = loadData1DVec(filePath,numProcs,'FluxM');
 
 
 %%%   calculate divU
@@ -77,12 +80,11 @@ end
 
 %figure(77); hold on; plot(Xcc,divV(:,100)); box on;
 
-T = P./N;
 Ptot = P + B.^2/2 + M.*V/2.0;
 PdV = P.*divV;
 VdP = V.*dPdx;
 etaJ2 = eta.*Jcc.^2;
-etaJ2mod = (gamma0-1)*etaJ2./N.^(gamma0-1);
+etaJ2mod = etaJ2./T;
 Edenstot = 3/2*P + N.*V.^2/2 + B.^2/2;
 
 %%%   calculate conservation stuff
@@ -95,7 +97,7 @@ Efield = sum(B(3:end-2,:).^2/2)*dX;
 EEztot = delta0*sum(Ez(2:end-2,:).^2/2.0)*dX;
 %
 
-EntropyDensity = 2.0*N.*log(P./N.^gamma0);
+EntropyDensity = 2.0*N.*log(T.^1.5./N);
 Entropy  = sum(EntropyDensity(3:end-2,:))*dX;
 Momentum = sum(M(3:end-2,:))*dX;
 Mass     = sum(N(3:end-2,:))*dX;
@@ -109,15 +111,15 @@ for n=1:length(tout)
    % Psource(n) = sum(etaJ2(3:end-2,n)+VdP(3:end-2,n))*dX;
     Etot(n)    = Etot(n) + EEztot(n);
     
-    Poynt(n) = -Ez(2,n)*B(3,n) ...
+    Poynt(n) = Ez(end-1,n)*(B(end-2,n)+B(end-1,n))/2.0 ...
+             - Ez(2,n)*(B(3,n)+B(2,n))/2.0 ...
              - 0*5/2*(P(2,n)+P(3,n))/2*(V(2,n)+V(3,n))/2 ...
              - 0*0.5*N(3,n)*V(3,n)^3;
-    Bflux(n) = -Ez(2,n);
+    Bflux(n) = Ez(end-1,n) - Ez(2,n);
     Mflux(n) =  (P(2,n)+P(3,n))/2 + B(2,n)^2/2;
     Msource(n) = Msource(n) + (P(2,n)+P(3,n))/2;
   %  Psource(n) = Psource(n) - 3/2*P(2,n)*(V(2,n)+V(3,n))/2;
 
-    Poynt(n) = Poynt(n) + Ez(end-1,n)*B(end-2,n) + 5/2*P(end-1,n)*V(end-1,n);
     Msource(n) = Msource(n) - (P(end-2,n)+P(end-1,n))/2;
     Mflux(n) = Mflux(n) - (P(end-2,n)+P(end-1,n))/2;
    
@@ -154,7 +156,7 @@ set(f1,'position',[1030 425 1300 840]);
 
 subplot(2,3,1);
 hold on; plot(Xcc,N(:,1),'black'); box on;
-hold on; plot(Xcc,N(:,round(end/2)),'b');
+hold on; plot(Xcc,N(:,round((end-plotBackIndex)/2)),'b');
 %hold on; plot(Xcc,N(:,round(120)),'g');
 %hold on; plot(Xcc,N(:,round(end/2)),'b');
 hold on; plot(Xcc,N(:,end-plotBackIndex),'r'); grid on;
@@ -166,7 +168,7 @@ xlim([0 xp1]);
 %
 subplot(2,3,2);
 hold on; plot(Xcc,V(:,1),'black'); box on;
-hold on; plot(Xcc,V(:,round(end/2)),'b');
+hold on; plot(Xcc,V(:,round((end-plotBackIndex)/2)),'b');
 hold on; plot(Xcc,V(:,end-plotBackIndex),'r'); grid on;
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
@@ -176,7 +178,7 @@ xlim([0 xp1]);
 %
 subplot(2,3,3);
 hold on; plot(Xcc,P(:,1),'black'); box on;
-hold on; plot(Xcc,P(:,round(end/2)),'b');
+hold on; plot(Xcc,P(:,round((end-plotBackIndex)/2)),'b');
 hold on; plot(Xcc,P(:,end-plotBackIndex),'r'); grid on;
 hold on; plot(Xcc,T(:,end-plotBackIndex),'g');
 %set(gca,'xtick',0:0.25:2);
@@ -188,7 +190,7 @@ xlim([0 xp1]);
 %
 subplot(2,3,4);
 hold on; plot(Xce,Ez(:,1),'black'); box on;
-hold on; plot(Xce,Ez(:,round(end/2)),'b');
+hold on; plot(Xce,Ez(:,round((end-plotBackIndex)/2)),'b');
 hold on; plot(Xce,Ez(:,end-plotBackIndex),'r'); grid on;
 hold on; plot(Xcc,Ez0(:,end-plotBackIndex),'g--'); 
 %set(gca,'xtick',0:0.25:2);
@@ -199,7 +201,7 @@ xlim([0 xp1]);
 %
 subplot(2,3,5);
 hold on; plot(Xcc,B(:,1),'black'); box on;
-hold on; plot(Xcc,B(:,round(end/2)),'b'); grid on;
+hold on; plot(Xcc,B(:,round((end-plotBackIndex)/2)),'b'); grid on;
 hold on; plot(Xcc,B(:,end-plotBackIndex),'r');
 xlabel('x'); ylabel('B'); axis('square');
 title('magnetic field');
@@ -209,7 +211,7 @@ xlim([0 xp1]);
 %
 subplot(2,3,6);
 hold on; plot(Xce,J(:,1),'black'); box on;
-hold on; plot(Xce,J(:,round(end/2)),'b'); grid on;
+hold on; plot(Xce,J(:,round((end-plotBackIndex)/2)),'b'); grid on;
 hold on; plot(Xce,J(:,end-plotBackIndex),'r');
 %hold on; plot(Xce,J0(:,end-plotBackIndex),'g--');
 hold on; plot(Xcc,Jcc(:,end-plotBackIndex),'g--');
@@ -219,10 +221,6 @@ title('current density');
 %set(gca,'ytick',1:0.5:3);
 xlim([0 xp1]);
 end
-
-figure(7);
-hold on; plot(Xcc,Mach(:,end-plotBackIndex),'r'); box on;
-title('Mach Number'); xlim([0 xp1]);
 
 
 
@@ -315,9 +313,59 @@ xlim([0 tout(end)]);
 Jheating = cumtrapz(tout,JdotE);
 f12= figure(12); 
 hold on; plot(tout,Emean+Etherm-Etherm(1),'displayName', '\int (3/2P + \rhoV^2/2) dx');
-hold on; plot(tout,Jheating,'displayName','\int \int J\cdot E dx dt');
+hold on; plot(tout,Jheating,'linestyle','--','displayName','\int \int J\cdot E dx dt');
 xlabel('time'); ylabel('energy'); title('kinetic energy conservation');
 lg9 = legend('show'); set(lg9,'location','northwest');
 box on; grid on;
 xlim([0 tout(end)]);
+
+
+
+%%%   calculate current-channel and shock location/speeds
+%
+X_J = zeros(size(tout));
+X_N = zeros(size(tout));
+X_shock = zeros(size(tout));
+for n=1:length(tout)
+    [~,ix0] = max(abs(J(:,n)));
+    X_J(n) = Xce(ix0);
+    %
+    [~,ix0] = max(abs(N(:,n)));
+    X_N(n) = Xcc(ix0);
+    thisV = V(ix0,n);
+    %
+    if(thisV>0)
+        [~,ix1] = min(abs(N(ix0:end,n)-2.0));
+        ix1 = ix1 + ix0 - 1;
+    else
+        [~,ix1] = min(abs(N(1:ix0,n)-2.0));
+        %ix1 = ix1 + ix0 - 1;
+    end
+    X_shock(n) = Xcc(ix1);
+end
+
+V_J = zeros(size(tout));
+V_N = zeros(size(tout));
+V_shock = zeros(size(tout));
+
+for n=2:length(tout)
+    V_J(n) = (X_J(n)-X_J(n-1))/(tout(n)-tout(n-1));
+    V_N(n) = (X_N(n)-X_N(n-1))/(tout(n)-tout(n-1));
+    V_shock(n) = (X_shock(n)-X_shock(n-1))/(tout(n)-tout(n-1));
+end
+
+[~,it0] = min(abs(tout-0.02));
+[~,it1] = min(abs(tout-0.04));
+V_J0 = (X_J(it1)-X_J(it0))/(0.04-0.02);
+V_N0 = (X_N(it1)-X_N(it0))/(0.04-0.02);
+V_shock0 = (X_shock(it1)-X_shock(it0))/(0.04-0.02);
+
+f13=figure(13); 
+plot(tout,X_J,tout,X_N,tout,X_shock); grid on;
+xlabel('time'); ylabel('position');
+title('axial positions');
+lg13=legend('peak current density','peak density','shock front');
+set(lg13,'location','best');
+xlim([0 tout(end)]);
+
 

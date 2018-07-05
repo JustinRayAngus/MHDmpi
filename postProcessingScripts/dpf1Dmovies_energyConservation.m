@@ -19,7 +19,7 @@ addpath('~angus1/Programs/MATLAB_LSP_TOOLS/');
 %%%   define number of procs and load date
 %
 numProcs = 4;
-filePath = '../physicsMods/dpfRundown1D/';
+filePath = '../physicsMods/dpfRundown1D_Econs/';
 
 Xcc = loadData1DVec(filePath,numProcs,'Xcc');
 Xce = loadData1DVec(filePath,numProcs,'Xce');
@@ -77,7 +77,7 @@ set(gca,'xtick',0:0.2:1);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('N');
 title('mass density'); axis('square');
-axis([0 1 0 20]); axis('square');
+axis([0 1 0 15]); axis('square');
 %
 subplot(2,3,2);
 h4=plot(Xcc,B(:,it).^2/2+P(:,it),'black'); box on; grid on;
@@ -88,17 +88,17 @@ set(gca,'xtick',0:0.2:1);
 xlabel('x'); ylabel('P');
 title('pressure'); axis('square');
 legend('total','magnetic','thermal','location','best');
-axis([0 1 0 400]);  axis('square');
+axis([0 1 0 500]);  axis('square');
 %
 %
 %
 subplot(2,3,3);
-h3=plot(Xcc,V(:,it)./Cs(:,it),'black'); box on; grid on;
-xlabel('x'); ylabel('V/C_s'); axis('square');
-title('local Mach Number');
+h3=plot(Xcc,V(:,it),'black'); box on; grid on;
+xlabel('x'); ylabel('V'); axis('square');
+title('velocity');
 set(gca,'xtick',0:0.2:1);
 %set(gca,'ytick',1:0.5:3);
-axis([0 1 -1 10]);  axis('square');
+axis([0 1 -20 20]);  axis('square');
 %
 %
 %

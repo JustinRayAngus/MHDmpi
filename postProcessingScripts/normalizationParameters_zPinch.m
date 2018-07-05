@@ -50,11 +50,6 @@ r0 = 5.0e-5;   % reactor
 N0 = 3.0e27;   % reactor
 T0 = 4e4;      % reactor [eV]
 
-=======
-r0  = 5.0e-3; % spatial scale [m]
-T0  = 100.0;    % initial plasma temperature [eV]
->>>>>>> 13056ff273390f0ff7ee3309583c90c1a1ea2135
-
 
 %%%   fundamental constants
 %
@@ -117,8 +112,10 @@ nuT = me/Mi/tau_e; % thermalization rate [Hz]
 
 %%%   calculate ion and electron inertial length scales (skin depth)
 %
-Le = 5.31e5/sqrt(N0*1e-6)/100;            % c/wpe [m]
-Li = 2.28e7*sqrt(aMn)/sqrt(N0*1e-6)/100;  % c/wpi [m]
+wpe = 5.64e4*sqrt(N0*1e-6);   % electron plasma freq [rad/s]
+wpi = wpe*sqrt(me/Mi);        % ion plasma freq [rad/s]
+Le = cvac/wpe;                % electron inertial scale [m]
+Li = cvac/wpi;                % ion inertial scale [m]
 
 
 %%%   calculate gyro-Bohm radius
