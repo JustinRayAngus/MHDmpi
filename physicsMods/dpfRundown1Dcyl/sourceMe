@@ -1,2 +1,0 @@
-export PHYScpp=dpfRundown1Dcyl.cpp
-export PHYS_HOME="../physicsMods/dpfRundown1Dcyl"

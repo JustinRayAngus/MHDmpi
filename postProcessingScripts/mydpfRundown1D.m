@@ -19,7 +19,7 @@ set(0,'defaultaxesfontweight','bold');
 numProcs = 4;
 filePath = '../physicsMods/dpfRundown1D/'; TwoTempVersion=0;
 filePath = '../physicsMods/dpfRundown1D/2TempVersion/'; TwoTempVersion=1;
-%filePath = '../physicsMods/dpfRundown1D/dataSave_1MA/';
+filePath = '../physicsMods/dpfRundown1D/2TempVersion/dataSave_1MAcyl/';
 %filePath = '../physicsMods/dpfRundown1Dcyl_Econs/';
 
 plotBackIndex = 0*35; % plot time will be end-plotBackIndex
@@ -53,8 +53,18 @@ if(TwoTempVersion)
     Pi  = loadData1DVec(filePath,numProcs,'Pi');
     Te  = loadData1DVec(filePath,numProcs,'Te');
     Ti  = loadData1DVec(filePath,numProcs,'Ti');
+    %
+    hy_cc = loadData1DVec(filePath,numProcs,'hy_cc');
+    hy_ce = loadData1DVec(filePath,numProcs,'hy_ce');
 else
     T  = loadData1DVec(filePath,numProcs,'T');
+    Te = T/2;
+    Ti = T/2;
+    Pe = P/2;
+    Pi = P/2;
+    %
+    hy_cc = 1.0 + 0.0*Xcc;
+    hy_ce = 1.0 + 0.0*Xce;
 end
 V  = loadData1DVec(filePath,numProcs,'V');
 J  = loadData1DVec(filePath,numProcs,'J');
@@ -65,18 +75,24 @@ eta = loadData1DVec(filePath,numProcs,'eta');
 gamma0 = loadData1DVec(filePath,numProcs,'gamma0');
 delta0 = loadData1DVec(filePath,numProcs,'delta0');
 FluxM = loadData1DVec(filePath,numProcs,'FluxM');
+FluxN = loadData1DVec(filePath,numProcs,'FluxN');
 
 T = P/2.0./N; % average temperature
 
 %%%   calculate divU
 %
 dX = Xcc(2)-Xcc(1);
+dV = dX*hy_cc;
 divV = zeros(size(V));
 dPdx = zeros(size(V));
+dhydx = zeros(size(Xcc));
 for j=2:length(Xcc)-1
     divV(j,:) = (V(j+1,:)-V(j-1,:))/2/dX;
     dPdx(j,:) = (P(j+1,:)-P(j-1,:))/2/dX;
+    dhydx(j) = (hy_ce(j)-hy_ce(j-1))/dX;
 end
+dhydx(1) = dhydx(2);
+dhydx(end) = dhydx(end-1);
 
 
 %%%   calcualte Ez at cell-center
@@ -98,25 +114,26 @@ Edenstot = 3/2*P + N.*V.^2/2 + B.^2/2;
 
 %%%   calculate conservation stuff
 %
-JdotE  = sum(Jcc(3:end-2,:).*Ezcc(3:end-2,:))*dX;
-Etot   = sum(Edenstot(3:end-2,:))*dX;
-Etherm = sum(1.5*P(3:end-2,:))*dX;
-Emean  = sum(0.5*M(3:end-2,:).*V(3:end-2,:))*dX;
-Efield = sum(B(3:end-2,:).^2/2)*dX;
-EEztot = delta0*sum(Ez(2:end-2,:).^2/2.0)*dX;
+JdotE  = sum(Jcc(3:end-2,:).*Ezcc(3:end-2,:).*dV(3:end-2));
+Etot   = sum(Edenstot(3:end-2,:).*dV(3:end-2));
+Etherm = sum(1.5*P(3:end-2,:).*dV(3:end-2));
+Emean  = sum(0.5*M(3:end-2,:).*V(3:end-2,:).*dV(3:end-2));
+Efield = sum(B(3:end-2,:).^2/2.*dV(3:end-2));
+EEztot = delta0*sum(Ez(2:end-2,:).^2/2.0.*dV(3:end-2));
 %
 
 EntropyDensity = 2.0*N.*log(T.^1.5./N);
-Entropy  = sum(EntropyDensity(3:end-2,:))*dX;
-Momentum = sum(M(3:end-2,:))*dX;
-Mass     = sum(N(3:end-2,:))*dX;
+Entropy  = sum(EntropyDensity(3:end-2,:).*dV(3:end-2));
+Momentum = sum(M(3:end-2,:).*dV(3:end-2));
+Mass     = sum(N(3:end-2,:).*dV(3:end-2));
 
 for n=1:length(tout)
 
     Btot(n)   = sum(B(3:end-2,n))*dX;
-    Ssource(n) = sum(etaJ2mod(3:end-2,n))*dX;
-    Msource(n) = sum(-Jcc(3:end-2,n).*B(3:end-2,n))*dX;
-    Psource(n) = sum(etaJ2(3:end-2,n)-0*PdV(3:end-2,n))*dX;
+    Ssource(n) = sum(etaJ2mod(3:end-2,n).*dV(3:end-2));
+    Msource(n) = sum(-Jcc(3:end-2,n).*B(3:end-2,n).*dV(3:end-2) ...
+                     +P(3:end-2,n).*dhydx(3:end-2)*dX);
+    Psource(n) = sum(etaJ2(3:end-2,n)-0*PdV(3:end-2,n).*dV(3:end-2));
    % Psource(n) = sum(etaJ2(3:end-2,n)+VdP(3:end-2,n))*dX;
     Etot(n)    = Etot(n) + EEztot(n);
     
@@ -126,7 +143,7 @@ for n=1:length(tout)
              - 0*0.5*N(3,n)*V(3,n)^3;
     Bflux(n) = Ez(end-1,n) - Ez(2,n);
     Mflux(n) =  (P(2,n)+P(3,n))/2 + B(2,n)^2/2;
-    Msource(n) = Msource(n) + (P(2,n)+P(3,n))/2;
+    Msource(n) = Msource(n) + FluxM(2,n) - FluxM(end-1,n);
   %  Psource(n) = Psource(n) - 3/2*P(2,n)*(V(2,n)+V(3,n))/2;
 
     Msource(n) = Msource(n) - (P(end-2,n)+P(end-1,n))/2;
@@ -253,7 +270,8 @@ f8=figure(8); set(f8,'position',[1000 560 1400 800]);
 %%%   plot mass conservation
 %
 subplot(2,3,1);
-hold on; plot(tout,(Mass-Mass(1))/Mass(1)); box on;
+hold on; plot(tout,100*abs(Mass-Mass(1))/Mass(1)); box on;
+set(gca,'yscale','log');
 xlabel('time'); ylabel('% error'); title('mass conservation');
 lg9 = legend('show'); set(lg9,'location','best');
 xlim([0 tout(end)]);
