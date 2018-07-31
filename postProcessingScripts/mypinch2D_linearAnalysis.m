@@ -109,6 +109,15 @@ filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.0/ka100/'; numProcs = 20; ne
 
 %filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.17/ka3.0_taui1.0e-3/'; numProcs = 20; newDeck = 2;
 filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0_noGyroVisc_taui1.0e-2_smallerDt/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0_noGyroVisc_taui1.0e-2/oldData/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0_noGyroVisc/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka3.0_taui1.0e-2/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka3.0_taui1.0e-2_nuTherm100/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka0.3_taui1.0e-2/'; numProcs = 20; newDeck = 2;
+%
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/noGyroVisc/ka3.0_taui1.0e-2_nuTherm100/'; numProcs = 20; newDeck = 2;
+
+
 %filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/ka3.0_new/'; numProcs = 20; newDeck = 2;
 %filePath = '../../fromQuartz/pinch2D/entropy_v2/testing4_taui1.0e-3/'; numProcs = 20; newDeck = 2;
 
@@ -120,8 +129,8 @@ filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0_noGyroVisc_taui1.0e
 
 
 plotBackIndex = 1; % plot time will be end-plotBackIndex
-thist = 15; %9.4; %7.9;
-thist2 = 20; %10.2; %9.4;
+thist = 10; %9.4; %7.9;
+thist2 = 15; %10.2; %9.4;
 
 %t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
 t0 = 1.2046e-8; % using pinch radius for length scale
@@ -133,7 +142,7 @@ tA = 2.5e-8;    % from PoP 17, 072107 (2010)
 tout = loadData(filePath,numProcs,'tout');
 %tout = tout*t0/tA; % normalize to 2010 paper alfven time
 [~,tindex] = min(abs(tout-thist));
-[~,tindex2] = min(abs(tout-thist2));
+[~,tindex2] = min(abs(tout-tout(end-1)));
 
 Xcc = loadData(filePath,numProcs,'Xcc');
 Xce = loadData(filePath,numProcs,'Xce');
@@ -427,7 +436,7 @@ end
 figure(23); hold on; plot(tout(1:end-1),mDzFT_amp(2,:)); box on;
 hold on; plot(tout(1:end-1),mDzFT_amp(3,:));
 hold on; plot(tout(1:end-1),mDzFT_amp(4,:));
-xlabel('t/t_A'); ylabel('growth rate');
+xlabel('t/t_0'); ylabel('growth rate');
 title('derivative of log Fourier amps');
 axis([0 tout(end) -1 5]); grid on;
 

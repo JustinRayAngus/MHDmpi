@@ -22,7 +22,7 @@ set(0,'defaultaxesfontweight','bold');
 numProcs = 4;
 filePath = '../physicsMods/dpfRundown1D/'; TwoTempVersion=0;
 filePath = '../physicsMods/dpfRundown1D/2TempVersion/'; TwoTempVersion=1;
-filePath = '../physicsMods/dpfRundown1D/2TempVersion/dataSave_1MAcyl/'; TwoTempVersion=1;
+filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcyl/'; TwoTempVersion=1;
 
 xp1 = 1;
 
@@ -93,7 +93,7 @@ nulh = (Vez./VTi).^2.*wlh;      % lower-hybrid collision frequency [Hz]
 
 
 f1 = figure(4); set(f1,'position',[1300 200 1100 900]);
-it = 100;
+it = 84;
 %
 subplot(2,2,1); 
 hold on; plot(Xcc*Xscale*100,N(:,it)*Nscale/1e6); box on;

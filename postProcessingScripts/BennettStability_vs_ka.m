@@ -60,6 +60,7 @@ growthRate_general0 = zeros(length(ka0),4);
 gamma = 5/3; %2.1; %5/3; %2.1;  % adiabatic coefficient
 %ka = 3.0;      % normalized wavenumber
 Li = 1.5e-2;  % omega0/Omegai0 = ion inertial length / r0
+%Li = 0.12;
 nuT = 0; %100;    % normalized thermalization rate
 
 
@@ -140,8 +141,10 @@ for k=1:length(ka0)
 
 
     for m=1:4
-    growthRate_general0(k,m) = max( max(imag(omega_total(:,m))), ...
-                                    0 );
+        [~,ir0]=min(abs(rcc-1)); % where r=a
+        growthRate_general0(k,m) = max(imag(omega_total(ir0,m)),0);
+       % growthRate_general0(k,m) = max( max(imag(omega_total(:,m))), ...
+       %                             0 );
     end
     growthRate_total0(k) = max( growthRate_general0(k,:) );
 

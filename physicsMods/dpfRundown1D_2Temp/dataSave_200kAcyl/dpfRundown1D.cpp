@@ -31,8 +31,8 @@
  * delta0 = (V0/cvac)^2
  * Le0or0sq = (Le0/r0)^2, Le0 = cvac/wpe0
  * gamma0 = 2/degFreedom + 1
- * eta0 = 1.03/10/T0^1.5/(r0^2*mu0/t0)
- * taue0 = 3.44e5/10*T0^1.5/N0/t0
+ * eta0 = 1.03/10/Te0^1.5/(r0^2*mu0/t0)
+ * taue0 = 3.44e5/10*Te0^1.5/N0/t0
  *
 ***/
 
@@ -61,6 +61,7 @@
 using namespace std;
 
 string advScheme0;  // advection differencing scheme
+string geometry0;   // CAR or CYL
 double gamma0;      // adiabatic coefficient
 double eta0;        // resistivity coefficient
 double taue0;       // ele collision time coefficient
@@ -69,7 +70,7 @@ double mM;          // me/Mi
 double etaVis0;     // numerical viscosity coefficient
 double delta0;      // relaxation const (V0/cvac)^2
 double Le0or0sq;    // normalized electron skin depth squared
-double B0;          // boundary value of magnetic field
+double B0, B00;     // boundary value of magnetic field
 int Nsub;           // time-solver subcycle steps
 vector<double> N, M, Ei, Ee, B, Ez, Jz;   // time-evolving variables
 vector<double> eta, Cs, V, P, Pe, Pi, Te, Ti, Jz0, Qvisc; // derived variables
@@ -81,7 +82,10 @@ vector<double> FluxN, FluxM, FluxEi, FluxEe, FluxB, FluxEz;
 vector<double> Qie, NUdotE, JdotE, taue;
 
 double Nscale, Tscale, Xscale, Amass, Iscale, dyIscale, dtIscale;
+double Pscale, Tiscale, Tescale, Bscale, Jscale, Ezscale, Vscale, tscale, Mi;
 double epsilonRel, meRel;
+
+vector<double> hy_cc, hy_ce; // y-dimension lame coefficient
 
 // Set lower threshold values for N, T, and S
 double Nthresh=1.0e-4, Tthresh=2.5e-2, Ethresh, Pthresh;
@@ -90,6 +94,7 @@ void computeFluxes(const domainGrid&, const int);
 void setXminBoundary(vector<double>&, const double, const double);
 void setXminExtrap(vector<double>&);
 void setXmaxBoundary(vector<double>&, const double, const double);
+void setXminBoundaryEz(vector<double>&);
 
 // alternative means for getting grid, opposed
 // to passing predefined instance (Xgrid) to 
@@ -163,11 +168,15 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    FluxR.assign(nXce,0.0);
    FluxL.assign(nXce,0.0);
    //
+   hy_cc.assign(nXcc,1.0);
+   hy_ce.assign(nXce,1.0);
+   
    const Json::Value defValue; // used for default reference
    const Json::Value Phys = root.get("Physics",defValue);
    if(Phys.isObject()) {
       if(procID==0) printf("\nInitializing Physics ...\n");
       Json::Value advScheme = Phys.get("advScheme",defValue);
+      Json::Value geometry  = Phys.get("geometry",defValue);
       Json::Value gammaVal  = Phys.get("gammaC",defValue);
       Json::Value NsubVal   = Phys.get("Nsub",defValue);
       //Json::Value etaVal    = Phys.get("eta0",defValue);
@@ -285,20 +294,25 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
 
       //   calculate derived parameter scales
       //
-      double Pscale  = 2.0*(Nscale)*Tscale*qe;     // pressure scale [J/m^3]
-      double Bscale  = pow(mu0*Pscale,0.5);        // magnetic field scale [T]
-      double Mi      = Amass*amu;                  // ion mass [kg]
-      double Vscale  = pow(Pscale/Mi/Nscale,0.5);  // velocity scale [m/s]
-      double Ezscale = Vscale*Bscale;              // electric field scale [V/m]
-      double tscale  = Xscale/Vscale;              // time scale [s]
+      //Pscale  = Nscale*Tscale*qe;     // pressure scale [J/m^3]
+      Tiscale = 2.0*Tscale;
+      Tescale = Tiscale;
+      //Pscale  = 2.0*Nscale*Tscale*qe;     // pressure scale [J/m^3]
+      Pscale  = Nscale*Tiscale*qe;     // pressure scale [J/m^3]
+      Bscale  = pow(mu0*Pscale,0.5);        // magnetic field scale [T]
+      Jscale  = Bscale/Xscale/mu0;          // current density scale [A/m^2]
+      Mi      = Amass*amu;                  // ion mass [kg]
+      Vscale  = pow(Pscale/Mi/Nscale,0.5);  // velocity scale [m/s]
+      Ezscale = Vscale*Bscale;              // electric field scale [V/m]
+      tscale  = Xscale/Vscale;              // time scale [s]
       double etascale  = Xscale*Xscale*mu0/tscale; // resistivity scale [Ohm-m]
       mM = me/Mi;
       double wpescale = 5.64e4*pow(Nscale/1.0e6,0.5); // ele plasma freq [rad/s]
       double wpiscale = wpescale*pow(me/Mi,0.5);    // ion plasma freq [rad/s]
       double wcescale = qe*Bscale/me;   // ele cyclotron freq [rad/s]
       double wciscale = qe*Bscale/Mi;   // ion cyclotron freq [rad/s]
-      double tauescale = 3.44e5/10.0*pow(Tscale,1.5)/(Nscale/1.0e6); // collision time [s]
-      double tauiscale = 2.09e7/10.0*pow(Tscale,1.5)/(Nscale/1.0e6)*sqrt(Mi/Mp); // collision time [s]
+      double tauescale = 3.44e5/10.0*pow(Tescale,1.5)/(Nscale/1.0e6); // collision time [s]
+      double tauiscale = 2.09e7/10.0*pow(Tiscale,1.5)/(Nscale/1.0e6)*sqrt(Mi/Mp); // collision time [s]
       //
       double Lescale  = cvac/wpescale;    // ele inertial scale [m]
       double Liscale  = cvac/wpiscale;         // ion inertial scale [m]
@@ -310,6 +324,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
          cout << "velocity scale [m/s] = " << Vscale << endl; 
          cout << "electric field scale [V/m] = " << Ezscale << endl; 
          cout << "magnetic field scale [T] = " << Bscale << endl; 
+         cout << "Ti and Te scale [eV] = " << Tiscale << endl; 
          //cout << "pressure scale [J/m^3] = " << Pscale << endl; 
          cout << "time scale [s] = " << tscale << endl; 
          cout << "resistivity scale [Ohm-m] = " << etascale << endl; 
@@ -328,7 +343,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       //
       Json::Value etaVal = Phys.get("eta0",defValue);
       if(etaVal == defValue) {
-         eta0   = 1.03e-4/10.0*pow(Tscale,1.5)/(Xscale*Xscale*mu0/tscale); // norm res
+         eta0   = 1.03e-4/10.0/pow(Tescale,1.5)/(Xscale*Xscale*mu0/tscale); // norm res
       } else {
 	 eta0 = etaVal.asDouble();
       } 
@@ -337,6 +352,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       taui0 = tauiscale/tscale;
       delta0 = pow(Vscale/cvac,2.0)*epsilonRel;
       Le0or0sq = pow(Lescale/Xscale,2.0)*meRel;
+      B00      = mu0*Iscale/dyIscale/Bscale;  // 
       if(procID==0) {
 	 cout << endl;
          cout << "dimensionless parameters:" << endl;
@@ -347,14 +363,15 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
          cout << "wce*taue = " << wcescale*tauescale << endl;
          cout << "wci*taui = " << wciscale*tauiscale << endl;
          cout << "(Le0/r0)^2 = " << Le0or0sq << " (Ez relaxation const)"<< endl;      
-         cout << "(V0/c)^2 = " << delta0 << " (Jz relaxation const)" << endl << endl;      
+         cout << "(V0/c)^2 = " << delta0 << " (Jz relaxation const)" << endl;      
+         cout << "B(R)/Bscale = " << B00 << endl << endl;      
       }
 
 
       if(advScheme == defValue || gammaVal == defValue ||
-	 NsubVal == defValue) {
+	 geometry == defValue || NsubVal == defValue) {
          cout << "ERROR: advScheme or gamma " << endl;
-         cout << "or Nsub " << endl;
+         cout << "or Nsub or geometry" << endl;
          cout << "not declared in input file" << endl;
          exit (EXIT_FAILURE);
       } 
@@ -369,6 +386,21 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       else {
          cout << "advection scheme " << advScheme0 << " is not valid " << endl;
          cout << "valid types are C2, U1, QUICK, and TVD " << endl;
+         exit (EXIT_FAILURE);
+      }
+      
+      geometry0 = geometry.asString();
+      if(geometry0=="CAR" || geometry0=="CYL") {
+         if(procID==0) {
+            cout << "geometry is " << geometry0 << endl;
+         }
+	 if(geometry0=="CYL") {
+            hy_cc = Xgrid.Xcc;
+            hy_ce = Xgrid.Xce;
+	 }
+      }
+      else {
+         cout << "valid geometry types are CAR and CYL" << endl;
          exit (EXIT_FAILURE);
       }
 
@@ -444,6 +476,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    const Json::Value Bvar = Phys.get("B",defValue);
    if(Bvar.isObject()) { 
       Xgrid.setInitialProfile(B,Bvar);
+      B0 = 0;
       if(procID==0) setXminBoundary(B, B0, 0.0);   
       if(procID==numProcs-1) setXmaxBoundary(B, 0.0, 0.0);
       Xgrid.communicate(B);
@@ -453,8 +486,10 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       exit (EXIT_FAILURE);
    }
 
-   Xgrid.DDX(Jz,B); 
-   Xgrid.DDX(Jzcc,B); 
+   Xgrid.DDX(Jz,hy_cc*B);
+   //Jz = Jz/hy_ce; 
+   Xgrid.DDX(Jzcc,hy_cc*B);
+   Jzcc = Jzcc/hy_cc; 
    Xgrid.communicate(Jz);
    Xgrid.communicate(Jzcc);
    Jz0 = Jz;
@@ -512,9 +547,22 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    dataFile.add(FluxR, "FluxR", 1);
    dataFile.add(FluxL, "FluxL", 1);
    //
-   dataFile.add(Nscale,"Nscale",0); 
+   dataFile.add(Iscale,"Iscale",0);
+   dataFile.add(Nscale,"Nscale",0);
    dataFile.add(Tscale,"Tscale",0); 
+   dataFile.add(Tiscale,"Tiscale",0); 
+   dataFile.add(Tescale,"Tescale",0); 
    dataFile.add(Xscale,"Xscale",0); 
+   dataFile.add(Bscale,"Bscale",0);
+   dataFile.add(Ezscale,"Ezscale",0);
+   dataFile.add(Jscale,"Jscale",0);
+   dataFile.add(Pscale,"Pscale",0);
+   dataFile.add(Vscale,"Vscale",0);
+   dataFile.add(tscale,"tscale",0);
+   dataFile.add(Mi,"Mi",0);
+   //
+   dataFile.add(hy_cc,"hy_cc",0);
+   dataFile.add(hy_ce,"hy_ce",0);
 
 } // end Physics.initilize
 
@@ -537,12 +585,13 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 
       for (auto i=nXg; i<nMax-nXg; i++) {
 	 
-	 N.at(i) = Nold.at(i) - thisdt*(FluxN.at(i)-FluxN.at(i-1))/Xgrid.dX;
-         M.at(i) = Mold.at(i) - thisdt*(FluxM.at(i)-FluxM.at(i-1))/Xgrid.dX
+	 N.at(i) = Nold.at(i) - thisdt*(FluxN.at(i)-FluxN.at(i-1))/hy_cc.at(i)/Xgrid.dX;
+         M.at(i) = Mold.at(i) - thisdt*(FluxM.at(i)-FluxM.at(i-1))/hy_cc.at(i)/Xgrid.dX
 		 - thisdt*Jzcc.at(i)*B.at(i);
-         Ei.at(i) = Eiold.at(i) - thisdt*(FluxEi.at(i)-FluxEi.at(i-1))/Xgrid.dX
+	 if(geometry0=="CYL") M.at(i) = M.at(i) + thisdt*P.at(i)/hy_cc.at(i);
+         Ei.at(i) = Eiold.at(i) - thisdt*(FluxEi.at(i)-FluxEi.at(i-1))/hy_cc.at(i)/Xgrid.dX
       		  + thisdt*(NUdotE.at(i) + Qie.at(i));
-         Ee.at(i) = Eeold.at(i) - thisdt*(FluxEe.at(i)-FluxEe.at(i-1))/Xgrid.dX
+         Ee.at(i) = Eeold.at(i) - thisdt*(FluxEe.at(i)-FluxEe.at(i-1))/hy_cc.at(i)/Xgrid.dX
       		  + thisdt*(JdotE.at(i) - Qie.at(i) - NUdotE.at(i));
 	 B.at(i) = Bold.at(i) - thisdt*(FluxB.at(i)-FluxB.at(i-1))/Xgrid.dX;
 	 
@@ -559,7 +608,8 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       //cout << "thist = " << tmesh->tSim << endl;
       double thist = tmesh->tSim;
       B0 = thist*3000.0;
-      if(B0>25.0) B0 = 25.0;
+      //if(B0>25.0) B0 = 25.0;
+      if(B0>B00) B0 = B00;
       
       if(procID==0) {
          //setXminBoundary(N, N.at(2), 0.0);   
@@ -572,7 +622,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
          //setXminExtrap(N);
          //setXminExtrap(M);
          //setXminExtrap(E);
-         setXminBoundary(B, 0.0, 1.0);   
+         setXminBoundary(B, 0.0, -1.0);   
 	 if(N.at(0)<Nthresh || N.at(1)<Nthresh) {
             N.at(0) = Nthresh;
             N.at(1) = Nthresh;
@@ -584,8 +634,9 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
          setXmaxBoundary(N, 0.0, 1.0);   
          setXmaxBoundary(M, 0.0, -1.0);   
          setXmaxBoundary(Ei, 0.0, 1.0);   
-         setXmaxBoundary(Ee, 0.0, 1.0);   
-         setXmaxBoundary(B, B0, 0.0);   
+         setXmaxBoundary(Ee, 0.0, 1.0); 
+         //cout << "hy_cc.at(nMax-nXg) = " << hy_cc.at(nMax-nXg) << endl;	 
+         setXmaxBoundary(B, B0/hy_cc.at(nMax-nXg), 0.0);   
       }
 
       Xgrid.communicate(N);
@@ -607,7 +658,7 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
          d0 = delta0/thisdt;	   
          e0 = Le0or0sq/thisdt/N.at(i);	   
          //
-         Ez.at(i) = (B.at(i+1)-B.at(i))/Xgrid.dX + d0*Ezold.at(i)
+         Ez.at(i) = -(FluxEz.at(i+1)-FluxEz.at(i))/hy_ce.at(i)/Xgrid.dX + d0*Ezold.at(i)
 	          - (e0*Jzold.at(i) + VBce.at(i))/(e0 + etace.at(i));
          Ez.at(i) /= d0 + 1.0/(e0 + etace.at(i)); 
          //
@@ -615,17 +666,16 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
          Jz.at(i) /= e0 + etace.at(i);
       }
 
-      /*
       //cout << "Xce(nXg-1) =" << Xgrid.Xce.at(nXg-1) << endl;
       //cout << "Xce(nMax-Xg-1) =" << Xgrid.Xce.at(nMax-nXg-1) << endl;
       if(procID==0) {
-         setXminBoundary(Ez, Ez.at(1), 0.0);   
+         setXminBoundaryEz(Ez);   
       }
-      if(procID==numProcs-1) {
-         setXmaxBoundary(Ez, 0.0, 1.0);   
-         // setXmaxExtrap(Ez);   
-      }
-      */
+      //if(procID==numProcs-1) {
+      //   setXmaxBoundary(Ez, 0.0, 1.0);   
+      //   // setXmaxExtrap(Ez);   
+      //}
+      
       Xgrid.communicate(Ez);
       Xgrid.communicate(Jz);
    
@@ -673,7 +723,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    if(min(N)<0.0) cout << " N IS LESS THAN ZERO " << endl;
    Pi  = (Ei - 0.5*V*M)*(gamma0-1.0);
    Pe  = Ee*(gamma0-1.0);
-   P = Pe + Pi;
+   P = Pe + Pi; 
    Ti  = Pi/N;
    Te  = Pe/N;
    if(min(Te)<0.0) cout << " Te IS LESS THAN ZERO " << endl;
@@ -681,6 +731,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    Cs = sqrt(gamma0*P/N + B*B/N);
    //eta = eta0/Te/sqrt(Te);
    eta = eta0/Te/sqrt(Te)*(1.0+1000.0*pow(0.01/N,4));
+   //eta = eta0/Te/sqrt(Te)*(1.0+1000.0*pow(0.001/N,4));
    Xgrid.InterpToCellEdges(etace,eta,eta,"C2");
    Xgrid.communicate(etace);
    Xgrid.communicate(eta);
@@ -690,12 +741,12 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    // compute advection flux at cell center
    //
    Cspeed  = abs(V) + Cs; // adv flux jacobian
-   FluxNcc = M;
-   FluxMcc = M*V + P;
-   FluxEicc = (0.5*V*M + Pi*gamma0/(gamma0-1.0) )*V;
-   FluxEecc = Pe*gamma0/(gamma0-1.0)*V;
+   FluxNcc = hy_cc*M;
+   FluxMcc = hy_cc*(M*V + P);
+   FluxEicc = hy_cc*(0.5*V*M + Pi*gamma0/(gamma0-1.0) )*V;
+   FluxEecc = hy_cc*Pe*gamma0/(gamma0-1.0)*V;
    FluxB0cc = V*B;
-   FluxEz = -B;
+   FluxEz = -hy_cc*B;
    
    // compute viscous terms
    //
@@ -716,13 +767,13 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    //Nsub = 2;
    if(advScheme0 == "TVD") {
       Xgrid.computeFluxTVD(FluxN,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxNcc,Cspeed,N,Nsub);
+                           FluxNcc,Cspeed,hy_cc*N,Nsub);
       Xgrid.computeFluxTVD(FluxM,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxMcc,Cspeed,M,Nsub);
+                           FluxMcc,Cspeed,hy_cc*M,Nsub);
       Xgrid.computeFluxTVD(FluxEi,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxEicc,Cspeed,Ei,Nsub);
+                           FluxEicc,Cspeed,hy_cc*Ei,Nsub);
       Xgrid.computeFluxTVD(FluxEe,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxEecc,Cspeed,Ee,Nsub);
+                           FluxEecc,Cspeed,hy_cc*Ee,Nsub);
       Xgrid.computeFluxTVD(VBce,FluxL,FluxR,FluxRatio,FluxLim,
                            FluxB0cc,Cspeed,B,Nsub);
    }
@@ -738,8 +789,9 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    //FluxM = FluxM + FluxVisc;
 
    if(procID==0) {
-      setXminBoundary(FluxN, 0.0, 0.0);   
-      setXminBoundary(FluxM, (P.at(2)+P.at(1))/2.0, 0.0);   
+      setXminBoundary(FluxN, 0.0, 0.0);
+      //cout << "hy_ce.at(1)" << hy_ce.at(1) << endl;   
+      setXminBoundary(FluxM, hy_ce.at(1)*(P.at(2)+P.at(1))/2.0, 0.0);   
       setXminBoundary(FluxEi, 0.0, 0.0);
       setXminBoundary(FluxEe, 0.0, 0.0);
       setXminBoundary(VBce, 0.0, 0.0);
@@ -749,7 +801,8 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       setXmaxBoundary(FluxEi, 0.0, 0.0);
       setXmaxBoundary(FluxEe, 0.0, 0.0);
       const int thisnX = P.size();
-      double P0 = (P.at(thisnX-3)+P.at(thisnX-2))/2.0;
+      //cout << "hy_ce.at(thisnX-3)" << hy_ce.at(thisnX-3) << endl;   
+      double P0 = hy_ce.at(thisnX-3)*(P.at(thisnX-3)+P.at(thisnX-2))/2.0;
       setXmaxBoundary(FluxM, P0, 0.0);   
       setXmaxBoundary(VBce, 0.0, 0.0);
    }   
@@ -764,7 +817,11 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    Xgrid.communicate(Ezcc);
    Xgrid.InterpToCellCenter(Jzcc,Jz);
    Xgrid.communicate(Jzcc);
-   Xgrid.DDX(Jz0,B); 
+   Xgrid.DDX(Jz0,hy_cc*B);
+   Jz0 = Jz0/hy_ce;
+   if(procID==0 && geometry0=="CYL") {
+      setXminBoundary(Jz0,2.0*B.at(2)/hy_cc.at(2),0.0);
+   } 
    Xgrid.communicate(Jz0);
 
    JdotE = Jzcc*Ezcc;
@@ -830,6 +887,14 @@ void setXmaxBoundary(vector<double>& var, const double C0, const double C1)
       
 }
 
+void setXminBoundaryEz(vector<double>& var)
+{
+   domainGrid* mesh = domainGrid::mesh;
+   const int ishift = mesh->nXg;
+   
+   var.at(ishift-1) = (3.0*var.at(ishift) - var.at(ishift+1))/2.0;
+      
+}
 
 void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
 {

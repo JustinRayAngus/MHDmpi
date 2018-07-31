@@ -57,7 +57,8 @@ filePath = '../../fromQuartz/pinch2D/entropy_v0/Li5.0e-2/ka3.0/'; numProcs = 20;
 
 
 filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.12/ka10/'; numProcs = 20; newDeck = 2;
-filePath = '../../fromQuartz/pinch2D/driftIdeal_v2/ka3.0/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/driftIdeal_v2/ka3.0/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka10.0_taui1.0e-2/'; numProcs = 20; newDeck = 2;
 
 
 t0 = 1.2046e-8; % see normalizationParameters_zPinch.m
@@ -227,15 +228,30 @@ R0 = 5.0e-3; % [m]
 rhobar = Mi*NperZ*n0; % [kg/m^3]
 
 
+%%%   t0 = a/Cs, with Cs=sqrt(2*T0/Mi)   
+%
 ka = [0.0 0.3 1 3 5 10 15 20];
 gamma_Li0      = [0 0.123 0.33 0.50 0.54 0.57 0.57 0.57]; % Li/a = 0.0;
 gamma_Li1p5em2 = [0 0.123 0.33 0.51 0.56 0.62 0.66 0.71]; % Li/a = 1.5e-2
 gamma_Li5p0em2 = [0 0.127      0.57                1.00]; % Li/a = 5.0e-2
+gamma_Li0p12   = [0 0.136 0.40 0.68 0    1.00 0    0   ]; % Li/a = 0.12
+kasub = ka([1,3:4,6]);
+
+
+%%%   values form Kurt (LSP) for FUZE (Li/a=0.12)
+%%%   t0 = a/Va, with Va calculated using peak B (t0=2.6ns)
+kaKurt = [0 1 1.5 2 2.5 5 7.5 10.0 12.5 15];
+gamma_Kurt = [0 0.49 0.63 0.68 0.70 0.78 0.71 0.59 0.51 0.47]/sqrt(2);
+%
+kaVasi = [2.5 5 7.5 10];
+gamma_Vasi = [1.0 1.05 0.9 0.65]/sqrt(2);
 
 close(figure(3)); f3=figure(3); 
 plot(ka,gamma_Li0,'Marker','*');grid on;
 hold on; plot(ka,0.6+0*ka); % max gamma from local analysis
 xlabel('ka'); ylabel('\gammat_0'); title('Bennett Equilibrium Growth Rates');
 axis('square'); axis([0 20 0 0.7]);
+
+
 
 

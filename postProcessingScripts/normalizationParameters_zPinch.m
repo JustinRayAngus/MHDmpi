@@ -35,7 +35,7 @@ N0 = 1.0e24; %2*2.6868e25*Pg/760*273/Tg;  % total density [1/m^3]
 r0  = 5.0e-3/3; % spatial scale [m]
 T0  = 100.0;    % initial plasma temperature [eV]
 %
-aMn = 2.0;      % fuze deuterium
+aMn = 2.0/2.0;      % fuze deuterium
 r0 = 0.091e-2;  % fuze a=0.09 cm,
 N0 = 4.25e24;   % fuze n0 = 4e18/cc
 T0 = 1270;      % fuze temperature [eV]
@@ -45,10 +45,10 @@ T0 = 1270;      % fuze temperature [eV]
 % N0 = 1.0e22;   % zap n0 = 1e16/cc
 % T0 = 100;      % zap [eV]
 
-aMn = 2.0;     % reactor deuterium
-r0 = 5.0e-5;   % reactor 
-N0 = 3.0e27;   % reactor
-T0 = 4e4;      % reactor [eV]
+% aMn = 2.0;     % reactor deuterium
+% r0 = 5.0e-5;   % reactor 
+% N0 = 3.0e27;   % reactor
+% T0 = 4e4;      % reactor [eV]
 
 
 %%%   fundamental constants
@@ -75,8 +75,16 @@ U0 = sqrt(P0/rho0);           % velocity [m/s]
 E0 = U0*B0;                   % electric field [V/m]
 t0 = r0/U0;                   % time [s]
 
+
+%%%   calculate fundamental values
+%
 wci = qe*B0/Mi; % ion cyclotron frequency [Hz]
 wce = qe*B0/me; % electron cyclotron frequency [Hz]
+VTe = 4.19e7*sqrt(T0)/100;
+VTi = VTe*sqrt(me/Mi);
+wpe = 5.64e4*sqrt(N0*1e-6);   % electron plasma freq [rad/s]
+wpi = wpe*sqrt(me/Mi);        % ion plasma freq [rad/s]
+
 
 % %%%   set parameters for calculation of time-dependent magnetic field
 % %%%   boundary: B|x=0 = mu*I(t)/dy, I(t) = I0*t/100ns
@@ -97,7 +105,6 @@ delta = U0^2/cvac^2;
 eta = 1.03e-4/10/T0^1.5;  % plasma resistivity [Ohm-m]
 eta0  = r0^2*mu0/t0;
 etanorm = eta/eta0;
-VTi = 9.29e5*sqrt(T0/2/aMn)/100; % ion thermal speed [m/s] ( sqrt(kBTi/Mi) )
 rhoi = VTi/wci;                % ion gyro radius [m]
 
 
@@ -112,8 +119,6 @@ nuT = me/Mi/tau_e; % thermalization rate [Hz]
 
 %%%   calculate ion and electron inertial length scales (skin depth)
 %
-wpe = 5.64e4*sqrt(N0*1e-6);   % electron plasma freq [rad/s]
-wpi = wpe*sqrt(me/Mi);        % ion plasma freq [rad/s]
 Le = cvac/wpe;                % electron inertial scale [m]
 Li = cvac/wpi;                % ion inertial scale [m]
 

@@ -19,7 +19,8 @@ addpath('~angus1/Programs/MATLAB_LSP_TOOLS/');
 %%%   define number of procs and load date
 %
 numProcs = 4;
-filePath = '../physicsMods/dpfRundown1D_Econs/';
+%filePath = '../physicsMods/dpfRundown1D_Econs/';
+filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcar/'; TwoTempVersion=1;
 
 Xcc = loadData1DVec(filePath,numProcs,'Xcc');
 Xce = loadData1DVec(filePath,numProcs,'Xce');
@@ -27,9 +28,27 @@ tout = loadData1DVec(filePath,numProcs,'tout');
 %
 N  = loadData1DVec(filePath,numProcs,'N');
 M  = loadData1DVec(filePath,numProcs,'M');
-S  = loadData1DVec(filePath,numProcs,'S');
+%S  = loadData1DVec(filePath,numProcs,'S');
 B  = loadData1DVec(filePath,numProcs,'B');
 P  = loadData1DVec(filePath,numProcs,'P');
+if(TwoTempVersion)
+    Pe  = loadData1DVec(filePath,numProcs,'Pe');
+    Pi  = loadData1DVec(filePath,numProcs,'Pi');
+    Te  = loadData1DVec(filePath,numProcs,'Te');
+    Ti  = loadData1DVec(filePath,numProcs,'Ti');
+    %
+    hy_cc = loadData1DVec(filePath,numProcs,'hy_cc');
+    hy_ce = loadData1DVec(filePath,numProcs,'hy_ce');
+else
+    T  = loadData1DVec(filePath,numProcs,'T');
+    Te = T/2;
+    Ti = T/2;
+    Pe = P/2;
+    Pi = P/2;
+    %
+    hy_cc = 1.0 + 0.0*Xcc;
+    hy_ce = 1.0 + 0.0*Xce;
+end
 V  = loadData1DVec(filePath,numProcs,'V');
 J  = loadData1DVec(filePath,numProcs,'J');
 Jcc = loadData1DVec(filePath,numProcs,'Jcc');

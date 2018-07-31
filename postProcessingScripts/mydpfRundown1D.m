@@ -19,8 +19,9 @@ set(0,'defaultaxesfontweight','bold');
 numProcs = 4;
 filePath = '../physicsMods/dpfRundown1D/'; TwoTempVersion=0;
 filePath = '../physicsMods/dpfRundown1D/2TempVersion/'; TwoTempVersion=1;
-filePath = '../physicsMods/dpfRundown1D/2TempVersion/dataSave_1MAcyl/';
-%filePath = '../physicsMods/dpfRundown1Dcyl_Econs/';
+filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcyl/';
+%filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcar/';
+%filePath = '../physicsMods/dpfRundown1D_2Temp/';
 
 plotBackIndex = 0*35; % plot time will be end-plotBackIndex
 xp1 = 1;
@@ -66,6 +67,8 @@ else
     hy_cc = 1.0 + 0.0*Xcc;
     hy_ce = 1.0 + 0.0*Xce;
 end
+Te = 2.0*Te; Ti = 2.0*Ti; % normalization is 2*T0
+T = (Te+Ti)/2.0;
 V  = loadData1DVec(filePath,numProcs,'V');
 J  = loadData1DVec(filePath,numProcs,'J');
 Jcc = loadData1DVec(filePath,numProcs,'Jcc');
@@ -77,7 +80,7 @@ delta0 = loadData1DVec(filePath,numProcs,'delta0');
 FluxM = loadData1DVec(filePath,numProcs,'FluxM');
 FluxN = loadData1DVec(filePath,numProcs,'FluxN');
 
-T = P/2.0./N; % average temperature
+%T = P/2.0./N; % average temperature
 
 %%%   calculate divU
 %
@@ -105,12 +108,27 @@ end
 
 %figure(77); hold on; plot(Xcc,divV(:,100)); box on;
 
+Pmag = B.^2/2;
+Pmageff = Pmag + cumtrapz(Xcc,B.^2./Xcc); % for cyl only
+Pram = M.*V;
 Ptot = P + B.^2/2 + M.*V/2.0;
 PdV = P.*divV;
 VdP = V.*dPdx;
 etaJ2 = eta.*Jcc.^2;
-etaJ2mod = etaJ2./T;
+etaJ2mod = etaJ2./Te;
 Edenstot = 3/2*P + N.*V.^2/2 + B.^2/2;
+
+
+%%%   calculate <Te+Ti> in compressed region at stagnation
+%
+mu0 = 4*pi*1e-7;
+qe = 1.6022e-19;
+I0 = loadData1DVec(filePath,numProcs,'Iscale'); % current scale [A]
+N0 = loadData1DVec(filePath,numProcs,'Nscale'); % dens scale [1/m^3]
+R0 = loadData1DVec(filePath,numProcs,'Xscale'); % length scale [m]
+rs = 0.13*R0; % compression radius from 1D shock
+TeTi0 = (gamma0-1)/(pi*R0^2*N0)*mu0*I0^2/(4*pi)*log(R0/rs)/qe; % <Ti+Te> [eV]
+
 
 %%%   calculate conservation stuff
 %
@@ -122,7 +140,7 @@ Efield = sum(B(3:end-2,:).^2/2.*dV(3:end-2));
 EEztot = delta0*sum(Ez(2:end-2,:).^2/2.0.*dV(3:end-2));
 %
 
-EntropyDensity = 2.0*N.*log(T.^1.5./N);
+EntropyDensity = N.*log(Te.^1.5./N) + N.*log(Ti.^1.5./N);
 Entropy  = sum(EntropyDensity(3:end-2,:).*dV(3:end-2));
 Momentum = sum(M(3:end-2,:).*dV(3:end-2));
 Mass     = sum(N(3:end-2,:).*dV(3:end-2));
@@ -206,7 +224,8 @@ subplot(2,3,3);
 hold on; plot(Xcc,P(:,1),'black'); box on;
 hold on; plot(Xcc,P(:,round((end-plotBackIndex)/2)),'b');
 hold on; plot(Xcc,P(:,end-plotBackIndex),'r'); grid on;
-hold on; plot(Xcc,T(:,end-plotBackIndex),'g');
+hold on; plot(Xcc,Ti(:,end-plotBackIndex),'g');
+hold on; plot(Xcc,Te(:,end-plotBackIndex),'g--');
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('P');
@@ -394,5 +413,9 @@ title('axial positions');
 lg13=legend('peak current density','peak density','shock front');
 set(lg13,'location','best');
 xlim([0 tout(end)]);
+
+
+
+display(TeTi0);
 
 

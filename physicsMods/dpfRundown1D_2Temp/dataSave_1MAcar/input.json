@@ -39,7 +39,7 @@
                 "a":0.0,  // amplitude
                 "b":0.0,  // x-shift
                 "c":0.0,  // width
-                "d":0.2   // y-shift
+                "d":0.1   // y-shift
                },
            "V":{
                 "type":"const", // initial profile
