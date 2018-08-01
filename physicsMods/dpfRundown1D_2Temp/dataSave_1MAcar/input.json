@@ -6,8 +6,8 @@
          "nXg":2 // number of guard cells each end
         },
 "Time":{
-        "dtOut":1.0e-3,  // output time intervals
-        "tOutSteps":100,  // number of output setps
+        "dtOut":0.5e-3,  // output time intervals
+        "tOutSteps":200,  // number of output setps
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{

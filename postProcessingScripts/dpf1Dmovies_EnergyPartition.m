@@ -22,6 +22,7 @@ numProcs = 4;
 %filePath = '../physicsMods/dpfRundown1D_Econs/';
 filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcar/'; TwoTempVersion=1;
 filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcyl/'; TwoTempVersion=1;
+%filePath = '../physicsMods/dpfRundown1D_2Temp/';
 
 
 Xcc = loadData1DVec(filePath,numProcs,'Xcc');
@@ -57,14 +58,18 @@ if(TwoTempVersion)
     hy_ce = loadData1DVec(filePath,numProcs,'hy_ce');
 else
     T  = loadData1DVec(filePath,numProcs,'T');
-    Te = T/2;
-    Ti = T/2;
+    Te = T/2; % units are 1/2 eV
+    Ti = T/2; % units are 1/2 eV
     Pe = P/2;
     Pi = P/2;
     %
     hy_cc = 1.0 + 0.0*Xcc;
     hy_ce = 1.0 + 0.0*Xce;
 end
+Te = 2.0*Te; % [eV]
+Ti = 2.0*Ti; % [eV]
+T = (Te+Ti)/2.0;
+
 V  = loadData1DVec(filePath,numProcs,'V');
 J  = loadData1DVec(filePath,numProcs,'J');
 Jcc = loadData1DVec(filePath,numProcs,'Jcc');
@@ -76,7 +81,7 @@ delta0 = loadData1DVec(filePath,numProcs,'delta0');
 FluxM = loadData1DVec(filePath,numProcs,'FluxM');
 FluxN = loadData1DVec(filePath,numProcs,'FluxN');
 
-T = P/2.0./N; % average temperature
+%T = P/2.0./N; % average temperature
 
 %%%   calculate divU
 %
@@ -169,7 +174,7 @@ Ez0 = eta.*Jcc-V.*B;
 
 deleteFlag = 0;
 thisFigNum = 0;
-itmax = 120;
+itmax = 111; %length(tout);
 for it = 1:1:itmax
     
 f1=figure(11); 
@@ -184,7 +189,8 @@ xlabel('x/R'); ylabel('N');
 title('density'); axis('square');
 %axis([0 1 0 12]);
 axis([0 1 0 80]);
-%
+
+
 subplot(1,3,2);
 %h4=plot(Xcc,B(:,it).^2/2+P(:,it),'black'); box on; grid on;
 h4=plot(Xcc,B(:,it).^2/2,'black');
@@ -196,12 +202,11 @@ title('pressure'); axis('square');
 legend('magnetic','thermal','location','northeast');
 grid on;
 %axis([0 1 0 2000]);
-axis([0 1 0 5e4]);
-%
-%
-%
+axis([0 1 0 8e4]);
+
+
 subplot(1,3,3);
- plot(tout(1:it),Efield(1:it),'displayName','magnetic','color','black');
+plot(tout(1:it),Efield(1:it),'displayName','magnetic','color','black');
 hold on; plot(tout(1:it),Etherm(1:it)-Etherm(1),'displayName','thermal','color','r'); 
 hold on; plot(tout(1:it),Emean(1:it),'displayName','mean', ...
                    'color','b','linestyle','--');
@@ -221,7 +226,7 @@ axis([0 tout(itmax) 0 700]);
 %%%   put time stamp on figure
 %
 a1=annotation(f1,'textbox',...
-[0.914 0.76 0.055 0.0743],...
+[0.914 0.76 0.06 0.0743],...
 'String',['t=',num2str(tout(it),3)],...
 'FitBoxToText','off', ...
 'backgroundcolor','y');
@@ -242,10 +247,10 @@ end
 f2=figure(2);
 f1pos = get(f1,'position');
 set(f2,'Position',f1pos);
-movie(f2,Mov,2,3);
+movie(f2,Mov,1,3);
 %v=VideoWriter([dataPath,'movieFigs/2DrBthMovie.avi']);
 v=VideoWriter('./dpf1Dmovie.avi');
-v.FrameRate = 2; %v.Quality=100; %v.CompressionRatio = 2;
+v.FrameRate = 4; %v.Quality=100; %v.CompressionRatio = 2;
 %v.LosslessCompression = true;
 open(v); writeVideo(v,Mov);
 close(v);
