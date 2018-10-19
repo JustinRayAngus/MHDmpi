@@ -28,17 +28,17 @@ clear all;
 %%%   specify spatial scale, gas temp/pressure, atomic mass number, 
 %%%   and current scale
 %
-aMn = 1.008;      % atomic mass number
+aMn = 1.007;      % atomic mass number
 Tg  = 300;    % ambient gas temperature [K]
 Pg  = 1;      % ambient gas pressure    [Torr]
 N0 = 1.0e24; %2*2.6868e25*Pg/760*273/Tg;  % total density [1/m^3]
 r0  = 5.0e-3/3; % spatial scale [m]
 T0  = 100.0;    % initial plasma temperature [eV]
 %
-aMn = 2.0/2.0;      % fuze deuterium
-r0 = 0.091e-2;  % fuze a=0.09 cm,
-N0 = 4.25e24;   % fuze n0 = 4e18/cc
-T0 = 1270;      % fuze temperature [eV]
+% aMn = 2.0/2.0;      % fuze deuterium
+% r0 = 0.091e-2;  % fuze a=0.09 cm,
+% N0 = 4.25e24;   % fuze n0 = 4e18/cc
+% T0 = 1270;      % fuze temperature [eV]
 
 % aMn = 2.0;     % zap deuterium
 % r0 = 1.0e-2;   % zap a=1.0 cm, r0 = 3*a
@@ -49,6 +49,7 @@ T0 = 1270;      % fuze temperature [eV]
 % r0 = 5.0e-5;   % reactor 
 % N0 = 3.0e27;   % reactor
 % T0 = 4e4;      % reactor [eV]
+
 
 
 %%%   fundamental constants

@@ -1,0 +1,8 @@
+ideal_v0 is the standard ideal MHD module. All other versions are
+stepping stones towards solving the equations in a similar manner
+to how I solve them for the drift Ideal MHD module
+
+I recently updated v0 to use a different Cspeed in each direction.
+The other versions don't have this update.
+
+

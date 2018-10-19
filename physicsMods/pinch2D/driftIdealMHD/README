@@ -1,0 +1,6 @@
+out of all the decks, entropy_v1 is the default one I'm using
+
+
+entropy_v1 is same as entropy v0, except now including diamagnetic contribution to
+stress tensor. I also have parallel Stress tensor
+

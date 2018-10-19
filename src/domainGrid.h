@@ -91,6 +91,7 @@ public:
   void DDZ(vector<vector<double>>&, const vector<vector<double>>&) const;
   void DDX(matrix2D<double>&, const matrix2D<double>&) const;
   void DDZ(matrix2D<double>&, const matrix2D<double>&) const;
+  void D2DZ2(matrix2D<double>&, const matrix2D<double>&) const;
 
 //domainGrid() {};
 

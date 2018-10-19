@@ -20,9 +20,9 @@ numProcs = 4;
 filePath = '../physicsMods/dpfRundown1D/'; TwoTempVersion=0;
 filePath = '../physicsMods/dpfRundown1D/2TempVersion/'; TwoTempVersion=1;
 filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcyl/';
-filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcar/';
-filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_200kAcyl/';
-filePath = '../physicsMods/dpfRundown1D_2Temp/';
+%filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcar/';
+%filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_200kAcyl/';
+%filePath = '../physicsMods/dpfRundown1D_2Temp/';
 
 plotBackIndex = 0*35; % plot time will be end-plotBackIndex
 xp1 = 1;
@@ -416,6 +416,7 @@ set(lg13,'location','best');
 xlim([0 tout(end)]);
 
 
+ mfpi = 2.0e12*Ti.^2./(N0*N/1e6); % ion mean free path [cm]
 
 display(TeTi0);
 

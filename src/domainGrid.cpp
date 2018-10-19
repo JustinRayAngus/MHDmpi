@@ -458,7 +458,7 @@ void domainGrid::setInitialProfile(matrix2D<double> &var,
 void domainGrid::setInitialProfileArbDir(vector<double> &var,
 	           const vector<double>& Xvec,	
                    const double Xmin, const double Xmax,
-		   const double a, const double b,
+                   const double a, const double b,
 		   const double c, const double d,
 		   const string& type0) const
 {
@@ -686,23 +686,24 @@ void domainGrid::communicate(matrix2D<double> &F0) const {
    if(nMax == nXce) thisnXg = nXg-1; // receiving for fluxes 
 
    int procID, numProcs;
-   double Fsend[nXg], Frecv[nXg];
+   double Fsend[thisnZ], Frecv[thisnZ];
+   //double Fsend[nXg], Frecv[nXg];
 
    MPI_Status status;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
 
-   for (auto j=0; j<thisnZ; j++) { // loop over z-direction
+   for (auto i=0; i<thisnXg; i++) { // loop over z-direction
+   //for (auto j=0; j<thisnZ; j++) { // loop over z-direction
 
    //  send F0[nXg+i][j], i<nXg for ID>0 to proc ID-1
    //
    if (procID>0) {
       int tag = 1;
-      for (auto i=0; i<thisnXg; i++) {
-         //Fsend[i] = F0[nXg+i][j];
-         Fsend[i] = F0(nXg+i,j);
+      for (auto j=0; j<thisnZ; j++) { // loop over z-direction
+         Fsend[j] = F0(nXg+i,j);
       }
-      MPI_Send(Fsend, thisnXg, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
+      MPI_Send(Fsend, thisnZ, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
       //MPI_Send(&F0.at(nXg), 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
    }  
   
@@ -710,11 +711,11 @@ void domainGrid::communicate(matrix2D<double> &F0) const {
    //
    if (procID<numProcs-1) {
       int tag = 1;
-      MPI_Recv(Frecv, thisnXg, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(Frecv, thisnZ, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD, &status);
       //MPI_Recv(&F0[nXsub+1], 1, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD, &status);
-      for (auto i=0; i<thisnXg; i++) {
+      for (auto j=0; j<thisnZ; j++) {
          //F0[nMax-thisnXg+i][j] = Frecv[i];
-         F0(nMax-thisnXg+i,j) = Frecv[i];
+         F0(nMax-thisnXg+i,j) = Frecv[j];
       }
    }
 
@@ -722,13 +723,12 @@ void domainGrid::communicate(matrix2D<double> &F0) const {
    //
    if (procID<numProcs-1) {
       int tag = 2;
-      for (auto i=0; i<thisnXg; i++) {
-         //Fsend[i] = F0[nMax-2*nXg+i][j];
-         Fsend[i] = F0(nMax-2*nXg+i,j);
+      for (auto j=0; j<thisnZ; j++) {
+         Fsend[j] = F0(nMax-2*nXg+i,j);
          //if(nMax==nXce) Fsend[i] = F0[nMax+1-2*nXg+i][j];
-         if(nMax==nXce) Fsend[i] = F0(nMax+1-2*nXg+i,j);
+         if(nMax==nXce) Fsend[j] = F0(nMax+1-2*nXg+i,j);
       }
-      MPI_Send(Fsend, thisnXg, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
+      MPI_Send(Fsend, thisnZ, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
       //MPI_Send(&F0[nXsub], 1, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
    }  
 
@@ -736,11 +736,11 @@ void domainGrid::communicate(matrix2D<double> &F0) const {
    //
    if (procID>0) {
       int tag = 2;
-      MPI_Recv(Frecv, thisnXg, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(Frecv, thisnZ, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD, &status);
       //MPI_Recv(&F0[0], 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD, &status);
-      for (auto i=0; i<thisnXg; i++) {
+      for (auto j=0; j<thisnZ; j++) {
          //F0[i][j] = Frecv[i];
-         F0(i,j) = Frecv[i];
+         F0(i,j) = Frecv[j];
       }
    }
 
@@ -890,6 +890,27 @@ void domainGrid::DDZ(matrix2D<double>& Fout,
          }
       }	 
    }
+
+}
+
+void domainGrid::D2DZ2(matrix2D<double>& Fout, 
+    	 	 const matrix2D<double>& Fin) const {
+
+   // check that Fin and Fout at cell center 
+   
+   const int Nout0 = Fout.size0();
+   const int Nout1 = Fout.size1();
+   const int Nin0  = Fin.size0();
+   const int Nin1  = Fin.size1();
+   assert(Nout0 == Nin0);
+   assert(Nin1 == nZcc);
+   assert(Nout1 == nZcc);
+
+   for (auto i=0; i<Nout0; i++) {
+      for (auto j=1; j<Nout1-1; j++) {
+         Fout(i,j) = (Fin(i,j+1) - 2.0*Fin(i,j) + Fin(i,j-1))/dZ/dZ;
+      }
+   }	 
 
 }
 
@@ -1336,9 +1357,9 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
       // superbee(a,b) = minmod(a,2b) if |a|>=|b|
       //               = minmod(2a,b) if otherwise
       //
-      FlLimR.at(i) = minmod(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
+      //FlLimR.at(i) = minmod(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
       //FlLimR.at(i) = superbee(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
-      //FlLimR.at(i) = vanleer(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
+      FlLimR.at(i) = vanleer(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
       //FlLimR.at(i) = 0.0;
 
 
@@ -1349,7 +1370,7 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
 
       FlLimL.at(i) = minmod(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       //FlLimL.at(i) = superbee(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
-      //FlLimL.at(i) = vanleer(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
+      FlLimL.at(i) = vanleer(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
       //FlLimL.at(i) = 0.0;
 
       if(order==1) {
@@ -1581,7 +1602,7 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
    //  using flux limiter
    //
    for (auto i=1; i<Nout0-1; i++) {
-      for (auto j=0; j<Nout1; j++) {
+      for (auto j=1; j<Nout1-1; j++) {
          if(dir==0) { // X-Flux
 
             assert(nXg >= 2);

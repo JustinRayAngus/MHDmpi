@@ -12,8 +12,8 @@ set(0,'defaulttextfontsize',18);
 set(0,'defaultaxeslinewidth',1.5);
 set(0,'defaultlinelinewidth',1.5);
 set(0,'defaultaxesfontweight','bold');
-%colormap('jet');
-colormap('hot');
+colormap('jet');
+%colormap('hot');
 
 numProcs = 2;
 filePath = '../physicsMods/pinch2D/';
@@ -115,7 +115,22 @@ filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka3.0_taui1.0e
 filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka3.0_taui1.0e-2_nuTherm100/'; numProcs = 20; newDeck = 2;
 filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka0.3_taui1.0e-2/'; numProcs = 20; newDeck = 2;
 %
-filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/noGyroVisc/ka3.0_taui1.0e-2_nuTherm100/'; numProcs = 20; newDeck = 2;
+filePath = '/Volumes/LaCie/zPinch/myMHD/entropy_v1/Li0.12/noGyroVisc/ka3.0_taui1.0e-2/'; numProcs = 20; newDeck = 2;
+%filePath = '/Volumes/LaCie/zPinch/myMHD/entropy_v1/Li0.12/noGyroVisc/ka3.0_taui1.0e-2_nuTherm1/'; numProcs = 20; newDeck = 2;
+%filePath = '/Volumes/LaCie/zPinch/myMHD/entropy_v1/Li0.12/noGyroVisc/ka3.0_testing/'; numProcs = 20; newDeck = 2;
+
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka3.0_HallC2/'; numProcs = 20; newDeck = 2;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka3.0_HallTVD/'; numProcs = 20; newDeck = 2;
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka3.0_taui1.0e-2/'; numProcs = 20; newDeck = 2;
+
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka10.0_nuTherm10/'; numProcs = 20; newDeck = 2;
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka3.0_nuTherm0/'; numProcs = 20; newDeck = 2;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/testing3/'; numProcs = 20; newDeck = 2;
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/ka3.0_M0.5_ideal/'; numProcs = 20; newDeck = 2;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/ka3.0_M0.5_taui1.0e-3_splitCspeed/'; numProcs = 20; newDeck = 2;
+
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/Paraschiv_Fig10/kR5.0_M1.25/'; numProcs = 20; newDeck = 2;
+
 
 
 %filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/ka3.0_new/'; numProcs = 20; newDeck = 2;
@@ -130,18 +145,18 @@ filePath = '../../fromQuartz/pinch2D/entropy_v1/Li1.5e-2/noGyroVisc/ka3.0_taui1.
 
 plotBackIndex = 1; % plot time will be end-plotBackIndex
 thist = 10; %9.4; %7.9;
-thist2 = 15; %10.2; %9.4;
+thist2 = 14.2; %10.2; %9.4;
 
 %t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
-t0 = 1.2046e-8; % using pinch radius for length scale
+t0 = 1.2040e-8; % using pinch radius for length scale
 tA = 2.5e-8;    % from PoP 17, 072107 (2010)
 %tA = 5.4036e-08;  % r0/VTi
 %tA = 3.8209e-08;
 
 
 tout = loadData(filePath,numProcs,'tout');
-%tout = tout*t0/tA; % normalize to 2010 paper alfven time
-[~,tindex] = min(abs(tout-thist));
+tout = tout*t0/tA; % normalize to 2010 paper alfven time
+[~,tindex] = min(abs(tout-thist2));
 [~,tindex2] = min(abs(tout-tout(end-1)));
 
 Xcc = loadData(filePath,numProcs,'Xcc');
@@ -288,8 +303,8 @@ end
 
 %%%   plot contours
 %
-close(figure(12));
-f13=figure(12); set(f13,'position',[1282 300 660 804]);
+close(figure(15));
+f13=figure(15); set(f13,'position',[1282 300 660 804]);
 subplot(2,1,1);
 pcolor(Zcc,Xcc,N(:,:,tindex)'); colorbar; box on
 xlabel('x direction'); shading flat;
@@ -361,6 +376,7 @@ for n=1:length(tout)
  %   deltaN(:,:,n) = Te(:,:,n);
     %  deltaN(:,:,n) = S(:,:,n);
     deltaNdA = squeeze(deltaN(3:end-2,3:end-2,n).*dA(3:end-2,3:end-2));
+    %deltaNdA = squeeze(deltaN(3:end-2,50:350,n).*dA(3:end-2,50:350));
     Dz(:,n) = sum(deltaNdA,2);
 end
 %Dz = squeeze(N(3:end-2,60,:));
@@ -390,9 +406,9 @@ DzFT_amp_odd = abs(imag(DzFT))/Mass(1);
 f10=figure(10); set(f10,'position',[1000 200 510 850]);
 
 subplot(2,1,1);
-semilogy(tout,DzFT_amp(2,:),'displayName',['kR=',num2str(k(2))]);
-hold on; plot(tout,DzFT_amp(3,:),'displayName',['kR=',num2str(k(3))]);
-hold on; plot(tout,DzFT_amp(4,:),'displayName',['kR=',num2str(k(4))]);
+semilogy(tout,DzFT_amp(2,:),'displayName',['ka=',num2str(k(2))]);
+hold on; plot(tout,DzFT_amp(3,:),'displayName',['ka=',num2str(k(3))]);
+hold on; plot(tout,DzFT_amp(4,:),'displayName',['ka=',num2str(k(4))]);
 xlabel('t/t_A'); ylabel('mode amplitude'); 
 title('Fourier Amplitudes'); grid on, grid off; grid on;
 lg9=legend('show'); set(lg9,'location','southeast');
@@ -400,9 +416,9 @@ ylim([1.0e-10 1]); axis('square');
 set(gca,'ytick',10.^(-10:2:0));
 
 subplot(2,1,2);
-semilogy(tout,DzFT_amp_odd(2,:),'displayName',['kR=',num2str(k(2))]);
-hold on; plot(tout,DzFT_amp_odd(3,:),'displayName',['kR=',num2str(k(3))]);
-hold on; plot(tout,DzFT_amp_odd(4,:),'displayName',['kR=',num2str(k(4))]);
+semilogy(tout,DzFT_amp_odd(2,:),'displayName',['ka=',num2str(k(2))]);
+hold on; plot(tout,DzFT_amp_odd(3,:),'displayName',['ka=',num2str(k(3))]);
+hold on; plot(tout,DzFT_amp_odd(4,:),'displayName',['ka=',num2str(k(4))]);
 xlabel('t/t_A'); ylabel('mode amplitude'); 
 title('odd Fourier Amplitudes'); grid on, grid off; grid on;
 lg9=legend('show'); set(lg9,'location','southeast');

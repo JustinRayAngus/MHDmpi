@@ -70,8 +70,18 @@ filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.12/ka10.0/'; numProcs = 20; 
 
 %filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0/'; numProcs = 20; newDeck = 2;
 %filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0_noGyroVisc/'; numProcs = 20; newDeck = 2;
-filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka10.0_taui1.0e-2/'; numProcs = 20; newDeck = 2;
-filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka3.0_taui1.0e-2_nuTherm100/'; numProcs = 20; newDeck = 2;
+filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka10.0_taui1.0e-2_smallerDt/'; numProcs = 20; newDeck = 2;
+%filePath = '/Volumes/LaCie/zPinch/myMHD/entropy_v1/Li0.12/noGyroVisc/ka3.0_taui1.0e-2_nuTherm1/'; numProcs = 20; newDeck = 2;
+%filePath = '/Volumes/LaCie/zPinch/myMHD/entropy_v1/Li0.12/noGyroVisc/nuTherm100/ka8.0_taui1.0e-2/'; numProcs = 20; newDeck = 2;
+
+
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/testingError/ka10.0_HallC2_2/'; numProcs = 20; newDeck = 2;
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/ka3.0_M1.0/'; numProcs = 20; newDeck = 2;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka3.0_nuTherm0/'; numProcs = 20; newDeck = 2;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/ka3.0_M0.5_taui1.0e-3_splitCspeed/'; numProcs = 20; newDeck = 2;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka10.0_nuTherm10/'; numProcs = 20; newDeck = 2;
+
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/Paraschiv_Fig10/ideal_v0/kR5.0_M2.5_Csplit/'; numProcs = 20; newDeck = 0;
 
 
 %t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
@@ -106,7 +116,7 @@ Jx  = loadData(filePath,numProcs,'Jx');
 Cs  = loadData(filePath,numProcs,'Cs');
 %Te  = loadData(filePath,numProcs,'Te');
 gamma0 = loadData(filePath,numProcs,'gamma0');
-Li0 = loadData(filePath,numProcs,'lambda0');
+%Li0 = loadData(filePath,numProcs,'lambda0');
 dX = Xcc(2)-Xcc(1);
 dZ = Zcc(2)-Zcc(1);
 Fx = loadData(filePath,numProcs,'Fx'); % - d(P+B^2/2)/dr - B^2/r
@@ -118,7 +128,8 @@ Ptot = P+By.^2/2+Mx.*Vx/2.0;
 %%%   plot contours
 %
 close(figure(1));
-f1=figure(1); set(f1,'position',[1100 300 1500 500]);
+f1=figure(1); set(f1,'position',[1100 300 1500 500]); % for ka=3
+%f1=figure(1); set(f1,'position',[1500 30 1080 770]); % for ka=10
 %f1=figure(1); set(f1,'position',[400 400 1800 200]);
 set(gcf,'color','w');
 
@@ -137,9 +148,9 @@ for thist=1:length(tout)-1
     %
     subplot(1,3,2);
     h2=pcolor(Zcc,Xcc,By(:,:,thist)'); colorbar; box on
-    xlabel('z/r_0'); shading flat;
-    ylabel('r/r_0'); 
-    title(['B_y at t = ',num2str(tout(thist),3),' t_0=c_s/r_0']);
+    xlabel('z/a'); shading flat;
+    ylabel('r/a'); 
+    title(['B_y at t = ',num2str(tout(thist),3),' t_0=c_s/a']);
     axis('equal'); 
     axis([Zce(2) Zce(end-1) Xce(3) Xce(end-2)]);
     colormap('jet');
@@ -151,7 +162,7 @@ for thist=1:length(tout)-1
     h3=pcolor(Zcc,Xcc,Ez(:,:,thist)'); colorbar; box on
     xlabel('z/r_0'); shading flat;
     ylabel('r/r_0'); 
-    title(['E_z at t = ',num2str(tout(thist),3),' t_0=c_s/r_0']);
+    title(['E_z at t = ',num2str(tout(thist),3),' t_0=c_s/a']);
     axis('equal'); 
     axis([Zce(2) Zce(end-1) Xce(3) Xce(end-2)]);
     colormap('jet');    

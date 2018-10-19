@@ -1,0 +1,2 @@
+export PHYScpp=pinch2D.cpp
+export PHYS_HOME="../../physicsMods/pinch2D/driftIdealMHD/"

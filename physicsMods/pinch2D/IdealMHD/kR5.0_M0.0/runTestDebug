@@ -1,0 +1,1 @@
+srun -n 25 -p pdebug -t 00:30:00 ./mhd >> log.txt &

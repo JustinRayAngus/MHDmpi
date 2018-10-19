@@ -1,0 +1,2 @@
+export PHYScpp=pinch2D.cpp
+export PHYS_HOME="/p/lscratchh/angus1/myMHD/pinch2D/IdealMHD/"

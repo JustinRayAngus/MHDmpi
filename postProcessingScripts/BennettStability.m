@@ -246,7 +246,7 @@ lg32 = legend('show'); set(lg22,'location','best');
 
 %%%   characteristic values
 %
-aMn = 2.0;      % fuze deuterium
+aMn = 1.0;      % fuze deuterium
 r0 = 0.091e-2;   % fuze a=0.09 cm,
 N0 = 4.25e24;    % fuze n0 = 4e18/cc
 T0 = 1270;      % fuze [eV]
@@ -286,7 +286,7 @@ Dion = Xion.^4 +  2.70*Xion.^2 + 0.6770;
 
 coPerpFactor_ele = Xele.^2.*(5/2*Xele.^2 + 21.67)./Dele;
 coPerpFactor_ion = Xion.^2.*(5/2*Xion.^2 +  4.65)./Dion;
-coPerpFactor_fudge = (100*B).^2./((100*B).^2+3.7703); % simulation fudge
+coPerpFactor_fudge = (85*B).^2./((85*B).^2+3.7703); % simulation fudge
 
 f11=figure(11); 
 plot(rcc,coPerpFactor_ele/(5/2),'displayName','ele');
