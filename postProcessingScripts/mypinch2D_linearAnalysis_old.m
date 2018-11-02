@@ -46,9 +46,9 @@ filePath = '../../fromQuartz/pinch2D/kR5/data_320nz_800nx/'; numProcs = 80;
 
 %%%   kR = 10
 %
-%filePath = '../../fromQuartz/pinch2D/kR10/data_80nz_400nx/'; numProcs = 20;
-%filePath = '../../fromQuartz/pinch2D/kR10/data_160nz_800nx/'; numProcs = 80;
-%filePath = '../../fromQuartz/pinch2D/kR10/data_400nz_800nx/'; numProcs = 80;
+filePath = '../../fromQuartz/pinch2D/kR10/data_80nz_400nx/'; numProcs = 20;
+filePath = '../../fromQuartz/pinch2D/kR10/data_160nz_800nx/'; numProcs = 80;
+filePath = '../../fromQuartz/pinch2D/kR10/data_400nz_800nx/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR10/testing/'; numProcs = 20;
 %filePath = '../../fromQuartz/pinch2D/kR10/testing2/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR10/testing3/'; numProcs = 80;
@@ -56,26 +56,17 @@ filePath = '../../fromQuartz/pinch2D/kR5/data_320nz_800nx/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR10/data_80nz_400nx_ideal1/'; numProcs = 20;
 %
 
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/ka3/M0.0/80x800/'; numProcs = 100; newDeck = 0;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/testing/'; numProcs = 25; newDeck = 0;
 
-% filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka10.0_nuTherm10/'; numProcs = 20; newDeck = 2;
-% filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka3.0_nuTherm0/'; numProcs = 20; newDeck = 2;
-% %filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/testing3/'; numProcs = 20; newDeck = 2;
-% filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/ka3.0_M0.5_ideal/'; numProcs = 20; newDeck = 2;
-% %filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/ka3.0_M0.5_taui1.0e-3_splitCspeed/'; numProcs = 20; newDeck = 2;
-% 
-filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/Paraschiv_Fig10/kR5.0_M0.85/'; numProcs = 20; newDeck = 2;
-%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/Paraschiv_Fig10/ideal_v0/kR5.0_M0.0/'; numProcs = 20; newDeck = 0;
-filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/Paraschiv_Fig10/ideal_v0/kR5.0_M2.5/'; numProcs = 50; newDeck = 0;
-%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/Paraschiv_Fig10/ideal_v0/kR5.0_M0.0/'; numProcs = 25; newDeck = 0;
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/pinch2Dtesting2/'; numProcs = 25; newDeck = 0;
 
-
-%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/Paraschiv_Fig10/ideal_v0/kR5.0_M1.25_Csplit_320x800/'; numProcs = 32; newDeck = 0;
-
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD_new/ka3.0/M0.4/width0.03/160x800/'; numProcs = 100; newDeck = 0;
 
 
 plotBackIndex = 1; % plot time will be end-plotBackIndex
-thist = 10; %9.4; %7.9;
-thist2 = 14.2; %10.2; %9.4;
+thist = 1; %9.4; %7.9;
+thist2 = 2; %10.2; %9.4;
 
 %t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
 t0 = 1.2040e-8; % using pinch radius for length scale
@@ -113,6 +104,11 @@ Ez  = loadData(filePath,numProcs,'Ez');
 Ex  = loadData(filePath,numProcs,'Ex');
 Cs  = loadData(filePath,numProcs,'Cs');
 gamma0 = loadData(filePath,numProcs,'gamma0');
+FluxL_x  = loadData(filePath,numProcs,'FluxL_x');
+FluxR_x  = loadData(filePath,numProcs,'FluxR_x');
+FluxLimL_x  = loadData(filePath,numProcs,'FluxLim_x');
+FluxLimR_x  = loadData(filePath,numProcs,'FluxRatio_x');
+%
 dX = Xcc(2)-Xcc(1);
 dZ = Zcc(2)-Zcc(1);
 Fx = loadData(filePath,numProcs,'Fx'); % - d(P+B^2/2)/dr - B^2/r

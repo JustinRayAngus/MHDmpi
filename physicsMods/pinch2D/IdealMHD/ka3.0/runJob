@@ -1,0 +1,1 @@
+mpiexec -np 4 ./mhd input.json > log.txt &

@@ -77,11 +77,11 @@ filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/noGyroVisc/ka10.0_taui1.0
 
 filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/testingError/ka10.0_HallC2_2/'; numProcs = 20; newDeck = 2;
 filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/ka3.0_M1.0/'; numProcs = 20; newDeck = 2;
-%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka3.0_nuTherm0/'; numProcs = 20; newDeck = 2;
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka10.0_nuTherm1/'; numProcs = 50; newDeck = 2;
 %filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/withShear/ka3.0_M0.5_taui1.0e-3_splitCspeed/'; numProcs = 20; newDeck = 2;
 %filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/ka10.0_nuTherm10/'; numProcs = 20; newDeck = 2;
 
-filePath = '/Users/angus1/Documents/zPinch/myMHDsims/entropy_v1/Paraschiv_Fig10/ideal_v0/kR5.0_M2.5_Csplit/'; numProcs = 20; newDeck = 0;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/Paraschiv_Fig10/kR5.0_M1.25_320x1200/'; numProcs = 120; newDeck = 0;
 
 
 %t0 = 3.6137e-8; % see normalizationParameters_zPinch.m
@@ -128,8 +128,8 @@ Ptot = P+By.^2/2+Mx.*Vx/2.0;
 %%%   plot contours
 %
 close(figure(1));
-f1=figure(1); set(f1,'position',[1100 300 1500 500]); % for ka=3
-%f1=figure(1); set(f1,'position',[1500 30 1080 770]); % for ka=10
+%f1=figure(1); set(f1,'position',[1100 300 1500 500]); % for ka=3
+f1=figure(1); set(f1,'position',[1500 30 1080 770]); % for ka=10
 %f1=figure(1); set(f1,'position',[400 400 1800 200]);
 set(gcf,'color','w');
 

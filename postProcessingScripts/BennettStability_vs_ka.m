@@ -57,11 +57,11 @@ ka0 = 0.1:0.2:30;
 growthRate_entropy0 = zeros(size(ka0));
 growthRate_ideal0   = zeros(size(ka0));
 growthRate_general0 = zeros(length(ka0),4);
-gamma = 5/3; %2.1; %5/3; %2.1;  % adiabatic coefficient
+gamma = 5.3; %2.1; %5/3; %2.1;  % adiabatic coefficient
 %ka = 3.0;      % normalized wavenumber
-Li = 1.5e-2;  % omega0/Omegai0 = ion inertial length / r0
-%Li = 0.12;
-nuT = 0; %100;    % normalized thermalization rate
+%Li = 1.5e-2;  % omega0/Omegai0 = ion inertial length / r0
+Li = 0.12;
+nuT = 10; %100;    % normalized thermalization rate
 
 
 for k=1:length(ka0)
@@ -86,12 +86,12 @@ for k=1:length(ka0)
 
     %%%   compute growth rate from entropy mode (Kadomtsev)
     %
-    nuTstar = 2*nuT*rcc.*B/(ka*Li);
+    nuTstar = nuT*rcc.*B/(ka*Li);
     a0 = (2*rcc.*B/(ka*Li)).^2;
     b0 = -2*rcc.*B/(ka*Li).*(2*qP - 1i*nuTstar);
     RHS = gamma^2*(4 + beta.*qP).^2./(4*gamma + qP.*(2 + gamma*beta)).* ...
           (1 + ((2*gamma-1)./(2*gamma)+beta/4).*qP - qT);
-    c0 = qP.*(qP -1i*nuTstar) - RHS;
+    c0 = qP.*(qP -4i*nuTstar) - RHS;
 
     omega_entropy = zeros(length(rcc),2);
     for i=1:length(rcc)
@@ -108,7 +108,7 @@ for k=1:length(ka0)
     %%%
     %%%
     %%%          compute modes from full dispersionv (sans thermalization)
-    %%%          Kadomtsev 1960 Eqs 26-28
+    %%%          Kadomtsev 1960 Eqs 26-28 (with corrections)
     %%%
     %%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

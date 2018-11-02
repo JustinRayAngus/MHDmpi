@@ -507,7 +507,7 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
    else if(type0=="cos") {
       
       var = a*cos(2.0*3.141592653589793*c*Xvec/Lvec+b) + d;
-      
+
       if(procID==0) {
          cout << "Initial F0 is cos with mode number  = " << c << endl;
       }
@@ -1178,6 +1178,101 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
    
    } // end METHOD=U1
    
+   else if(METHOD == "QUICK") { // 2nd? order upwind
+      
+      double Ui, ap, am;
+      double a0 = 3.0/4.0, a1 = 3.0/8.0, a2 = 1.0/8.0;   
+
+      if(dir==0) { // interp to X-faces
+         assert(nXg >= 2);
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=0; j<Nout1; j++) {
+               Ui = upC(i,j);
+               ap = 1.0;
+               am = 0.0;
+               if(Ui<0.0) {
+                   ap = 0.0;
+                   am = 1.0;
+               }
+
+               if(i==0.0 || i==Nout0-1) {
+                  Fout(i,j) = ap*Fin(i,j) + am*Fin(i+1,j);
+               } else {
+                  Fout(i,j) = ap*( a0*Fin(i,j)
+                                +  a1*Fin(i+1,j)
+                                -  a2*Fin(i-1,j) )
+                            + am*( a0*Fin(i+1,j)
+                                +  a1*Fin(i,j)
+                                -  a2*Fin(i+2,j) );
+               }
+
+	    }
+         }
+      }
+      else { // interp to Z-faces
+         assert(nZg >= 2);
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=0; j<Nout1; j++) {
+               Ui = upC(i,j);
+               ap = 1.0;
+               am = 0.0;
+               if(Ui<0.0) {
+                   ap = 0.0;
+                   am = 1.0;
+               }
+      
+               if(j==0.0 || j==Nout1-1) {
+                  Fout(i,j) = ap*Fin(i,j) + am*Fin(i,j+1);
+               } else {
+                  Fout(i,j) = ap*( a0*Fin(i,j)
+                                +  a1*Fin(i,j+1)
+                                -  a2*Fin(i,j-1) )
+                            + am*( a0*Fin(i,j+1)
+                                +  a1*Fin(i,j)
+                                -  a2*Fin(i,j+2) );
+               }
+
+	    }
+         }
+      }
+   
+   } // end METHOD=QUICK
+   
+   else if(METHOD == "WENO3") { // 3rd order upwind NOT DONE YET!!!
+  
+      double epsilon, deriv, w, r;
+      epsilon = 1.0e-8;
+
+      if(dir==0) { // interp to X-faces
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=0; j<Nout1; j++) {
+      
+               if(upC(i,j)<0.0) {
+                  Fout(i,j) = Fin(i+1,j);
+               } else {
+                  Fout(i,j) = Fin(i,j);
+               }
+
+	    }
+         }
+      }
+      else { // interp to Z-faces
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=0; j<Nout1; j++) {
+      
+               if(upC(i,j)<0.0) {
+                  Fout(i,j) = Fin(i,j+1);
+               } else {
+                  Fout(i,j) = Fin(i,j);
+               }
+
+	    }
+         }
+      }
+   
+   } // end METHOD=CWENO2
+   
+
    else {
       cout << "advection scheme not valid," << endl;
       cout << "should be caught on initilization!" << endl;
@@ -1389,17 +1484,54 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
 
 } // end function computeFluxTVD
 
+void domainGrid::computeFluxTVDsimple(vector<double> &Flout, 
+                                vector<double> &FloutL,  vector<double> &FloutR, 
+                                const vector<double> &Flin,
+                                const vector<double> &upC,
+                                const vector<double> &fin) const {
 
-void domainGrid::computeFluxTVD(vector<vector<double>> &Flout, 
-                                vector<vector<double>> &FloutL,
-				vector<vector<double>> &FloutR, 
-                                vector<vector<double>> &FlLimL, 
-                                vector<vector<double>> &FlLimR, 
-                                const vector<vector<double>> &Flin,
-                                const vector<vector<double>> &upC,
-                                const vector<vector<double>> &fin,
+   // this function interpolates cell-center flux Flin
+   // to Flout, defined at cell edges, using TVD scheme 
+   // FloutL and FloutR are left and right going fluxes
+   // upC is the local maximum characteristic speed
+   // and fin is the function being fluxed
+   
+   
+   const int Nout = Flout.size();
+   assert(Nout == nXce);
+   assert(FloutL.size()  == Xce.size());
+   assert(FloutR.size()  == Xce.size());
+   assert(Flin.size() == Xcc.size());
+   assert(upC.size()  == Xcc.size());
+   assert(fin.size()  == Xcc.size());
+
+   vector<double> FlinR, FlinL;
+   FlinR.assign(nXcc,0.0);   
+   FlinL.assign(nXcc,0.0);   
+
+   FlinR = 0.5*(Flin + upC*fin);
+   FlinL = 0.5*(Flin - upC*fin);
+
+   InterpToCellEdges(FloutR,FlinR,upC,"QUICK");
+   InterpToCellEdges(FloutL,FlinL,-upC,"QUICK");
+
+   Flout = FloutR + FloutL;
+
+}
+
+void domainGrid::computeFluxTVDnew(matrix2D<double> &Flout, 
+                                matrix2D<double> &FloutL,
+				matrix2D<double> &FloutR, 
+                                matrix2D<double> &FlLimL, 
+                                matrix2D<double> &FlLimR, 
+                                const matrix2D<double> &Flin,
+                                const matrix2D<double> &upC,
+                                const matrix2D<double> &fin,
 				const int dir, 
 				const int order) const {
+   
+   // same as computeFluxTVD, but set up to use different arguements
+   // for flux limiter calculation
 
    // this function interpolates cell-center flux Flin
    // to Flout, defined at cell edges, using TVD scheme 
@@ -1410,10 +1542,10 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
    // order is scheme order (1 or 2)
    
    
-   const int Nout0 = Flout.size();
-   const int Nout1 = Flout[0].size();
-   const int Nin0 = Flin.size();
-   const int Nin1 = Flin[0].size();
+   const int Nout0 = Flout.size0();
+   const int Nout1 = Flout.size1();
+   const int Nin0 = Flin.size0();
+   const int Nin1 = Flin.size1();
 
    if(dir==0) {
       assert(Nout0 == nXce && Nin0 == nXcc);
@@ -1422,69 +1554,60 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
       assert(Nout1 == nZce && Nin1 == nZcc);
    }
    else {
-      cout << "dir in call to InterpToCellEdges most be 0 or 1" << endl;
+      cout << "dir in call to computeFluxTVD most be 0 or 1" << endl;
       exit (EXIT_FAILURE);
    }
-   assert(upC.size() == Flin.size());
-   assert(fin.size() == Flin.size());
-   assert(upC[0].size() == Flin[0].size());
-   assert(fin[0].size() == Flin[0].size());
+   assert(upC.size0() == Flin.size0());
+   assert(fin.size0() == Flin.size0());
+   assert(upC.size1() == Flin.size1());
+   assert(fin.size1() == Flin.size1());
 
-  
    //  define some additional matrix values for calculation
    //
-   vector<vector<double>> FluxL1st(Nout0,vector<double>(Nout1)); 
-   vector<vector<double>> FluxR1st(Nout0,vector<double>(Nout1)); 
-   vector<vector<double>> DeltaFluxRL(Nout0,vector<double>(Nout1));
-   vector<vector<double>> DeltaFluxRR(Nout0,vector<double>(Nout1));
-   vector<vector<double>> DeltaFluxLL(Nout0,vector<double>(Nout1));
-   vector<vector<double>> DeltaFluxLR(Nout0,vector<double>(Nout1));
-   vector<vector<double>> FlinR(Nin0,vector<double>(Nin1));
-   vector<vector<double>> FlinL(Nin0,vector<double>(Nin1));
-   
+   matrix2D<double> FluxL1st(Nout0,Nout1,0.0); 
+   matrix2D<double> FluxR1st(Nout0,Nout1,0.0); 
+   matrix2D<double> FluxLC2(Nout0,Nout1,0.0); 
+   matrix2D<double> FluxRC2(Nout0,Nout1,0.0); 
+   double ratioR, ratioL;
+   matrix2D<double> FlinR(Nin0,Nin1,0.0);
+   matrix2D<double> FlinL(Nin0,Nin1,0.0);
+
    FlinR = 0.5*(Flin + upC*fin);
    FlinL = 0.5*(Flin - upC*fin);
-
-   //  compute first order left and right fluxes
-   //
    int iup=1, jup=0;
    if(dir==1) iup=0, jup=1;
 
+   //  compute U1 and C2 left and right fluxes
+   //
    for (auto i=0; i<Nout0; i++) {
       for (auto j=0; j<Nout1; j++) {
-         FluxR1st[i][j] = FlinR[i][j];
-         FluxL1st[i][j] = FlinL[i+iup][j+jup];
-         //if(dir==0) FluxL1st[i][j] = FlinL[i+1][j];
-         //if(dir==1) FluxL1st[i][j] = FlinL[i][j+1];
+         FluxR1st(i,j) = FlinR(i,j);
+         FluxL1st(i,j) = FlinL(i+iup,j+jup);
+         FluxRC2(i,j) = (FlinR(i,j) + FlinR(i+iup,j+jup))/2.0;
+         FluxLC2(i,j) = (FlinL(i,j) + FlinL(i+iup,j+jup))/2.0;
       }
    }
-
+   
    //  compute second order left and right flux corrections
    //  using flux limiter
    //
    for (auto i=1; i<Nout0-1; i++) {
-      for (auto j=0; j<Nout1; j++) {
+      for (auto j=1; j<Nout1-1; j++) {
          if(dir==0) { // X-Flux
 
             assert(nXg >= 2);
 
             // calculate flux correction for right going wave
 	    //
-            DeltaFluxRL[i][j] = 0.5*(FlinR[i][j]   - FlinR[i-1][j]); // B2 scheme
-            DeltaFluxRR[i][j] = 0.5*(FlinR[i+1][j] - FlinR[i][j]);   // C2 scheme
-
-            //FlLimR[i][j] = minmod(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
-            //FlLimR[i][j] = superbee(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
-            FlLimR[i][j] = vanleer(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
+	    //ratioR = (fin(i,j) - fin(i-1,j))/(fin(i+1,j) - fin(i,j));
+	    ratioR = (FlinR(i,j) - FlinR(i-1,j))/(FlinR(i+1,j) - FlinR(i,j));
+            FlLimR(i,j) = (ratioR+abs(ratioR))/(1.0+abs(ratioR));
             
 	    // calculate flux correction for left going wave
 	    //
-	    DeltaFluxLL[i][j] = -0.5*(FlinL[i+1][j] - FlinL[i][j]);    // C2 scheme
-            DeltaFluxLR[i][j] = -0.5*(FlinL[i+2][j] - FlinL[i+1][j]);  // F2 scheme
-
-            //FlLimL[i][j] = minmod(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
-            //FlLimL[i][j] = superbee(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
-            FlLimL[i][j] = vanleer(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
+	    //ratioL = (fin(i+2,j) - fin(i+1,j))/(fin(i+1,j) - fin(i,j));
+	    ratioL = (FlinL(i+2,j) - FlinL(i+1,j))/(FlinL(i+1,j) - FlinL(i,j));
+            FlLimL(i,j) = (ratioL+abs(ratioL))/(1.0+abs(ratioL));
 
 	 }
 	 if(dir==1) { // Z-flux
@@ -1493,27 +1616,21 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
 
 	    // calculate flux correction for right going wave
 	    //
-	    DeltaFluxRL[i][j] = 0.5*(FlinR[i][j]   - FlinR[i][j-1]); // B2 scheme 
-            DeltaFluxRR[i][j] = 0.5*(FlinR[i][j+1] - FlinR[i][j]);   // C2 scheme
-            
-	    //FlLimR[i][j] = minmod(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
-            //FlLimR[i][j] = superbee(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
-            FlLimR[i][j] = vanleer(DeltaFluxRL[i][j],DeltaFluxRR[i][j]);
+	    //ratioR = (fin(i,j) - fin(i,j-1))/(fin(i,j+1) - fin(i,j));
+	    ratioR = (FlinR(i,j) - FlinR(i,j-1))/(FlinR(i,j+1) - FlinR(i,j));
+            FlLimR(i,j) = (ratioR+abs(ratioR))/(1.0+abs(ratioR));
             
 	    // calculate flux correction for left going wave
 	    //
-	    DeltaFluxLL[i][j] = -0.5*(FlinL[i][j+1] - FlinL[i][j]);    // C2 scheme
-            DeltaFluxLR[i][j] = -0.5*(FlinL[i][j+2] - FlinL[i][j+1]);  // F2 scheme
-
-            //FlLimL[i][j] = minmod(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
-            //FlLimL[i][j] = superbee(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
-            FlLimL[i][j] = vanleer(DeltaFluxLR[i][j],DeltaFluxLL[i][j]);
+	    //ratioL = (fin(i,j+2) - fin(i,j+1))/(fin(i,j+1) - fin(i,j));
+	    ratioL = (FlinL(i,j+2) - FlinL(i,j+1))/(FlinL(i,j+1) - FlinL(i,j));
+            FlLimL(i,j) = (ratioL+abs(ratioL))/(1.0+abs(ratioL));
 
 	 }
 	   
       }
    }
-
+   
    //  compute total flux
    //
    if(order==1) {
@@ -1521,13 +1638,70 @@ void domainGrid::computeFluxTVD(vector<vector<double>> &Flout,
       FloutL = FluxL1st;
    }
    else {
-      FloutR = FluxR1st + FlLimR;
-      FloutL = FluxL1st + FlLimL;
+      FloutR = FluxR1st + FlLimR*(FluxRC2 - FluxR1st);
+      FloutL = FluxL1st + FlLimL*(FluxLC2 - FluxL1st);
    }
+
    Flout = FloutR+FloutL;
 
+} // end TVD flux new calculation
 
-} // end TVD flux calculation
+
+void domainGrid::computeFluxTVDsimple(matrix2D<double> &Flout, 
+                                matrix2D<double> &FloutL,
+				matrix2D<double> &FloutR, 
+                                const matrix2D<double> &Flin,
+                                const matrix2D<double> &upC,
+                                const matrix2D<double> &fin,
+				const int dir) const {
+
+   // similar to computeFluxTVD, but uses QUICK to compute
+   // left and right going fluxes rather than MUSCL
+   // Note that it is not a TVD schem now
+
+   // this function interpolates cell-center flux Flin
+   // to Flout, defined at cell edges, using TVD scheme 
+   // FloutL and FloutR are left and right going fluxes
+   // upC is the local maximum characteristic speed
+   // and fin is the function being fluxed
+   // dir is the directoin (0 for X, 1 for Z)
+   // order is scheme order (1 or 2)
+   
+   
+   const int Nout0 = Flout.size0();
+   const int Nout1 = Flout.size1();
+   const int Nin0 = Flin.size0();
+   const int Nin1 = Flin.size1();
+
+   if(dir==0) {
+      assert(Nout0 == nXce && Nin0 == nXcc);
+   }
+   else if(dir==1) {
+      assert(Nout1 == nZce && Nin1 == nZcc);
+   }
+   else {
+      cout << "dir in call to computeFluxTVD most be 0 or 1" << endl;
+      exit (EXIT_FAILURE);
+   }
+   assert(upC.size0() == Flin.size0());
+   assert(fin.size0() == Flin.size0());
+   assert(upC.size1() == Flin.size1());
+   assert(fin.size1() == Flin.size1());
+
+   //  define some additional matrix values for calculation
+   //
+   matrix2D<double> FlinR(Nin0,Nin1,0.0);
+   matrix2D<double> FlinL(Nin0,Nin1,0.0);
+
+   FlinR = 0.5*(Flin + upC*fin);
+   FlinL = 0.5*(Flin - upC*fin);
+  
+   InterpToCellEdges(FloutR,FlinR,upC,"QUICK",dir);
+   InterpToCellEdges(FloutL,FlinL,-upC,"QUICK",dir);
+  
+   Flout = FloutR+FloutL;
+
+}  // end TVD flux simple calculation
 
 
 void domainGrid::computeFluxTVD(matrix2D<double> &Flout, 
@@ -1562,7 +1736,7 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
       assert(Nout1 == nZce && Nin1 == nZcc);
    }
    else {
-      cout << "dir in call to InterpToCellEdges most be 0 or 1" << endl;
+      cout << "dir in call to computeFluxTVD most be 0 or 1" << endl;
       exit (EXIT_FAILURE);
    }
    assert(upC.size0() == Flin.size0());
@@ -1575,6 +1749,8 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
    //
    matrix2D<double> FluxL1st(Nout0,Nout1,0.0); 
    matrix2D<double> FluxR1st(Nout0,Nout1,0.0); 
+   //matrix2D<double> FluxLC2(Nout0,Nout1,0.0); 
+   //matrix2D<double> FluxRC2(Nout0,Nout1,0.0); 
    double DeltaFluxRL, DeltaFluxRR;
    double DeltaFluxLL, DeltaFluxLR;
    matrix2D<double> FlinR(Nin0,Nin1,0.0);
@@ -1587,7 +1763,7 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
    int iup=1, jup=0;
    if(dir==1) iup=0, jup=1;
 
-   //  compute first order left and right fluxes
+   //  compute U1 and C2 left and right fluxes
    //
    for (auto i=0; i<Nout0; i++) {
       for (auto j=0; j<Nout1; j++) {

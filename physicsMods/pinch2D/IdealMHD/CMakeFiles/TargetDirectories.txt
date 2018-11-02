@@ -1,0 +1,3 @@
+/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/IdealMHD/CMakeFiles/rebuild_cache.dir
+/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/IdealMHD/CMakeFiles/edit_cache.dir
+/Users/angus1/Programs/MHDmpi/physicsMods/pinch2D/IdealMHD/CMakeFiles/mhd.dir

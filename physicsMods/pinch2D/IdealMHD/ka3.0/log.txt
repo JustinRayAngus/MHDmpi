@@ -1,0 +1,107 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Initiating simulation
+mpi job with 4 processors
+
+Input file ./input.json parsed successfully
+
+Output file output0.h5 created 
+Non-extendable int procID written to output0.h5
+
+Initializing domain grid ...
+Xmin = 0
+Xmax = 3
+nX = 200
+nXsub = 50
+dX = 0.015
+nXg = 2
+
+Zmin = -1.0472
+Zmax = 1.0472
+nZ = 40
+nZsub = 40
+dZ = 0.0523599
+nZg = 2
+
+Non-extendable vector Xcc added to output0.h5
+Non-extendable vector Xce added to output0.h5
+Non-extendable vector Zcc added to output0.h5
+Non-extendable vector Zce added to output0.h5
+
+Initializing time domain ...
+tmax = 1.1
+tOut intervals = 0.1
+dtFrac = 2
+
+Extendable scalar tout added to output0.h5
+
+Initializing Physics ...
+advection diff/interp scheme is QUICK
+adiabatic coefficent = 1.6667
+Nsub = 2
+Initial var is Gaussian with amplitude = -0.0001
+center at x = 1
+width = 0.3333
+and y-shift = 0
+Initial F0 is cos with mode number  = 1
+Non-extendable matrix2D rcc added to output0.h5
+Extendable matrix2D Fx added to output0.h5
+Extendable matrix2D N added to output0.h5
+Non-extendable matrix2D deltaP added to output0.h5
+Non-extendable matrix2D P0 added to output0.h5
+Extendable matrix2D Mx added to output0.h5
+Extendable matrix2D Mz added to output0.h5
+Extendable matrix2D S added to output0.h5
+Extendable matrix2D By added to output0.h5
+Extendable matrix2D P added to output0.h5
+Extendable matrix2D T added to output0.h5
+Extendable matrix2D Vx added to output0.h5
+Extendable matrix2D Vz added to output0.h5
+Extendable matrix2D Jz added to output0.h5
+Extendable matrix2D Ez added to output0.h5
+Extendable matrix2D Jx added to output0.h5
+Extendable matrix2D Ex added to output0.h5
+Extendable matrix2D Cs added to output0.h5
+Non-extendable scalar gamma0 written to output0.h5
+Extendable matrix2D FluxN_x added to output0.h5
+Extendable matrix2D FluxMx_x added to output0.h5
+Extendable matrix2D FluxMz_x added to output0.h5
+Extendable matrix2D FluxS_x added to output0.h5
+Extendable matrix2D FluxBy_x added to output0.h5
+Extendable matrix2D FluxRatio_x added to output0.h5
+Extendable matrix2D FluxLim_x added to output0.h5
+Extendable matrix2D FluxR_x added to output0.h5
+Extendable matrix2D FluxL_x added to output0.h5
+dtSim = 0.000658806
+Initial simulation time step: 0.000658806
+
+dtSim = 0.000661503
+Output variables dumped at t = 0.100139 units?
+dtSim = 0.000662061
+Output variables dumped at t = 0.200025 units?
+dtSim = 0.000662507
+Output variables dumped at t = 0.300659 units?
+dtSim = 0.000662876
+Output variables dumped at t = 0.400035 units?
+dtSim = 0.000663199
+Output variables dumped at t = 0.500129 units?
+dtSim = 0.000663486
+Output variables dumped at t = 0.600272 units?
+dtSim = 0.000663745
+Output variables dumped at t = 0.700458 units?
+dtSim = 0.000663982
+Output variables dumped at t = 0.80002 units?
+dtSim = 0.000664201
+Output variables dumped at t = 0.900281 units?
+dtSim = 0.000664406
+Output variables dumped at t = 1.00058 units?
+dtSim = 0.000664597
+Output variables dumped at t = 1.10024 units?
+
+Final simulation time step = 0.000664597
+
+Ending simulation: wall time = 119.74
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
