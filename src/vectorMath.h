@@ -528,24 +528,17 @@ vector<T> operator/(const T &b, const vector<T> &a)
 // exp(), sqrt(), tanh(), log(), cos(), sin() ...
 //
 
+vector<double> erf(const vector<double> &fin);
 vector<double> exp(const vector<double> &fin);
-
 vector<double> sqrt(const vector<double> &fin);
-
 vector<double> tanh(const vector<double> &fin);
-
 vector<double> log(const vector<double> &fin);
-
 vector<double> cos(const vector<double> &fin);
-
 vector<double> sin(const vector<double> &fin);
-
 vector<double> pow(const vector<double> &fin, const double exponent);
-
 vector<double> abs(const vector<double> &fin);
 
 double min(const vector<double> &fin);
-
 double max(const vector<double> &fin);
 
 double vanleer(const double a, const double b);

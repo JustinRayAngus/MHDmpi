@@ -539,6 +539,40 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
       }
 
    } 
+   else if(type0=="contStratP") {
+      
+      Xshift = (Xvec-b)/c;
+      double thisExponent, s;
+      s = d;  // shape factor
+      int Nmax = Xvec.size();
+      for (auto i=0; i<Nmax; i++) {
+         thisExponent = pow(Xshift.at(i),2*s);
+         var.at(i) = a*(s+1.0)/(2.0*s)*exp(-thisExponent);
+      }
+
+   } 
+   else if(type0=="contStratB") {
+      
+      Xshift = (Xvec-b)/c;
+      double thisExponent, s, r, uigamma;
+      s = d;   // shape factor
+      int Nmax = Xvec.size();
+      for (auto i=0; i<Nmax; i++) {
+         r = Xshift.at(i);
+         thisExponent = pow(r,2*s);
+         if(s==1.0) uigamma = exp(-thisExponent);
+         if(s==2.0) uigamma = tgamma(1.0/s) - sqrt(3.1415926536)*erf(r*r);
+         if(s!=1.0 && s!=2.0) {
+            cout << "ERROR: contStratB() requires shape factor (d) = 1 or 2" << endl;
+            cout << "have not generalized further yet since don't have incomplete" << endl;
+            cout << "gamma function call defined" << endl;
+            exit (EXIT_FAILURE);
+         }
+         var.at(i) = a*(s+1.0)/s*((tgamma(1.0/s)-uigamma)/(s*r*r)-exp(-thisExponent));
+         var.at(i) = sqrt(var.at(i));
+      }
+
+   } 
    else {
       Xshift = (Xvec-b);
       var = a*Xshift*Xshift + c*Xshift + d;

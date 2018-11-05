@@ -11,6 +11,8 @@ clear all;
 filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/testingInitialFx/'; numProcs = 25;
 filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/testingInitialFx2/'; numProcs = 100;
 
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD_new/ka3.0/M0.35/80x400/'; numProcs = 50;
+
 tout = loadData(filePath,numProcs,'tout');
 %
 Xcc = loadData(filePath,numProcs,'Xcc');

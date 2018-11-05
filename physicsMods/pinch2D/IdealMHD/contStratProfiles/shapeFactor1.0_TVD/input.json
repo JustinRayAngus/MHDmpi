@@ -14,21 +14,22 @@
          "nZg":2 // number of guard cells each end
         },
 "Time":{
-        "dtOut":1.0,  // output time intervals
-        "tOutSteps":101,  // number of output setps
+        "dtOut":2.0e-1,  // output time intervals
+        "tOutSteps":61,  // number of output setps
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
-           "advScheme":"QUICK", // "QUICK", "TVD"
+           "advScheme":"TVD", // "QUICK", "TVD"
            "Nsub":2, // this actually refers to order
            "gammaC":1.6667,  // adiabatic coefficient
            "Nthresh":1.0e-3, // density threshold
            "P":{
-                "Xtype":"bennettP", // initial profile
+                //"Xtype":"bennettP", // initial profile
+                "Xtype":"contStratP", // initial profile
                 "Xa":1.0,  // amplitude
                 "Xb":0.0,  // x-shift
                 "Xc":1.0,  // width
-                "Xd":0.0,   // y-shift
+                "Xd":1.0,   // y-shift
                 "Ztype":"const", // initial profile
                 "Za":0.0,  // amplitude
                 "Zb":0.0,  // x-shift
@@ -60,11 +61,12 @@
                 "Zd":1.0   // y-shift
                },
            "By":{
-                "Xtype":"bennettB", // initial profile
+                //"Xtype":"bennettB", // initial profile
+                "Xtype":"contStratB", // initial profile
                 "Xa":1.0,  // amplitude
                 "Xb":0.0,  // x-shift
                 "Xc":1.0,  // width
-                "Xd":0.0,   // y-shift
+                "Xd":1.0,   // y-shift
                 "Ztype":"const", // initial profile
                 "Za":0.0,  // amplitude
                 "Zb":0.0,  // x-shift

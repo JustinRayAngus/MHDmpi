@@ -21,8 +21,7 @@
 "Physics":{
            "advScheme":"QUICK", // "QUICK", "TVD"
            "Nsub":2, // this actually refers to order
-           "gammaC":1.6667,  // adiabatic coefficient
-           "Nthresh":1.0e-3, // density threshold
+           "gammaC":1.6667, // adiabatic coefficient
            "P":{
                 "Xtype":"bennettP", // initial profile
                 "Xa":1.0,  // amplitude

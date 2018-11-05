@@ -59,10 +59,13 @@ filePath = '../../fromQuartz/pinch2D/kR10/data_400nz_800nx/'; numProcs = 80;
 filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/ka3/M0.0/80x800/'; numProcs = 100; newDeck = 0;
 %filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/testing/'; numProcs = 25; newDeck = 0;
 
-filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/pinch2Dtesting2/'; numProcs = 25; newDeck = 0;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/pinch2Dtesting2/'; numProcs = 25; newDeck = 0;
 
-filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD_new/ka3.0/M0.4/width0.03/160x800/'; numProcs = 100; newDeck = 0;
+%filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD_new/ka3.0/M0.4/width0.03/160x800/'; numProcs = 100; newDeck = 0;
 
+%filePath = '/Users/angus1/Programs/fromQuartz/pinch2D/driftIdeal_v2/ka3.0_0/'; numProcs = 20;
+
+filePath = '../IdealMHD_new/contStratProfiles/shapeFactor2.0_TVD/'; numProcs = 50;
 
 plotBackIndex = 1; % plot time will be end-plotBackIndex
 thist = 1; %9.4; %7.9;

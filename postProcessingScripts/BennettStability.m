@@ -32,9 +32,9 @@ clear all;
 %%%   specify input parameters
 %
 gamma = 5/3; %2.1; %5/3; %2.1;  % adiabatic coefficient
-ka = 30;      % normalized wavenumber
+ka = 12;      % normalized wavenumber
 Li = 1.5e-6;  % omega0/Omegai0 = ion inertial length / r0
-Li = 0.012;  % omega0/Omegai0 = ion inertial length / r0
+Li = 0.12;  % omega0/Omegai0 = ion inertial length / r0
 
 nuT = 0; %200;    % normalized thermalization rate
 

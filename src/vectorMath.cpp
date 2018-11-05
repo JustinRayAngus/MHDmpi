@@ -29,6 +29,22 @@ using namespace std;
 // exp(), sqrt(), tanh, log(), cos(), sin() ...
 //
 
+vector<double> erf(const vector<double> &fin) {
+
+   vector<double> result;
+   const int imax = fin.size();
+   result.resize(imax);
+
+   //cout << "fin SIZE IS " << fin.size() << endl;
+   //cout << "RESULT SIZE IS " << result.size() << endl;
+
+   for (auto i=0; i<imax; i++) {
+      result.at(i) = erf(fin.at(i));
+   }
+
+   return result;
+}
+
 vector<double> exp(const vector<double> &fin) {
 
    vector<double> result;
@@ -375,7 +391,7 @@ double vanleer(const double a, const double b) {
    // zero otherwise
    //
    double result;
-   
+
    result = 2.0*a*b/(a+b);
 
    if(a<=0 && b>=0) result = 0.0;
