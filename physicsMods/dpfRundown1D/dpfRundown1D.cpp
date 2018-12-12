@@ -828,7 +828,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
 
    JdotE = Jzcc*Ezcc;
    taue = taue0*pow(Te,1.5)/N;
-   Qie   = 3.0*mM/taue*(Te-Ti);
+   Qie   = 2.0/(gamma0-1.0)*mM/taue*N*(Te-Ti);
    Xgrid.DDX(dPedx,Pe);
    Xgrid.communicate(dPedx);   
    NUdotE = -V*(Jzcc*B + dPedx);
