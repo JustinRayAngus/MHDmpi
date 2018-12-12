@@ -2,84 +2,84 @@
 "Xgrid":{
          "Xmin":0.0,
          "Xmax":1.0,
-         "nX":200,
+         "nX":400,
          "nXg":2 // number of guard cells each end
         },
 "Zgrid":{
          "Zmin":0.0,
          "Zmax":1.0,
-         "nZ":2,
-         "nZg":2 // number of guard cells each end
+         "nZ":1,
+         "nZg":1 // number of guard cells each end
         },
 "Time":{
-        "dtOut":1.5e-2,  // output time intervals
-        "tOutSteps":20,  // number of output setps
+        "dtOut":0.5e-3,  // output time intervals
+        "tOutSteps":201,  // number of output setps
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
            "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+           "geometry":"CAR", // "CAR", "CYL"
            "Nsub":2, // this actually refers to order
            "gammaC":1.6667, // adiabatic coefficient
-           "delta0":1.0e-4, // relaxation const (Vnorm/cvac)^2
+           "etaVis0":0.0e-30, // numerical viscosity
+           //"eta0":0.0278, // will override calculated resistivity
+           "epsilonRel":1.0e2, // c_eff  = cvac/sqrt(epsilonRel)
+           "meRel":1.0,        // me_eff = me*meRel
+           "DensScale_invmc":1.93e23,
+           "TempScale_eV":1.0,
+           "SpatScale_m":0.03,
+           "CurrScale_Amps":1.0e6,
+           "dyCurrScale_m":0.1885, // 2*pi*r0
+           "dtCurrScale_ns":1.0,   // rise time
+           "Amass":2.0,            // atomic mass
+           "Nthresh":1.0e-4,       // density threshold (normalized)
            "N":{
                 "Xtype":"const", // initial profile
                 "Xa":0.0,  // amplitude
                 "Xb":0.0,  // x-shift
                 "Xc":0.0,  // width
                 "Xd":1.0,   // y-shift
-                "Ztype":"const", // initial profile
-                "Za":0.0,  // amplitude
-                "Zb":0.0,  // x-shift
-                "Zc":0.0,  // width
-                "Zd":1.0   // y-shift
+		"Ztype":"const",
+		"Za":0.0,
+		"Zb":0.0,
+		"Zc":0.0,
+		"Zd":1.0
                },
            "P":{
                 "Xtype":"const", // initial profile
                 "Xa":0.0,  // amplitude
                 "Xb":0.0,  // x-shift
                 "Xc":0.0,  // width
-                "Xd":1.0,   // y-shift
-                "Ztype":"const", // initial profile
-                "Za":0.0,  // amplitude
-                "Zb":0.0,  // x-shift
-                "Zc":0.0,  // width
-                "Zd":1.0   // y-shift
+                "Xd":0.1,   // y-shift
+		"Ztype":"const",
+		"Za":0.0,
+		"Zb":0.0,
+		"Zc":0.0,
+		"Zd":1.0
                },
-           "Vx":{
+           "V":{
                 "Xtype":"const", // initial profile
                 "Xa":0.0,  // amplitude
                 "Xb":0.0,  // x-shift
                 "Xc":0.0,  // width
                 "Xd":0.0,   // y-shift
-                "Ztype":"const", // initial profile
-                "Za":0.0,  // amplitude
-                "Zb":0.0,  // x-shift
-                "Zc":0.0,  // width
-                "Zd":0.0   // y-shift
+		"Ztype":"const",
+		"Za":0.0,
+		"Zb":0.0,
+		"Zc":0.0,
+		"Zd":1.0
                },
-           "Vz":{
-                "Xtype":"const", // initial profile
-                "Xa":0.0,  // amplitude
-                "Xb":0.0,  // x-shift
-                "Xc":0.0,  // width
-                "Xd":0.0,   // y-shift
-                "Ztype":"const", // initial profile
-                "Za":0.0,  // amplitude
-                "Zb":0.0,  // x-shift
-                "Zc":0.0,  // width
-                "Zd":0.0   // y-shift
-               },
-           "By":{
+           "B":{
                 "Xtype":"const", // initial profile
                 "Xa":0.0, // amplitude
                 "Xb":0.0,  // x-shift
                 "Xc":0.0,  // width
                 "Xd":0.0,   // y-shift
-                "Ztype":"const", // initial profile
-                "Za":0.0,  // amplitude
-                "Zb":0.0,  // x-shift
-                "Zc":0.0,  // width
-                "Zd":0.0   // y-shift
+		"Ztype":"const",
+		"Za":0.0,
+		"Zb":0.0,
+		"Zc":0.0,
+		"Zd":1.0
                }
           }
 }

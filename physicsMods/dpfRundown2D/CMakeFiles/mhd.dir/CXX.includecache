@@ -407,8 +407,6 @@ mpi.h
 -
 assert.h
 -
-vector
--
 cmath
 -
 json/json.h
@@ -855,6 +853,8 @@ matrix2D.cpp
 /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp
 
 /Users/angus1/Programs/MHDmpi/src/timeDomain.cpp
+iostream
+-
 timeDomain.h
 /Users/angus1/Programs/MHDmpi/src/timeDomain.h
 mpi.h

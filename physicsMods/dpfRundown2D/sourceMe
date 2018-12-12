@@ -1,2 +1,2 @@
 export PHYScpp=dpfRundown2D.cpp
-export PHYS_HOME="../physicsMods/dpfRundown2D"
+export PHYS_HOME="../physicsMods/dpfRundown2D/"

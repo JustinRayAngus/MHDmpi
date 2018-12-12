@@ -1,0 +1,520 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Initiating simulation
+mpi job with 50 processors
+
+Input file ./input.json parsed successfully
+
+Output file output0.h5 created 
+Non-extendable int procID written to output0.h5
+
+Initializing domain grid ...
+Xmin = 0
+Xmax = 1
+nX = 400
+nXsub = 8
+dX = 0.0025
+nXg = 2
+
+Zmin = -0.523599
+Zmax = 0.523599
+nZ = 40
+nZsub = 40
+dZ = 0.0261799
+nZg = 2
+
+Non-extendable vector Xcc added to output0.h5
+Non-extendable vector Xce added to output0.h5
+Non-extendable vector Zcc added to output0.h5
+Non-extendable vector Zce added to output0.h5
+
+Initializing time domain ...
+tmax = 0.11
+tOut intervals = 0.001
+dtFrac = 2
+
+Extendable scalar tout added to output0.h5
+
+Initializing Physics ...
+
+input values:
+density scale [1/m^3] = 1.93e+23
+temperature scale [eV] = 1
+spatial scale [m] = 0.03
+current scale [Amps] = 1e+06
+in-plane current thickness [m] = 0.1885
+current rise time [ns] = 1
+atomic mass = 2
+Nthresh = 1e-06
+epsilon/epsilon0 = 10
+me/me0 = 1
+
+derived scales:
+velocity scale [m/s] = 9822.88
+electric field scale [V/m] = 2738.39
+magnetic field scale [T] = 0.278777
+Ti and Te scale [eV] = 2
+time scale [s] = 3.05409e-06
+resistivity scale [Ohm-m] = 0.000370314
+ele plasma freq [rad/s] = 2.47775e+13
+ion plasma freq [rad/s] = 4.10363e+11
+ele cyclotron freq [rad/s] = 4.90325e+10
+ion cyclotron freq [rad/s] = 1.34495e+07
+ele collision time [s] = 5.04134e-13
+ion collision time [s] = 4.31591e-11
+ele inertial length [m] = 1.20993e-05
+ion inertial length [m] = 0.000730548
+
+dimensionless parameters:
+normalized resistivity = 0.00983382
+taue/tscale = 1.65068e-07
+taui/tscale = 1.41316e-05
+wce*taue = 0.024719
+wci*taui = 0.000580467
+(Le0/r0)^2 = 1.62658e-07 (Ez relaxation const)
+(V0/c)^2 = 1.0736e-08 (Jz relaxation const)
+B(R)/Bscale = 23.9134
+
+advection diff/interp scheme is TVD
+geometry is CYL
+adiabatic coefficent = 1.6667
+Nsub = 2
+viscosity = 0
+Initial var is Gaussian with amplitude = -0.01
+center at x = 1
+width = 0.3333
+and y-shift = 0
+Initial F0 is cos with mode number  = 1
+Extendable matrix2D N added to output0.h5
+Extendable matrix2D Mx added to output0.h5
+Extendable matrix2D Mz added to output0.h5
+Extendable matrix2D By added to output0.h5
+Extendable matrix2D E added to output0.h5
+Extendable matrix2D P added to output0.h5
+Extendable matrix2D Pi added to output0.h5
+Extendable matrix2D Pe added to output0.h5
+Extendable matrix2D Ti added to output0.h5
+Extendable matrix2D Te added to output0.h5
+Extendable matrix2D eta added to output0.h5
+Extendable matrix2D taue added to output0.h5
+Extendable matrix2D Vx added to output0.h5
+Extendable matrix2D Vz added to output0.h5
+Extendable matrix2D Jz added to output0.h5
+Extendable matrix2D Jx added to output0.h5
+Extendable matrix2D Jzcc added to output0.h5
+Extendable matrix2D Jxcc added to output0.h5
+Extendable matrix2D Jz0 added to output0.h5
+Extendable matrix2D Jx0 added to output0.h5
+Extendable matrix2D Ez added to output0.h5
+Extendable matrix2D Ex added to output0.h5
+Extendable matrix2D Cs added to output0.h5
+Non-extendable scalar gamma0 written to output0.h5
+Non-extendable scalar delta0 written to output0.h5
+Non-extendable scalar Le0or0sq written to output0.h5
+Extendable matrix2D FluxN_x added to output0.h5
+Extendable matrix2D FluxMx_x added to output0.h5
+Extendable matrix2D FluxE_x added to output0.h5
+Extendable matrix2D FluxBy_x added to output0.h5
+Extendable matrix2D FluxEz_x added to output0.h5
+Extendable matrix2D FluxLimL_x added to output0.h5
+Extendable matrix2D FluxLimR_x added to output0.h5
+Extendable matrix2D FluxR_x added to output0.h5
+Extendable matrix2D FluxL_x added to output0.h5
+Non-extendable scalar Iscale written to output0.h5
+Non-extendable scalar Nscale written to output0.h5
+Non-extendable scalar Tscale written to output0.h5
+Non-extendable scalar Tiscale written to output0.h5
+Non-extendable scalar Tescale written to output0.h5
+Non-extendable scalar Xscale written to output0.h5
+Non-extendable scalar Bscale written to output0.h5
+Non-extendable scalar Ezscale written to output0.h5
+Non-extendable scalar Jscale written to output0.h5
+Non-extendable scalar Pscale written to output0.h5
+Non-extendable scalar Vscale written to output0.h5
+Non-extendable scalar tscale written to output0.h5
+Non-extendable scalar Mi written to output0.h5
+Non-extendable matrix2D hy_cc added to output0.h5
+Non-extendable matrix2D hy_ce added to output0.h5
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Initial simulation time step: 1.29518e-07
+
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00100001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00200002
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00300004
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00400005
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00500006
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00600007
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00700009
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0080001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00900011
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0100001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.011
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.012
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.013
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.014
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0150001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0160001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0170001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0180001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0190001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0200001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0210001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.022
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.023
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.024
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.025
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0260001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0270001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0280001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0290001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0300001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0310001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.032
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.033
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.034
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.035
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0360001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0370001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0380001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0390001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0400001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0410001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0420001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.043
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.044
+sigma_0*dt/delta = 1170.37
+dtSim = 1.23564e-07
+Output variables dumped at t = 0.045
+sigma_0*dt/delta = 1082.64
+dtSim = 1.14301e-07
+Output variables dumped at t = 0.046
+sigma_0*dt/delta = 996.979
+dtSim = 1.05257e-07
+Output variables dumped at t = 0.0470001
+sigma_0*dt/delta = 915.823
+dtSim = 9.66891e-08
+Output variables dumped at t = 0.0480001
+sigma_0*dt/delta = 843.741
+dtSim = 8.90789e-08
+Output variables dumped at t = 0.049
+sigma_0*dt/delta = 893.494
+dtSim = 9.43317e-08
+Output variables dumped at t = 0.0500001
+sigma_0*dt/delta = 903.313
+dtSim = 9.53683e-08
+Output variables dumped at t = 0.0510001
+sigma_0*dt/delta = 872.034
+dtSim = 9.2066e-08
+Output variables dumped at t = 0.0520001
+sigma_0*dt/delta = 821.543
+dtSim = 8.67353e-08
+Output variables dumped at t = 0.053
+sigma_0*dt/delta = 766.181
+dtSim = 8.08905e-08
+Output variables dumped at t = 0.054
+sigma_0*dt/delta = 723.185
+dtSim = 7.63511e-08
+Output variables dumped at t = 0.055
+sigma_0*dt/delta = 731.443
+dtSim = 7.72229e-08
+Output variables dumped at t = 0.056
+sigma_0*dt/delta = 786.557
+dtSim = 8.30417e-08
+Output variables dumped at t = 0.057
+sigma_0*dt/delta = 789.332
+dtSim = 8.33346e-08
+Output variables dumped at t = 0.058
+sigma_0*dt/delta = 797.652
+dtSim = 8.4213e-08
+Output variables dumped at t = 0.059
+ Te IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Te IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+ Ti IS LESS THAN ZERO 
+bout to go bad: N(i,j) = -nan

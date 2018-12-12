@@ -67,6 +67,7 @@ public:
                       vector<double>&, vector<double>&,
                       const vector<double>&, const vector<double>&,
                       const vector<double>&,
+	              const string&,
 		      const int) const;
   void computeFluxTVD(matrix2D<double>&, matrix2D<double>&, 
                       matrix2D<double>&, matrix2D<double>&,
@@ -74,6 +75,7 @@ public:
                       const matrix2D<double>&, 
 		      const matrix2D<double>&,
 		      const matrix2D<double>&,
+	              const string&,
 		      const int,
 		      const int) const;
   void computeFluxTVDnew(matrix2D<double>&, matrix2D<double>&, 
@@ -96,7 +98,8 @@ public:
 		      vector<double> &, 
                       const vector<double>&, 
 		      const vector<double>&,
-		      const vector<double>&) const;
+		      const vector<double>&,
+		      const string&) const;
   
   void DDX(vector<double>&, const vector<double>&) const;
   void DDX(vector<vector<double>>&, const vector<vector<double>>&) const;

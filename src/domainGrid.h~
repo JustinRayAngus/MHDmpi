@@ -37,6 +37,7 @@ public:
   void setInitialProfile(matrix2D<double>&, const Json::Value&) const;
   void setInitialProfileArbDir(vector<double>&, const vector<double>&,
 		         const double, const double,
+		         const double, const double,
 		         const double, const double,	
 		         const string&) const;
   
@@ -66,14 +67,7 @@ public:
                       vector<double>&, vector<double>&,
                       const vector<double>&, const vector<double>&,
                       const vector<double>&,
-		      const int) const;
-  void computeFluxTVD(vector<vector<double>>&, vector<vector<double>>&, 
-		      vector<vector<double>>&, vector<vector<double>>&,
-                      vector<vector<double>>&,
-                      const vector<vector<double>>&, 
-		      const vector<vector<double>>&,
-		      const vector<vector<double>>&,
-		      const int,
+	              const string&,
 		      const int) const;
   void computeFluxTVD(matrix2D<double>&, matrix2D<double>&, 
                       matrix2D<double>&, matrix2D<double>&,
@@ -81,15 +75,37 @@ public:
                       const matrix2D<double>&, 
 		      const matrix2D<double>&,
 		      const matrix2D<double>&,
+	              const string&,
 		      const int,
 		      const int) const;
-  
+  void computeFluxTVDnew(matrix2D<double>&, matrix2D<double>&, 
+                      matrix2D<double>&, matrix2D<double>&,
+                      matrix2D<double>&,
+                      const matrix2D<double>&, 
+		      const matrix2D<double>&,
+		      const matrix2D<double>&,
+		      const int,
+		      const int) const;
+  void computeFluxTVDsimple(matrix2D<double>&, 
+                      matrix2D<double> &,
+		      matrix2D<double> &, 
+                      const matrix2D<double>&, 
+		      const matrix2D<double>&,
+		      const matrix2D<double>&,
+		      const int) const;
+  void computeFluxTVDsimple(vector<double>&, 
+                      vector<double> &,
+		      vector<double> &, 
+                      const vector<double>&, 
+		      const vector<double>&,
+		      const vector<double>&) const;
   
   void DDX(vector<double>&, const vector<double>&) const;
   void DDX(vector<vector<double>>&, const vector<vector<double>>&) const;
   void DDZ(vector<vector<double>>&, const vector<vector<double>>&) const;
   void DDX(matrix2D<double>&, const matrix2D<double>&) const;
   void DDZ(matrix2D<double>&, const matrix2D<double>&) const;
+  void D2DZ2(matrix2D<double>&, const matrix2D<double>&) const;
 
 //domainGrid() {};
 

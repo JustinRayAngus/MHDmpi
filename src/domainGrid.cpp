@@ -1024,6 +1024,65 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
 
    } // end METHOD=QUICK 
    
+   else if(METHOD == "WENO5") {   
+      
+      assert(nXg >= 3);
+      // Use 5th order WENO upwinding (see Ren 2003)
+      //
+      double ep, d0, d1, d2, f0, f1, f2, b0, b1, b2;
+      double w0, w1, w2, w0b, w1b, w2b, sumwb;
+      ep = 1.0e-4;
+
+      for (auto i=nXg-1; i<Nout-nXg+1; i++) {
+      
+	 if(upC.at(i)>=0) {
+            d0 = 0.3;
+            d1 = 0.6;
+            d2 = 0.1;
+	    //
+            f0 = (2.0*Fin.at(i)+5.0*Fin.at(i+1)-1.0*Fin.at(i+2))/6.0;
+            f1 = (-1.0*Fin.at(i-1)+5.0*Fin.at(i)+2.0*Fin.at(i+1))/6.0;
+            f2 = (2.0*Fin.at(i-2)-7.0*Fin.at(i-1)+11.0*Fin.at(i))/6.0;
+            //
+            b0 = 13.0/12.0*pow(Fin.at(i)-2.0*Fin.at(i+1)+Fin.at(i+2),2)
+               + 1.0/4.0*pow(3.0*Fin.at(i)-4.0*Fin.at(i+1)+Fin.at(i+2),2);
+            b1 = 13.0/12.0*pow(Fin.at(i-1)-2.0*Fin.at(i)+Fin.at(i+1),2)
+               + 1.0/4.0*pow(Fin.at(i-1)-Fin.at(i+1),2);
+            b2 = 13.0/12.0*pow(Fin.at(i-2)-2.0*Fin.at(i-1)+Fin.at(i),2)
+               + 1.0/4.0*pow(Fin.at(i-2)-4.0*Fin.at(i-1)+3.0*Fin.at(i),2);
+	 }
+	 else {
+            d0 = 0.1;
+            d1 = 0.6;
+            d2 = 0.3;
+	    //
+            f0 = (11.0*Fin.at(i+1)-7.0*Fin.at(i+2)+2.0*Fin.at(i+3))/6.0;
+            f1 = (2.0*Fin.at(i)+5.0*Fin.at(i+1)-1.0*Fin.at(i+2))/6.0;
+            f2 = (-1.0*Fin.at(i-1)+5.0*Fin.at(i)+2.0*Fin.at(i+1))/6.0;
+            //
+            b0 = 13.0/12.0*pow(Fin.at(i+1)-2.0*Fin.at(i+2)+Fin.at(i+3),2)
+               + 1.0/4.0*pow(3.0*Fin.at(i+1)-4.0*Fin.at(i+2)+Fin.at(i+3),2);
+            b1 = 13.0/12.0*pow(Fin.at(i)-2.0*Fin.at(i+1)+Fin.at(i+2),2)
+               + 1.0/4.0*pow(Fin.at(i)-Fin.at(i+2),2);
+            b2 = 13.0/12.0*pow(Fin.at(i-1)-2.0*Fin.at(i)+Fin.at(i+1),2)
+               + 1.0/4.0*pow(Fin.at(i-1)-4.0*Fin.at(i)+3.0*Fin.at(i+1),2);
+	 }
+
+	 w0b = d0/pow(ep+b0,2);
+	 w1b = d1/pow(ep+b1,2);
+	 w2b = d2/pow(ep+b2,2);
+
+         sumwb = w0b+w1b+w2b;
+         w0 = w0b/sumwb;
+         w1 = w1b/sumwb;
+         w2 = w2b/sumwb;
+
+         Fout.at(i) = w0*f0 + w1*f1 + w2*f2; 
+      
+      }
+
+   } // end METHOD=WENO5
+   
    else {
       cout << "advection scheme not valid," << endl;
       cout << "should be caught on initilization!" << endl;
@@ -1274,13 +1333,16 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
    
    else if(METHOD == "WENO3") { // 3rd order upwind NOT DONE YET!!!
   
-      double epsilon, deriv, w, r;
-      epsilon = 1.0e-8;
+      //double epsilon, p0, p1, p2, g0, g1, g2, w0, w1, w2;
+      //epsilon = 1.0e-8;
+      //g0 = 1.0/10.0;
+      //g1 = 6.0/10.0;
+      //g2 = 3.0/10.0;
 
       if(dir==0) { // interp to X-faces
          for (auto i=0; i<Nout0; i++) {
             for (auto j=0; j<Nout1; j++) {
-      
+                
                if(upC(i,j)<0.0) {
                   Fout(i,j) = Fin(i+1,j);
                } else {
@@ -1304,7 +1366,7 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
          }
       }
    
-   } // end METHOD=CWENO2
+   } // end METHOD=WENO3
    
 
    else {
@@ -1422,6 +1484,7 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
                                 const vector<double> &Flin,
                                 const vector<double> &upC,
                                 const vector<double> &fin,
+                                const string &LIMITER,
 				const int order) const {
 
    // this function interpolates cell-center flux Flin
@@ -1443,14 +1506,10 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
 
  
    vector<double> FluxL1st, FluxR1st;
-   vector<double> DeltaFluxRL, DeltaFluxRR;
-   vector<double> DeltaFluxLL, DeltaFluxLR;
+   double DeltaFluxRL, DeltaFluxRR;
+   double DeltaFluxLL, DeltaFluxLR;
    FluxL1st.assign(Nout,0.0);   
    FluxR1st.assign(Nout,0.0); 
-   DeltaFluxRL.assign(Nout,0.0);
-   DeltaFluxRR.assign(Nout,0.0);  
-   DeltaFluxLL.assign(Nout,0.0);
-   DeltaFluxLR.assign(Nout,0.0);  
    
    vector<double> FlLimL, FlinR, FlinL;
    FlLimL.assign(Nout,0.0);   
@@ -1477,30 +1536,30 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
 
       // calculate flux corrections for right going wave
       //
-      DeltaFluxRL.at(i) = 0.5*(FlinR.at(i)   - FlinR.at(i-1)); // B2 scheme 
-      DeltaFluxRR.at(i) = 0.5*(FlinR.at(i+1) - FlinR.at(i));   // C2 scheme
+      DeltaFluxRL = 0.5*(FlinR.at(i)   - FlinR.at(i-1)); // B2 scheme 
+      DeltaFluxRR = 0.5*(FlinR.at(i+1) - FlinR.at(i));   // C2 scheme
 
+      // calculate flux corrections for left going wave
+      //
+      DeltaFluxLL = -0.5*(FlinL.at(i+1) - FlinL.at(i));   // C2 scheme 
+      DeltaFluxLR = -0.5*(FlinL.at(i+2) - FlinL.at(i+1)); // F2 scheme
+      
       // vanleer(a,b)  = 2*a*b/(a+b) (a and b same sign) 
       //               = 0 otherwise
       // minmod(a,b)   = 1/2(sign(a) + sign(b))*min(|a|,|b|)
       // superbee(a,b) = minmod(a,2b) if |a|>=|b|
       //               = minmod(2a,b) if otherwise
       //
-      //FlLimR.at(i) = minmod(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
-      //FlLimR.at(i) = superbee(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
-      FlLimR.at(i) = vanleer(DeltaFluxRL.at(i),DeltaFluxRR.at(i));
-      //FlLimR.at(i) = 0.0;
-
-
-      // calculate flux corrections for left going wave
-      //
-      DeltaFluxLL.at(i) = -0.5*(FlinL.at(i+1) - FlinL.at(i));   // C2 scheme 
-      DeltaFluxLR.at(i) = -0.5*(FlinL.at(i+2) - FlinL.at(i+1)); // F2 scheme
-
-      FlLimL.at(i) = minmod(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
-      //FlLimL.at(i) = superbee(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
-      FlLimL.at(i) = vanleer(DeltaFluxLL.at(i),DeltaFluxLR.at(i));
-      //FlLimL.at(i) = 0.0;
+      if(LIMITER=="minmod") { 
+          FlLimR.at(i) = minmod(DeltaFluxRL,DeltaFluxRR);
+          FlLimL.at(i) = minmod(DeltaFluxLL,DeltaFluxLR);
+      } else if(LIMITER=="superbee") {       
+          FlLimR.at(i) = superbee(DeltaFluxRL,DeltaFluxRR);
+	  FlLimL.at(i) = superbee(DeltaFluxLL,DeltaFluxLR);
+      } else {
+	  FlLimR.at(i) = vanleer(DeltaFluxRL,DeltaFluxRR);
+	  FlLimL.at(i) = vanleer(DeltaFluxLL,DeltaFluxLR);
+      }
 
       if(order==1) {
          FloutR.at(i) = FluxR1st.at(i);
@@ -1522,7 +1581,8 @@ void domainGrid::computeFluxTVDsimple(vector<double> &Flout,
                                 vector<double> &FloutL,  vector<double> &FloutR, 
                                 const vector<double> &Flin,
                                 const vector<double> &upC,
-                                const vector<double> &fin) const {
+                                const vector<double> &fin,
+                                const string& METHOD) const {
 
    // this function interpolates cell-center flux Flin
    // to Flout, defined at cell edges, using TVD scheme 
@@ -1546,8 +1606,8 @@ void domainGrid::computeFluxTVDsimple(vector<double> &Flout,
    FlinR = 0.5*(Flin + upC*fin);
    FlinL = 0.5*(Flin - upC*fin);
 
-   InterpToCellEdges(FloutR,FlinR,upC,"QUICK");
-   InterpToCellEdges(FloutL,FlinL,-upC,"QUICK");
+   InterpToCellEdges(FloutR,FlinR,upC,METHOD);
+   InterpToCellEdges(FloutL,FlinL,-upC,METHOD);
 
    Flout = FloutR + FloutL;
 
@@ -1746,7 +1806,8 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
                                 const matrix2D<double> &Flin,
                                 const matrix2D<double> &upC,
                                 const matrix2D<double> &fin,
-				const int dir, 
+			        const string &LIMITER,
+			 	const int dir, 
 				const int order) const {
 
    // this function interpolates cell-center flux Flin
@@ -1822,18 +1883,23 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
             DeltaFluxRL = 0.5*(FlinR(i,j)   - FlinR(i-1,j)); // B2 scheme
             DeltaFluxRR = 0.5*(FlinR(i+1,j) - FlinR(i,j));   // C2 scheme
 
-            //FlLimR(i,j) = minmod(DeltaFluxRL,DeltaFluxRR);
-            //FlLimR(i,j) = superbee(DeltaFluxRL,DeltaFluxRR);
-            FlLimR(i,j) = vanleer(DeltaFluxRL,DeltaFluxRR);
-            
 	    // calculate flux correction for left going wave
 	    //
 	    DeltaFluxLL = -0.5*(FlinL(i+1,j) - FlinL(i,j));    // C2 scheme
             DeltaFluxLR = -0.5*(FlinL(i+2,j) - FlinL(i+1,j));  // F2 scheme
 
-            //FlLimL(i,j) = minmod(DeltaFluxLR,DeltaFluxLL);
-            //FlLimL(i,j) = superbee(DeltaFluxLR,DeltaFluxLL);
-            FlLimL(i,j) = vanleer(DeltaFluxLR,DeltaFluxLL);
+            //  calculate 2nd order flux correction using limiter
+	    //
+	    if(LIMITER=="minmod") {
+               FlLimR(i,j) = minmod(DeltaFluxRL,DeltaFluxRR);
+               FlLimL(i,j) = minmod(DeltaFluxLL,DeltaFluxLR);
+            } else if (LIMITER=="superbee") {
+	       FlLimR(i,j) = superbee(DeltaFluxRL,DeltaFluxRR);
+	       FlLimL(i,j) = superbee(DeltaFluxLL,DeltaFluxLR);
+            } else {
+	       FlLimR(i,j) = vanleer(DeltaFluxRL,DeltaFluxRR);
+	       FlLimL(i,j) = vanleer(DeltaFluxLL,DeltaFluxLR);
+            }
 
 	 }
 	 if(dir==1) { // Z-flux
@@ -1845,18 +1911,24 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
 	    DeltaFluxRL = 0.5*(FlinR(i,j)   - FlinR(i,j-1)); // B2 scheme 
             DeltaFluxRR = 0.5*(FlinR(i,j+1) - FlinR(i,j));   // C2 scheme
             
-            //FlLimR(i,j) = minmod(DeltaFluxRL,DeltaFluxRR);
-            //FlLimR(i,j) = superbee(DeltaFluxRL,DeltaFluxRR);
-            FlLimR(i,j) = vanleer(DeltaFluxRL,DeltaFluxRR);
-            
 	    // calculate flux correction for left going wave
 	    //
 	    DeltaFluxLL = -0.5*(FlinL(i,j+1) - FlinL(i,j));    // C2 scheme
             DeltaFluxLR = -0.5*(FlinL(i,j+2) - FlinL(i,j+1));  // F2 scheme
 
-            //FlLimL(i,j) = minmod(DeltaFluxLR,DeltaFluxLL);
-            //FlLimL(i,j) = superbee(DeltaFluxLR,DeltaFluxLL);
-            FlLimL(i,j) = vanleer(DeltaFluxLR,DeltaFluxLL);
+            //  calculate 2nd order flux correction using limiter
+	    //
+	    if(LIMITER=="minmod") {
+               FlLimR(i,j) = minmod(DeltaFluxRL,DeltaFluxRR);
+               FlLimL(i,j) = minmod(DeltaFluxLL,DeltaFluxLR);
+            } else if (LIMITER=="superbee") {
+	       FlLimR(i,j) = superbee(DeltaFluxRL,DeltaFluxRR);
+	       FlLimL(i,j) = superbee(DeltaFluxLL,DeltaFluxLR);
+            } else {
+	       FlLimR(i,j) = vanleer(DeltaFluxRL,DeltaFluxRR);
+	       FlLimL(i,j) = vanleer(DeltaFluxLL,DeltaFluxLR);
+            }
+
 
 	 }
 	   

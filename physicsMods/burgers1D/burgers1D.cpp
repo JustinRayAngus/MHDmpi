@@ -84,19 +84,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
       Json::Value advScheme  = Phys.get("advScheme",defValue);
       if(advScheme != defValue) advScheme0 = advScheme.asString();
       else advScheme0 = "U1";
+      if(procID==0) cout << "adv scheme is " << advScheme0 << endl;
       
-      if(advScheme0=="C2" || advScheme0=="U1" || 
-         advScheme0=="QUICK" || advScheme0=="TVD") {
-         if(procID==0) {
-            cout << "advection diff/interp scheme is " << advScheme0 << endl;
-         }
-      }
-      else {
-         cout << "advection scheme " << advScheme0 << " is not valid " << endl;
-         cout << "valid types are C2, U1, QUICK, and TVD " << endl;
-         exit (EXIT_FAILURE);
-      }
-
       //   get diffusion coefficent from input file
       //
       Json::Value KVal = Phys.get("diffC",defValue);
@@ -255,7 +244,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       //Xgrid.computeFluxTVD(FluxAdv,FluxL,FluxR,FluxRatio,FluxLim,
       //                     FluxAdvCC,Cspeed,F0,order);
       Xgrid.computeFluxTVD(Flux,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxAdvCC+FluxDifCC,Cspeed,F0,order);
+                           FluxAdvCC+FluxDifCC,Cspeed,F0,"minmod",order);
    }      
    else {
       Xgrid.InterpToCellEdges(FluxAdv,FluxAdvCC,Cspeed,advScheme0);
@@ -288,7 +277,7 @@ void setXmaxBoundary(const domainGrid& Xgrid, const double C)
 }
 
 
-void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
+void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid, const int verbose)
 {
    int procID;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
@@ -302,7 +291,7 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    double dtmaxAdv = dX/Umax;
    double dtmax = min(dtmaxDif,dtmaxAdv);
    dtSim = min(dtmax/tDom.dtFrac,tDom.dtOut);
-   if(procID==0) {
+   if(procID==0 && verbose) {
       cout << "max stable time step is " << dtmax << endl;
       cout << endl; 
    }

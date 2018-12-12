@@ -102,9 +102,11 @@ int main(int argc, char** argv) {
    Xgrid.initialize(inputRoot);
    dataFile.add(Xgrid.Xcc, "Xcc", 0); 
    dataFile.add(Xgrid.Xce, "Xce", 0); 
+   dataFile.add(Xgrid.nXg, "nXg", 0); 
    if(Xgrid.nZ>1) {
       dataFile.add(Xgrid.Zcc, "Zcc", 0); 
       dataFile.add(Xgrid.Zce, "Zce", 0);
+      dataFile.add(Xgrid.nZg, "nZg", 0); 
    }   
    //
    timeDomain tDom;
@@ -122,7 +124,9 @@ int main(int argc, char** argv) {
    // set initial time-step
    //
    double dtSim;
-   phys.setdtSim(dtSim, tDom, Xgrid);
+   int verbose = 1;
+   phys.setdtSim(dtSim, tDom, Xgrid, verbose);
+   verbose = 0;
    tDom.dtSim = dtSim;
    if(procID==0) {
       cout << "Initial simulation time step: " << dtSim << endl << endl;
@@ -151,12 +155,15 @@ int main(int argc, char** argv) {
          tDom.updatetOut(thist);
          dataFile.writeAll(); // append extendable outputs
          thistOutInt = thistOutInt+1;
-         phys.setdtSim(dtSim, tDom, Xgrid);
+	 verbose = 1;
+         phys.setdtSim(dtSim, tDom, Xgrid, verbose);
+	 verbose = 0;
          if(procID==0) {
-            cout << "Output variables dumped at t = " 
-                 << thist << " units?" << endl;
-            //cout << "Simulation time step = " << dtSim << endl;
+            cout << "Output variables dumped at t = " << thist << endl;
          }
+      }
+      else {
+         phys.setdtSim(dtSim, tDom, Xgrid, verbose);
       }
    }
 

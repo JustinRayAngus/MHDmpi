@@ -1,0 +1,372 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Initiating simulation
+mpi job with 4 processors
+
+Input file ./input.json parsed successfully
+
+Output file output0.h5 created 
+Non-extendable int procID written to output0.h5
+
+Initializing domain grid ...
+Xmin = 0
+Xmax = 1
+nX = 400
+nXsub = 100
+dX = 0.0025
+nXg = 3
+
+value for key "Zgrid" is not object type !
+no Z-grid, problem is 1D
+
+Non-extendable vector Xcc added to output0.h5
+Non-extendable vector Xce added to output0.h5
+
+Initializing time domain ...
+tmax = 0.08
+tOut intervals = 0.001
+dtFrac = 2
+
+Extendable scalar tout added to output0.h5
+
+Initializing Physics ...
+
+input values:
+density scale [1/m^3] = 1.93e+23
+temperature scale [eV] = 1
+spatial scale [m] = 0.03
+current scale [Amps] = 1e+06
+in-plane current thickness [m] = 0.1885
+current rise time [ns] = 1
+atomic mass = 2
+Nthresh = 1e-06
+epsilon/epsilon0 = 10
+me/me0 = 1
+
+derived scales:
+velocity scale [m/s] = 9822.88
+electric field scale [V/m] = 2738.39
+magnetic field scale [T] = 0.278777
+Ti and Te scale [eV] = 2
+time scale [s] = 3.05409e-06
+resistivity scale [Ohm-m] = 0.000370314
+ele plasma freq [rad/s] = 2.47775e+13
+ion plasma freq [rad/s] = 4.10363e+11
+ele cyclotron freq [rad/s] = 4.90325e+10
+ion cyclotron freq [rad/s] = 1.34495e+07
+ele collision time [s] = 5.04134e-13
+ion collision time [s] = 4.31591e-11
+ele inertial length [m] = 1.20993e-05
+ion inertial length [m] = 0.000730548
+
+dimensionless parameters:
+normalized resistivity = 0.00983382
+taue/tscale = 1.65068e-07
+taui/tscale = 1.41316e-05
+wce*taue = 0.024719
+wci*taui = 0.000580467
+(Le0/r0)^2 = 1.62658e-07 (Ez relaxation const)
+(V0/c)^2 = 1.0736e-08 (Jz relaxation const)
+B(R)/Bscale = 23.9134
+
+advection diff/interp scheme is WENO5
+geometry is CYL
+adiabatic coefficent = 1.6667
+Nsub = 2
+viscosity = 0
+Extendable vector N added to output0.h5
+Extendable vector M added to output0.h5
+Extendable vector B added to output0.h5
+Extendable vector E added to output0.h5
+Extendable vector P added to output0.h5
+Extendable vector Pi added to output0.h5
+Extendable vector Pe added to output0.h5
+Extendable vector Ti added to output0.h5
+Extendable vector Te added to output0.h5
+Extendable vector eta added to output0.h5
+Extendable vector taue added to output0.h5
+Extendable vector V added to output0.h5
+Extendable vector J added to output0.h5
+Extendable vector Jcc added to output0.h5
+Extendable vector J0 added to output0.h5
+Extendable vector Ez added to output0.h5
+Extendable vector Cs added to output0.h5
+Non-extendable scalar gamma0 written to output0.h5
+Non-extendable scalar delta0 written to output0.h5
+Non-extendable scalar Le0or0sq written to output0.h5
+Extendable vector FluxN added to output0.h5
+Extendable vector FluxM added to output0.h5
+Extendable vector FluxE added to output0.h5
+Extendable vector FluxB added to output0.h5
+Extendable vector FluxEz added to output0.h5
+Extendable vector FluxRatio added to output0.h5
+Extendable vector FluxLim added to output0.h5
+Extendable vector FluxR added to output0.h5
+Extendable vector FluxL added to output0.h5
+Non-extendable scalar Iscale written to output0.h5
+Non-extendable scalar Nscale written to output0.h5
+Non-extendable scalar Tscale written to output0.h5
+Non-extendable scalar Tiscale written to output0.h5
+Non-extendable scalar Tescale written to output0.h5
+Non-extendable scalar Xscale written to output0.h5
+Non-extendable scalar Bscale written to output0.h5
+Non-extendable scalar Ezscale written to output0.h5
+Non-extendable scalar Jscale written to output0.h5
+Non-extendable scalar Pscale written to output0.h5
+Non-extendable scalar Vscale written to output0.h5
+Non-extendable scalar tscale written to output0.h5
+Non-extendable scalar Mi written to output0.h5
+Non-extendable vector hy_cc added to output0.h5
+Non-extendable vector hy_ce added to output0.h5
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Initial simulation time step: 1.29518e-07
+
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00100001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00200002
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00300004
+sigma_0*dt/delta = 920.857
+dtSim = 9.72205e-08
+Output variables dumped at t = 0.00400007
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00500011
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00600012
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.007
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00800001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.00900003
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.01
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0110001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0120001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0130001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0140001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0150001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0160001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0170001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.018
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.019
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.02
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.021
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0220001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0230001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0240001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0250001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0260001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0270001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.028
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.029
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.03
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.031
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0320001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0330001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0340001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0350001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0360001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0370001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0380001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.039
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.04
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.041
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.042
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0430001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0440001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0450001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0460001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0470001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0480001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.049
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.05
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.051
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.052
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0530001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0540001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0550001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0560001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0570001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0580001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0590001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.06
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.061
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.062
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.063
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0640001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0650001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0660001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0670001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0680001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0690001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.07
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.071
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.072
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.073
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.074
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0750001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0760001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0770001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0780001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0790001
+sigma_0*dt/delta = 1226.78
+dtSim = 1.29518e-07
+Output variables dumped at t = 0.0800001
+
+Final simulation time step = 1.29518e-07
+
+Ending simulation: wall time = 1914.04
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

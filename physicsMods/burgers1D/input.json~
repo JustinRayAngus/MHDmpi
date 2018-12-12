@@ -3,7 +3,7 @@
          "Xmin":-0.5,
          "Xmax":0.5,
          "nX":200,
-         "nXg":2 // number of guard cells each end
+         "nXg":3 // number of guard cells each end
         },
 "Time" :{
          "dtOut":0.02,     // output time intervals
@@ -16,7 +16,7 @@
          "b":0.0,  // x-shift
          "c":0.1,  // width
          "d":0.0,  // y-shift
-         "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+         "advScheme":"WENO5", // "U1", "C2", "QUICK", "TVD"
          //"diffC":0.00, // diffusion coefficient
          "diffC":0.002, // diffusion coefficient
          "order":2,     // order in time (1 or 2)
