@@ -27,7 +27,7 @@ filePath = '../../fromQuartz/pinch2D/kR10/entropy_v0/test5_Li=5.0e-3_stable_taue
 
 
 filePath = '../../fromQuartz/pinch2D/entropy_v0/Li0.0/ka3.0/'; numProcs = 20; newDeck = 2;
-filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0_noGyroVisc_taui1.0e-2/'; numProcs = 20; newDeck = 2;
+%filePath = '../../fromQuartz/pinch2D/entropy_v1/Li0.12/ka3.0_noGyroVisc_taui1.0e-2/'; numProcs = 20; newDeck = 2;
 
 
 

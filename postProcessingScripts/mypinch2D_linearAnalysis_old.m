@@ -17,7 +17,7 @@ colormap('jet');
 
 numProcs = 2;
 filePath = '../physicsMods/pinch2D/';
-newDeck=0;
+newDeck=2;
 
 numProcs = 10;
 %filePath = '../../fromQuartz/pinch2D/data_200nx_kR10/';
@@ -56,7 +56,7 @@ filePath = '../../fromQuartz/pinch2D/kR10/data_400nz_800nx/'; numProcs = 80;
 %filePath = '../../fromQuartz/pinch2D/kR10/data_80nz_400nx_ideal1/'; numProcs = 20;
 %
 
-filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/ka3/M0.0/80x800/'; numProcs = 100; newDeck = 0;
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/ka3/M0.0/80x800/'; numProcs = 100;
 %filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/testing/'; numProcs = 25; newDeck = 0;
 
 %filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/pinch2Dtesting2/'; numProcs = 25; newDeck = 0;
@@ -66,6 +66,12 @@ filePath = '/Users/angus1/Documents/zPinch/myMHDsims/IdealMHD/ka3/M0.0/80x800/';
 %filePath = '/Users/angus1/Programs/fromQuartz/pinch2D/driftIdeal_v2/ka3.0_0/'; numProcs = 20;
 
 filePath = '../IdealMHD_new/contStratProfiles/shapeFactor2.0_TVD/'; numProcs = 50;
+filePath = '../IdealMHD_new/EnergyConsMethod/80x400_TVD/'; numProcs = 50;
+%filePath = '../IdealMHD_new/EnergyCons2/80x400_TVD/'; numProcs = 50;
+
+
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/driftIdealMHD_new/Li0.015/ka3.0/80x400/';
+filePath = '/Users/angus1/Documents/zPinch/myMHDsims/driftIdealMHD/Li0.12/ka3.0/80x400/'; newDeck = 2;
 
 plotBackIndex = 1; % plot time will be end-plotBackIndex
 thist = 1; %9.4; %7.9;
@@ -79,7 +85,7 @@ tA = 2.5e-8;    % from PoP 17, 072107 (2010)
 
 
 tout = loadData(filePath,numProcs,'tout');
-tout = tout*t0/tA; % normalize to 2010 paper alfven time
+%tout = tout*t0/tA; % normalize to 2010 paper alfven time
 [~,tindex] = min(abs(tout-thist2));
 [~,tindex2] = min(abs(tout-tout(end-1)));
 
@@ -95,6 +101,7 @@ deltaP  = loadData(filePath,numProcs,'deltaP');
 Mx  = loadData(filePath,numProcs,'Mx');
 Mz  = loadData(filePath,numProcs,'Mz');
 S  = loadData(filePath,numProcs,'S');
+% E  = loadData(filePath,numProcs,'E');
 By = loadData(filePath,numProcs,'By');
 P  = loadData(filePath,numProcs,'P');
 P0  = loadData(filePath,numProcs,'P0');
@@ -111,7 +118,7 @@ FluxL_x  = loadData(filePath,numProcs,'FluxL_x');
 FluxR_x  = loadData(filePath,numProcs,'FluxR_x');
 FluxLimL_x  = loadData(filePath,numProcs,'FluxLim_x');
 FluxLimR_x  = loadData(filePath,numProcs,'FluxRatio_x');
-%
+
 dX = Xcc(2)-Xcc(1);
 dZ = Zcc(2)-Zcc(1);
 Fx = loadData(filePath,numProcs,'Fx'); % - d(P+B^2/2)/dr - B^2/r
@@ -264,6 +271,9 @@ ByFlux = zeros(size(tout));
 Energy = zeros(size(tout));
 %Energy2 = zeros(size(tout));
 Edens = 0.5*(Mx.*Vx + Mz.*Vz) + P/(gamma0-1) + By.^2/2.0; 
+%E  = loadData(filePath,numProcs,'E');
+%Edens = E;
+%Edens = E + By.^2/2.0;
 %Edens2 = Ee + Ei;
 S = N.*(Te+Ti)./N.^gamma0;
 
@@ -349,7 +359,7 @@ title('Fourier Amplitudes'); grid on, grid off; grid on;
 lg9=legend('show'); set(lg9,'location','southeast');
 ylim([1.0e-10 1]); axis('square');
 set(gca,'ytick',10.^(-10:2:0));
-axis([0 30 1e-6 1e0]);
+axis([0 max(tout) 1e-6 1e0]);
 
 subplot(2,1,2);
 semilogy(tout,DzFT_amp_odd(2,:),'displayName',['ka=',num2str(k(2))]);
@@ -360,7 +370,7 @@ title('odd Fourier Amplitudes'); grid on, grid off; grid on;
 lg9=legend('show'); set(lg9,'location','southeast');
 ylim([1.0e-10 1]); axis('square');
 set(gca,'ytick',10.^(-10:2:0));
-axis([0 30 1e-6 1e0]);
+axis([0 max(tout) 1e-6 1e0]);
 
 %%% for looking at modes of N
 %hold on; plot(tout,2.8e-5*10.^(tout/2.15),'b--');

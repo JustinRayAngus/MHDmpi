@@ -2,8 +2,6 @@
 %%%
 %%%   look at output variables from 2D dpfRundown module
 %%%
-%%%   see G.A. Sod,. J. Comp. Phys. 27, 1-31 (1978)
-%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 

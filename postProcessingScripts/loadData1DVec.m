@@ -7,8 +7,9 @@ procID  = hdf5read(thisFile,'procID');
 fileinfo = hdf5info(thisFile);
 dsets=fileinfo.GroupHierarchy.Datasets;
 
-nXg = 2;
-nZg = 2;
+
+nXg = hdf5read(thisFile,'nXg');
+%nXg = 2;
 
 %Name1 = fileinfo.GroupHierarchy.Datasets(1).Name
 

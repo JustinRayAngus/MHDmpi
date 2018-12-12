@@ -34,7 +34,7 @@ tout= hdf5read(thisFile,'tout');
 %close(figure(1));
 f1=figure(2); 
 %set(f1,'position',[1030 925 1100 420]);
-set(f1,'position',[858 37 500 760]);
+%set(f1,'position',[858 37 500 760]);
 
 
 subplot(2,1,1);

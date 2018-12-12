@@ -1,8 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%
-%%%   look at output variables from 1D Sod shock simulations
-%%%
-%%%   see G.A. Sod,. J. Comp. Phys. 27, 1-31 (1978)
+%%%   look at output variables from 1D dpf rundown module
 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
@@ -17,12 +15,23 @@ set(0,'defaultaxesfontweight','bold');
 
 
 numProcs = 4;
-filePath = '../physicsMods/dpfRundown1D/'; TwoTempVersion=0;
-filePath = '../physicsMods/dpfRundown1D/2TempVersion/'; TwoTempVersion=1;
-filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcyl/';
-%filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_1MAcar/';
+filePath = '../physicsMods/dpfRundown1D/dataSave_1MAcyl/';
+%filePath = '../physicsMods/dpfRundown1D/dataSave_1MAcar/';
+filePath = '../physicsMods/dpfRundown1D/fromQuartz_1MAcyl/'; numProcs = 8;
+%filePath = '../physicsMods/dpfRundown1D/testing/'; numProcs = 8;
+%filePath = '../physicsMods/dpfRundown1D/resistiveMHD/testingVacRes2/'; numProcs = 16;
+filePath = '../physicsMods/dpfRundown1D/resistiveMHD/1MAcyl_TVD/'; numProcs = 4;
+filePath = '../physicsMods/dpfRundown1D/resistiveMHD/1MAcyl_WENO5/'; numProcs = 4;
+filePath = '../physicsMods/dpfRundown1D/resistiveMHD/testing/'; numProcs = 4;
+TwoTempVersion = 1.0;
+
+%filePath = '../physicsMods/dpfRundown1D/fromQuartz_1MAcyl/'; numProcs = 8;
+%filePath = '../physicsMods/dpfRundown1D/testing/'; numProcs = 8;
+
 %filePath = '../physicsMods/dpfRundown1D_2Temp/dataSave_200kAcyl/';
 %filePath = '../physicsMods/dpfRundown1D_2Temp/';
+
+%filePath = '../physicsMods/dpfRundown2D/'; TwoTempVersion=1;
 
 plotBackIndex = 0*35; % plot time will be end-plotBackIndex
 xp1 = 1;
@@ -135,7 +144,7 @@ TeTi0 = (gamma0-1)/(pi*R0^2*N0)*mu0*I0^2/(4*pi)*log(R0/rs)/qe; % <Ti+Te> [eV]
 %
 JdotE  = sum(Jcc(3:end-2,:).*Ezcc(3:end-2,:).*dV(3:end-2));
 Etot   = sum(Edenstot(3:end-2,:).*dV(3:end-2));
-Etherm = sum(1.5*P(3:end-2,:).*dV(3:end-2));
+Etherm = sum(P(3:end-2,:)/(gamma0-1).*dV(3:end-2));
 Emean  = sum(0.5*M(3:end-2,:).*V(3:end-2,:).*dV(3:end-2));
 Efield = sum(B(3:end-2,:).^2/2.*dV(3:end-2));
 EEztot = delta0*sum(Ez(2:end-2,:).^2/2.0.*dV(3:end-2));
@@ -200,21 +209,22 @@ set(f1,'position',[1030 425 1300 840]);
 %set(f1,'position',[341 436 900 840]);
 
 subplot(2,3,1);
-hold on; plot(Xcc,N(:,1),'black'); box on;
-hold on; plot(Xcc,N(:,round((end-plotBackIndex)/2)),'b');
+hold on; plot(Xcc,N(:,60),'black'); box on;
+hold on; plot(Xcc,N(:,70),'b');
 %hold on; plot(Xcc,N(:,round(120)),'g');
 %hold on; plot(Xcc,N(:,round(end/2)),'b');
-hold on; plot(Xcc,N(:,end-plotBackIndex),'r'); grid on;
+hold on; plot(Xcc,N(:,80),'r'); grid on;
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
+set(gca,'yscale','log'); grid off; grid on;
 xlabel('x'); ylabel('N');
 title('mass density'); axis('square');
 xlim([0 xp1]);
 %
 subplot(2,3,2);
-hold on; plot(Xcc,V(:,1),'black'); box on;
-hold on; plot(Xcc,V(:,round((end-plotBackIndex)/2)),'b');
-hold on; plot(Xcc,V(:,end-plotBackIndex),'r'); grid on;
+hold on; plot(Xcc,V(:,60),'black'); box on;
+hold on; plot(Xcc,V(:,70),'b');
+hold on; plot(Xcc,V(:,80),'r'); grid on;
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('V');
@@ -222,11 +232,12 @@ title('velocity'); axis('square');
 xlim([0 xp1]);
 %
 subplot(2,3,3);
-hold on; plot(Xcc,P(:,1),'black'); box on;
-hold on; plot(Xcc,P(:,round((end-plotBackIndex)/2)),'b');
-hold on; plot(Xcc,P(:,end-plotBackIndex),'r'); grid on;
-hold on; plot(Xcc,Ti(:,end-plotBackIndex),'g');
-hold on; plot(Xcc,Te(:,end-plotBackIndex),'g--');
+hold on; plot(Xcc,P(:,60),'black'); box on;
+hold on; plot(Xcc,P(:,70),'b');
+hold on; plot(Xcc,P(:,80),'r'); grid on;
+set(gca,'yscale','log'); grid off; grid on;
+%hold on; plot(Xcc,Ti(:,end-plotBackIndex),'g');
+%hold on; plot(Xcc,Te(:,end-plotBackIndex),'g--');
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('P');
@@ -235,10 +246,10 @@ xlim([0 xp1]);
 %
 %
 subplot(2,3,4);
-hold on; plot(Xce,Ez(:,1),'black'); box on;
-hold on; plot(Xce,Ez(:,round((end-plotBackIndex)/2)),'b');
-hold on; plot(Xce,Ez(:,end-plotBackIndex),'r'); grid on;
-hold on; plot(Xcc,Ez0(:,end-plotBackIndex),'g--'); 
+hold on; plot(Xce,Ez(:,60),'black'); box on;
+hold on; plot(Xce,Ez(:,70),'b');
+hold on; plot(Xce,Ez(:,80),'r'); grid on;
+hold on; plot(Xcc,Ez0(:,80),'g--'); 
 %set(gca,'xtick',0:0.25:2);
 %set(gca,'ytick',0:0.3:1.2);
 xlabel('x'); ylabel('Ez');
@@ -246,9 +257,9 @@ title('electric field'); axis('square');
 xlim([0 xp1]);
 %
 subplot(2,3,5);
-hold on; plot(Xcc,B(:,1),'black'); box on;
-hold on; plot(Xcc,B(:,round((end-plotBackIndex)/2)),'b'); grid on;
-hold on; plot(Xcc,B(:,end-plotBackIndex),'r');
+hold on; plot(Xcc,B(:,60),'black'); box on;
+hold on; plot(Xcc,B(:,70),'b'); grid on;
+hold on; plot(Xcc,B(:,80),'r');
 xlabel('x'); ylabel('B'); axis('square');
 title('magnetic field');
 %set(gca,'xtick',0.0:0.25:2);
@@ -256,11 +267,11 @@ title('magnetic field');
 xlim([0 xp1]);
 %
 subplot(2,3,6);
-hold on; plot(Xce,J(:,1),'black'); box on;
-hold on; plot(Xce,J(:,round((end-plotBackIndex)/2)),'b'); grid on;
-hold on; plot(Xce,J(:,end-plotBackIndex),'r');
-%hold on; plot(Xce,J0(:,end-plotBackIndex),'g--');
-hold on; plot(Xcc,Jcc(:,end-plotBackIndex),'g--');
+hold on; plot(Xce,J(:,60),'black'); box on;
+hold on; plot(Xce,J(:,70),'b'); grid on;
+hold on; plot(Xce,J(:,80),'r');
+%hold on; plot(Xce,J0(:,50),'m--');
+hold on; plot(Xcc,Jcc(:,80),'g--');
 xlabel('x'); ylabel('J'); axis('square');
 title('current density');
 %set(gca,'xtick',0:0.05:2);
@@ -371,11 +382,15 @@ xlim([0 tout(end)]);
 %%%   calculate current-channel and shock location/speeds
 %
 X_J = zeros(size(tout));
+X_B = zeros(size(tout));
 X_N = zeros(size(tout));
 X_shock = zeros(size(tout));
 for n=1:length(tout)
     [~,ix0] = max(abs(J(:,n)));
     X_J(n) = Xce(ix0);
+    %
+    [~,ix0] = max(abs(B(:,n)));
+    X_B(n) = Xcc(ix0);
     %
     [~,ix0] = max(abs(N(:,n)));
     X_N(n) = Xcc(ix0);
@@ -389,14 +404,26 @@ for n=1:length(tout)
         %ix1 = ix1 + ix0 - 1;
     end
     X_shock(n) = Xcc(ix1);
+    
+    %%%   get piston velocity from pressure balance expression by
+    %%%   potter 1978 (note potter used Vs=2*Vp/(gamma0+1) to get shock
+    %%%   instead of piston)
+    %
+    Pmagmax(n) = max(Pmag(:,n));
+    Vp_potter(n) = sqrt(2*Pmagmax(n)/(gamma0+1));
+    Vmax(n) = max(abs(V(:,n)));
 end
+Volume_cyl = pi*(X_B.^2-X_shock.^2);
+Volume_car = (X_J-X_shock);
 
 V_J = zeros(size(tout));
+V_B = zeros(size(tout));
 V_N = zeros(size(tout));
 V_shock = zeros(size(tout));
 
-for n=2:length(tout)
+for n=2:length(tout)-1
     V_J(n) = (X_J(n)-X_J(n-1))/(tout(n)-tout(n-1));
+    V_B(n) = (X_B(n+1)-X_B(n-1))/(tout(n+1)-tout(n-1));
     V_N(n) = (X_N(n)-X_N(n-1))/(tout(n)-tout(n-1));
     V_shock(n) = (X_shock(n)-X_shock(n-1))/(tout(n)-tout(n-1));
 end
@@ -414,6 +441,12 @@ title('axial positions');
 lg13=legend('peak current density','peak density','shock front');
 set(lg13,'location','best');
 xlim([0 tout(end)]);
+hold on; plot(tout,X_B,'displayName','peak B');
+hold on; line([0 tout(end)],[0.3088 0.3088],'linestyle','--','color','black'); % potter 1978
+
+%rsp = X_shock./X_B;
+%rp_potter = (gamma0./(gamma0+1-rsp.^2)).^(gamma0/(gamma0-1));
+
 
 
  mfpi = 2.0e12*Ti.^2./(N0*N/1e6); % ion mean free path [cm]
