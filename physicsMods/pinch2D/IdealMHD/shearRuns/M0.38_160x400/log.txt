@@ -1,0 +1,291 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Initiating simulation
+mpi job with 50 processors
+
+Input file ./input.json parsed successfully
+
+Output file output0.h5 created 
+Non-extendable int procID written to output0.h5
+
+Initializing domain grid ...
+Xmin = 0
+Xmax = 3
+nX = 400
+nXsub = 8
+dX = 0.0075
+nXg = 2
+
+Zmin = -1.88496
+Zmax = 1.88496
+nZ = 160
+nZsub = 160
+dZ = 0.0235619
+nZg = 2
+
+Non-extendable vector Xcc added to output0.h5
+Non-extendable vector Xce added to output0.h5
+Non-extendable int nXg written to output0.h5
+Non-extendable vector Zcc added to output0.h5
+Non-extendable vector Zce added to output0.h5
+Non-extendable int nZg written to output0.h5
+
+Initializing time domain ...
+tmax = 80.8
+tOut intervals = 0.8
+dtFrac = 2
+
+Extendable scalar tout added to output0.h5
+
+Initializing Physics ...
+advection diff/interp scheme is QUICK
+adiabatic coefficent = 1.6667
+Nsub = 2
+Nthresh = 0.001
+Initial var is Gaussian with amplitude = -0.0001
+center at x = 1
+width = 0.3333
+and y-shift = 0
+Initial F0 is cos with mode number  = 1
+Non-extendable matrix2D rcc added to output0.h5
+Extendable matrix2D Fx added to output0.h5
+Extendable matrix2D N added to output0.h5
+Non-extendable matrix2D deltaP added to output0.h5
+Non-extendable matrix2D P0 added to output0.h5
+Extendable matrix2D Mx added to output0.h5
+Extendable matrix2D Mz added to output0.h5
+Extendable matrix2D E added to output0.h5
+Extendable matrix2D S added to output0.h5
+Extendable matrix2D By added to output0.h5
+Extendable matrix2D P added to output0.h5
+Extendable matrix2D T added to output0.h5
+Extendable matrix2D Vx added to output0.h5
+Extendable matrix2D Vz added to output0.h5
+Extendable matrix2D Jz added to output0.h5
+Extendable matrix2D Ez added to output0.h5
+Extendable matrix2D Jx added to output0.h5
+Extendable matrix2D Ex added to output0.h5
+Extendable matrix2D Cs added to output0.h5
+Non-extendable scalar gamma0 written to output0.h5
+Extendable matrix2D FluxN_x added to output0.h5
+Extendable matrix2D FluxMx_x added to output0.h5
+Extendable matrix2D FluxMz_x added to output0.h5
+Extendable matrix2D FluxE_x added to output0.h5
+Extendable matrix2D FluxBy_x added to output0.h5
+Extendable matrix2D FluxRatio_x added to output0.h5
+Extendable matrix2D FluxLim_x added to output0.h5
+Extendable matrix2D FluxR_x added to output0.h5
+Extendable matrix2D FluxL_x added to output0.h5
+dtSim = 0.000255427
+Initial simulation time step: 0.000255427
+
+dtSim = 0.000256649
+Output variables dumped at t = 0.800061
+dtSim = 0.000256939
+Output variables dumped at t = 1.60004
+dtSim = 0.000257117
+Output variables dumped at t = 2.40018
+dtSim = 0.000257266
+Output variables dumped at t = 3.20006
+dtSim = 0.00025739
+Output variables dumped at t = 4.0001
+dtSim = 0.000257499
+Output variables dumped at t = 4.80023
+dtSim = 0.000257598
+Output variables dumped at t = 5.60018
+dtSim = 0.000257686
+Output variables dumped at t = 6.40016
+dtSim = 0.000257756
+Output variables dumped at t = 7.20013
+dtSim = 0.000257823
+Output variables dumped at t = 8.00005
+dtSim = 0.000257883
+Output variables dumped at t = 8.80017
+dtSim = 0.00025794
+Output variables dumped at t = 9.60021
+dtSim = 0.000257997
+Output variables dumped at t = 10.4002
+dtSim = 0.000258047
+Output variables dumped at t = 11.2
+dtSim = 0.000258098
+Output variables dumped at t = 12.0001
+dtSim = 0.000258148
+Output variables dumped at t = 12.8003
+dtSim = 0.000258194
+Output variables dumped at t = 13.6001
+dtSim = 0.00025824
+Output variables dumped at t = 14.4
+dtSim = 0.000258282
+Output variables dumped at t = 15.2001
+dtSim = 0.000258324
+Output variables dumped at t = 16.0001
+dtSim = 0.000258362
+Output variables dumped at t = 16.8002
+dtSim = 0.000258401
+Output variables dumped at t = 17.6001
+dtSim = 0.000258439
+Output variables dumped at t = 18.4002
+dtSim = 0.000258474
+Output variables dumped at t = 19.2001
+dtSim = 0.000258509
+Output variables dumped at t = 20.0001
+dtSim = 0.000258543
+Output variables dumped at t = 20.8
+dtSim = 0.000258575
+Output variables dumped at t = 21.6003
+dtSim = 0.000258604
+Output variables dumped at t = 22.4001
+dtSim = 0.000258633
+Output variables dumped at t = 23.2002
+dtSim = 0.000258661
+Output variables dumped at t = 24.0002
+dtSim = 0.000258686
+Output variables dumped at t = 24.8001
+dtSim = 0.000258712
+Output variables dumped at t = 25.6002
+dtSim = 0.000258737
+Output variables dumped at t = 26.4002
+dtSim = 0.000258761
+Output variables dumped at t = 27.2002
+dtSim = 0.000258785
+Output variables dumped at t = 28.0001
+dtSim = 0.000258809
+Output variables dumped at t = 28.8
+dtSim = 0.000258831
+Output variables dumped at t = 29.6
+dtSim = 0.000258852
+Output variables dumped at t = 30.4001
+dtSim = 0.000258876
+Output variables dumped at t = 31.2
+dtSim = 0.000258899
+Output variables dumped at t = 32.0003
+dtSim = 0.00025892
+Output variables dumped at t = 32.8
+dtSim = 0.000258945
+Output variables dumped at t = 33.6001
+dtSim = 0.000258966
+Output variables dumped at t = 34.4
+dtSim = 0.000258989
+Output variables dumped at t = 35.2
+dtSim = 0.000259013
+Output variables dumped at t = 36.0001
+dtSim = 0.000259038
+Output variables dumped at t = 36.8002
+dtSim = 0.000259064
+Output variables dumped at t = 37.6001
+dtSim = 0.000259089
+Output variables dumped at t = 38.4002
+dtSim = 0.000259118
+Output variables dumped at t = 39.2
+dtSim = 0.000259143
+Output variables dumped at t = 40.0002
+dtSim = 0.000259161
+Output variables dumped at t = 40.8002
+dtSim = 0.000259169
+Output variables dumped at t = 41.6
+dtSim = 0.000259169
+Output variables dumped at t = 42.4001
+dtSim = 0.000259164
+Output variables dumped at t = 43.2001
+dtSim = 0.000259154
+Output variables dumped at t = 44.0001
+dtSim = 0.000259141
+Output variables dumped at t = 44.8001
+dtSim = 0.000259127
+Output variables dumped at t = 45.6001
+dtSim = 0.000259114
+Output variables dumped at t = 46.4002
+dtSim = 0.000259106
+Output variables dumped at t = 47.2001
+dtSim = 0.00025911
+Output variables dumped at t = 48.0002
+dtSim = 0.000259129
+Output variables dumped at t = 48.8001
+dtSim = 0.000259169
+Output variables dumped at t = 49.6001
+dtSim = 0.000259232
+Output variables dumped at t = 50.4
+dtSim = 0.000259302
+Output variables dumped at t = 51.2001
+dtSim = 0.00025932
+Output variables dumped at t = 52.0001
+dtSim = 0.000259249
+Output variables dumped at t = 52.8
+dtSim = 0.000259148
+Output variables dumped at t = 53.6002
+dtSim = 0.000259079
+Output variables dumped at t = 54.4
+dtSim = 0.000259088
+Output variables dumped at t = 55.2001
+dtSim = 0.000259185
+Output variables dumped at t = 56.0003
+dtSim = 0.00025933
+Output variables dumped at t = 56.8001
+dtSim = 0.000259362
+Output variables dumped at t = 57.6002
+dtSim = 0.000259235
+Output variables dumped at t = 58.4002
+dtSim = 0.000259055
+Output variables dumped at t = 59.2001
+dtSim = 0.000258972
+Output variables dumped at t = 60.0002
+dtSim = 0.000259022
+Output variables dumped at t = 60.8002
+dtSim = 0.000259217
+Output variables dumped at t = 61.6001
+dtSim = 0.000258808
+Output variables dumped at t = 62.4002
+dtSim = 0.000258299
+Output variables dumped at t = 63.2001
+dtSim = 0.000256882
+Output variables dumped at t = 64.0003
+dtSim = 0.000252851
+Output variables dumped at t = 64.8
+dtSim = 0.000248331
+Output variables dumped at t = 65.6
+dtSim = 0.000246685
+Output variables dumped at t = 66.4002
+dtSim = 0.000242416
+Output variables dumped at t = 67.2
+dtSim = 0.000233928
+Output variables dumped at t = 68.0002
+dtSim = 0.00021724
+Output variables dumped at t = 68.8
+dtSim = 0.000219901
+Output variables dumped at t = 69.6001
+dtSim = 0.000233502
+Output variables dumped at t = 70.4002
+dtSim = 0.000231605
+Output variables dumped at t = 71.2002
+dtSim = 0.00018949
+Output variables dumped at t = 72.0001
+dtSim = 0.000261172
+Output variables dumped at t = 72.8001
+dtSim = 0.000290862
+Output variables dumped at t = 73.6001
+dtSim = 0.000285179
+Output variables dumped at t = 74.4002
+dtSim = 0.000282374
+Output variables dumped at t = 75.2002
+dtSim = 0.000284438
+Output variables dumped at t = 76.0003
+dtSim = 0.000282097
+Output variables dumped at t = 76.8
+dtSim = 0.000299317
+Output variables dumped at t = 77.6
+dtSim = 0.000323263
+Output variables dumped at t = 78.4002
+dtSim = 0.000339148
+Output variables dumped at t = 79.2001
+dtSim = 0.000320214
+Output variables dumped at t = 80.0002
+dtSim = 0.000310019
+Output variables dumped at t = 80.8
+
+Final simulation time step = 0.000310019
+
+Ending simulation: wall time = 1781.96
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

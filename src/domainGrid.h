@@ -92,6 +92,7 @@ public:
                       const matrix2D<double>&, 
 		      const matrix2D<double>&,
 		      const matrix2D<double>&,
+                      const string&,
 		      const int) const;
   void computeFluxTVDsimple(vector<double>&, 
                       vector<double> &,

@@ -8,7 +8,11 @@ fileinfo = hdf5info(thisFile);
 dsets=fileinfo.GroupHierarchy.Datasets;
 
 nXg = 2;
+try nXg = hdf5read(thisFile,'nXg');
+end
 nZg = 2;
+try nZg = hdf5read(thisFile,'nZg');
+end
 
 %Name1 = fileinfo.GroupHierarchy.Datasets(1).Name
 

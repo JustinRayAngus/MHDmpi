@@ -1,0 +1,88 @@
+{
+"Xgrid":{
+         "Xmin":0.0,
+         "Xmax":3.0,
+         "nX":400,
+         "nXg":2 // number of guard cells each end
+        },
+"Zgrid":{
+         "Zmin":-1.884955592153876,
+         "Zmax": 1.884955592153876,
+         //"Zmin":-1.047197551196598,
+         //"Zmax": 1.047197551196598,
+         "nZ":160,
+         "nZg":2 // number of guard cells each end
+        },
+"Time":{
+        "dtOut":0.8,  // output time intervals
+        "tOutSteps":101,  // number of output setps
+        "dtFrac":2.0     // dtSim = dtMax/dtFrac
+       },
+"Physics":{
+           "advScheme":"QUICK", // "QUICK", "TVD"
+           "Nsub":2, // this actually refers to order
+           "gammaC":1.6667,  // adiabatic coefficient
+           "Nthresh":1.0e-3, // density threshold
+           "P":{
+                "Xtype":"bennettP", // initial profile
+                "Xa":1.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":1.0,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
+               },
+           "T":{
+                "Xtype":"const", // initial profile
+                "Xa":0.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.0,  // width
+                "Xd":1.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
+               },
+           "Vz":{
+                "Xtype":"const", // initial profile
+                "Xa":0.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.380,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
+               },
+           "By":{
+                "Xtype":"bennettB", // initial profile
+                "Xa":1.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":1.0,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
+               },
+           "deltaP":{
+                "Xtype":"gaussian", // initial profile
+                "Xa":-1.0e-4,  // amplitude
+                "Xb":1.0,  // x-shift
+                "Xc":0.3333,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"cos", // initial profile
+                "Za":1.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":1.0,  // width
+                "Zd":0.0   // y-shift
+               }
+          }
+}
+

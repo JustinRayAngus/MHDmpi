@@ -21,7 +21,7 @@ class Physics
 {
 public:
    void initialize(const domainGrid&, const Json::Value&, HDF5dataFile&);
-   void setdtSim(double&, const timeDomain&, const domainGrid&);
+   void setdtSim(double&, const timeDomain&, const domainGrid&, const int);
    void advance(const domainGrid&, const double);
 };
 

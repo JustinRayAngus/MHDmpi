@@ -1,0 +1,16 @@
+#!/bin/csh 
+#MSUB -l walltime=0:30:00
+#MSUB -N testing
+#MSUB -V -j oe 
+#MSUB -l partition=quartz
+#MSUB -l nodes=3
+#MSUB -A wsilver
+#MSUB -m abe
+#MSUB -M angus1@llnl.gov
+#MSUB -q pdebug
+
+umask 027
+
+srun -N 3 -n 100 -m block ./mhd input.txt >>& log.txt
+
+

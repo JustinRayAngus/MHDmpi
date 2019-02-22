@@ -1,0 +1,94 @@
+{
+"Xgrid":{
+         "Xmin":0.0,
+         "Xmax":3.0,
+         "nX":400,
+         "nXg":2 // number of guard cells each end
+        },
+"Zgrid":{
+         "Zmin":-1.047197551196598,
+         "Zmax": 1.047197551196598,
+         "nZ":160,
+         "nZg":2 // number of guard cells each end
+        },
+"Time":{
+        "dtOut":2.0e-1,  // output time intervals
+        "tOutSteps":100,  // number of output setps
+        "dtFrac":2.0     // dtSim = dtMax/dtFrac
+       },
+"Physics":{
+           "advScheme":"QUICK", // "U1", "C2", "QUICK", "TVD"
+           "Nsub":2, // this actually refers to order
+           "gammaC":1.6667, // adiabatic coefficient
+           "lambda":0.12,  // Li/L0
+           "epsilon":1.0e-6, // (Le/L0)^2
+           "delta":1.0e-4,   // (V0/C)^2
+           "taui":10.0,     // taui/t0
+           "tauiVis":1.0e-3,  // taui/t0 used for viscousity
+           "modelDriftTerms":1,
+           "modelGyroVisc":0,
+           "nuTherm":2.7e-3,  // thermalization rate
+           "TempRatio":1.0,   // Ti0/Te0
+           "P":{
+                "Xtype":"bennettP", // initial profile
+                "Xa":1.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":1.0,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
+               },
+           "T":{
+                "Xtype":"const", // initial profile
+                "Xa":0.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.0,  // width
+                "Xd":0.5,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
+               },
+           "Vz":{
+                "Xtype":"const", // initial profile
+                "Xa":0.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.0,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
+               },
+           "By":{
+                "Xtype":"bennettB", // initial profile
+                "Xa":1.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":1.0,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"const", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0   // y-shift
+               },
+           "deltaP":{
+                "Xtype":"gaussian", // initial profile
+                "Xa":-1.0e-4,  // amplitude
+                "Xb":1.0,  // x-shift
+                "Xc":0.3333,  // width
+                "Xd":0.0,   // y-shift
+                "Ztype":"cos", // initial profile
+                "Za":1.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":1.0,  // width
+                "Zd":0.0   // y-shift
+               }
+          }
+}
+

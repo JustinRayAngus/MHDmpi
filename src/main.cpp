@@ -155,11 +155,11 @@ int main(int argc, char** argv) {
          tDom.updatetOut(thist);
          dataFile.writeAll(); // append extendable outputs
          thistOutInt = thistOutInt+1;
-	 verbose = 1;
+         verbose = 1;
          phys.setdtSim(dtSim, tDom, Xgrid, verbose);
-	 verbose = 0;
+         verbose = 0;
          if(procID==0) {
-            cout << "Output variables dumped at t = " << thist << endl;
+            cout << "Output variables dumped at t = " << thist << endl; 
          }
       }
       else {

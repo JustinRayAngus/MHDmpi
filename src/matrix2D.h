@@ -12,6 +12,8 @@
 //#include "vectorMath.h" 
 #include <vector>
 #include <mpi.h>
+#include <math.h>
+#include <cmath>
 
 using namespace std;
 
@@ -307,6 +309,43 @@ T max(const matrix2D<T> &thisMat)
   
    return result;
 }
+template <typename T>
+matrix2D<T> max(const matrix2D<T> &thisMat, const T a0)
+{
+   matrix2D<T> result(thisMat);
+   T  thisval;
+   const int thisNx = thisMat.size0();
+   const int thisNz = thisMat.size1();
+
+   for (auto i=0; i<thisNx; i++) {
+      for (auto j=0; j<thisNz; j++) {
+	 result(i,j) = max(thisMat(i,j),a0);
+	 //thisval = thisMat(i,j);
+	 //if(thisval<a0) result(i,j) = a0;
+      }
+   }
+
+   return result;
+}
+template <typename T>
+matrix2D<T> min(const matrix2D<T> &thisMat, const T a0)
+{
+   matrix2D<T> result(thisMat);
+   T  thisval;
+   const int thisNx = thisMat.size0();
+   const int thisNz = thisMat.size1();
+
+   for (auto i=0; i<thisNx; i++) {
+      for (auto j=0; j<thisNz; j++) {
+	 result(i,j) = min(thisMat(i,j),a0);
+	 //thisval = thisMat(i,j);
+	 //if(thisval<a0) result(i,j) = a0;
+      }
+   }
+
+   return result;
+}
+
 
 
 #include "matrix2D.cpp"

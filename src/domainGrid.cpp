@@ -791,18 +791,26 @@ void domainGrid::DDX(vector<double>& Fout, const vector<double>& Fin) const {
    const int Nout = Fout.size();
    const int Nin  = Fin.size();
    //assert(Nout == nXce);
-   assert(Nin == nXcc);
+   //assert(Nin == nXcc);
 
-   if(Nout == nXce) { // Fout is at cell edges
+   if(Nout == nXce && Nin == nXcc) { // Fout is at cell edges
       for (auto i=0; i<Nout; i++) {
          Fout.at(i) = (Fin.at(i+1)-Fin.at(i))/dX;
       }   
    } 
-   else {
+   else if (Nout == nXcc && Nin == nXcc) {
       for (auto i=1; i<Nout-1; i++) {
          Fout.at(i) = (Fin.at(i+1)-Fin.at(i-1))/2.0/dX;
       }   
-      
+   }
+   else if (Nout == nXcc && Nin == nXce) {
+      for (auto i=1; i<Nout-1; i++) {
+         Fout.at(i) = (Fin.at(i)-Fin.at(i-1))/dX;
+      }   
+   }
+   else {
+      printf("ERROR: Nout and Nin combo failed for DDX");
+      exit (EXIT_FAILURE);
    }
 
 }
@@ -847,23 +855,35 @@ void domainGrid::DDX(matrix2D<double>& Fout,
    const int Nout1 = Fout.size1();
    const int Nin0  = Fin.size0();
    const int Nin1  = Fin.size1();
-   assert(Nin0 == nXcc);
+   //assert(Nin0 == nXcc);
    assert(Nin1 == Nout1);
 
-   if(Nout0 == nXce) { // Fout is at cell edges in X-direction
+   if(Nout0 == nXce && Nin0 == nXcc) { // Fout is at cell edges in X-direction
       for (auto i=0; i<Nout0; i++) {
          for (auto j=0; j<Nout1; j++) {
             Fout(i,j) = (Fin(i+1,j)-Fin(i,j))/dX;
 	 }
       }   
    } 
-   else {  // Fout is at cell center in X-direction
+   else if (Nout0 == nXcc && Nin0 == nXcc) {  // Fout is at cell center in X-direction
       for (auto i=1; i<Nout0-1; i++) {
          for (auto j=0; j<Nout1; j++) {
             Fout(i,j) = (Fin(i+1,j)-Fin(i-1,j))/2.0/dX;
          }
       }	 
    }
+   else if (Nout0 == nXcc && Nin0 == nXce) {
+      for (auto i=1; i<Nout0-1; i++) {
+         for (auto j=0; j<Nout1; j++) {
+            Fout(i,j) = (Fin(i,j)-Fin(i-1,j))/dX;
+         }   
+      }
+   }
+   else {
+      printf("ERROR: Nout and Nin combo failed for DDX");
+      exit (EXIT_FAILURE);
+   }
+
 
 }
 
@@ -908,22 +928,34 @@ void domainGrid::DDZ(matrix2D<double>& Fout,
    const int Nin0  = Fin.size0();
    const int Nin1  = Fin.size1();
    assert(Nout0 == Nin0);
-   assert(Nin1 == nZcc);
+   //assert(Nin1 == nZcc);
 
-   if(Nout1 == nZce) { // Fout is at cell edges in Z-direction
+   if(Nout1 == nZce && Nin1 == nZcc) { // Fout is at cell edges in Z-direction
       for (auto i=0; i<Nout0; i++) {
          for (auto j=0; j<Nout1; j++) {
             Fout(i,j) = (Fin(i,j+1)-Fin(i,j))/dZ;
 	 }
       }   
    } 
-   else {  // Fout is at cell center in Z-direction
+   else if(Nout1 == nZcc && Nin1 == nZcc) {  // Fout is at cell center in Z-direction
       for (auto i=0; i<Nout0; i++) {
          for (auto j=1; j<Nout1-1; j++) {
             Fout(i,j) = (Fin(i,j+1)-Fin(i,j-1))/2.0/dZ;
          }
       }	 
    }
+   else if (Nout1 == nZcc && Nin1 == nZce) {
+      for (auto i=0; i<Nout0; i++) {
+         for (auto j=1; j<Nout1-1; j++) {
+            Fout(i,j) = (Fin(i,j)-Fin(i,j-1))/dZ;
+         }   
+      }
+   }
+   else {
+      printf("ERROR: Nout and Nin combo failed for DDZ");
+      exit (EXIT_FAILURE);
+   }
+
 
 }
 
@@ -1030,12 +1062,21 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
       // Use 5th order WENO upwinding (see Ren 2003)
       //
       double ep, d0, d1, d2, f0, f1, f2, b0, b1, b2;
-      double w0, w1, w2, w0b, w1b, w2b, sumwb;
-      ep = 1.0e-4;
+      double df, alpha, w0, w1, w2, w0b, w1b, w2b, sumwb;
+      ep = 1.0e-6;
 
       for (auto i=nXg-1; i<Nout-nXg+1; i++) {
       
-	 if(upC.at(i)>=0) {
+         //df = Fin.at(i+1)/upC.at(i+1)-Fin.at(i)/upC.at(i);
+         //if(df==df && df != 0.0) {
+         //   alpha = (Fin.at(i+1)-Fin.at(i))/df;
+         //}
+         //else {
+         //   alpha = upC.at(i+1)+upC.at(i);
+         //}
+         alpha = upC.at(i+1)+upC.at(i);
+        
+	 if(alpha>=0.0) {
             d0 = 0.3;
             d1 = 0.6;
             d2 = 0.1;
@@ -1331,44 +1372,126 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
    
    } // end METHOD=QUICK
    
-   else if(METHOD == "WENO3") { // 3rd order upwind NOT DONE YET!!!
-  
-      //double epsilon, p0, p1, p2, g0, g1, g2, w0, w1, w2;
-      //epsilon = 1.0e-8;
-      //g0 = 1.0/10.0;
-      //g1 = 6.0/10.0;
-      //g2 = 3.0/10.0;
+   else if(METHOD == "WENO5") {  
+      // Use 5th order WENO upwinding (see Ren 2003)
+      //
+      double ep, d0, d1, d2, f0, f1, f2, b0, b1, b2;
+      double df, alpha, w0, w1, w2, w0b, w1b, w2b, sumwb;
+      ep = 1.0e-6;
 
       if(dir==0) { // interp to X-faces
-         for (auto i=0; i<Nout0; i++) {
+
+         assert(nXg >= 3);
+
+         for (auto i=nXg-1; i<Nout0-nXg+1; i++) {
             for (auto j=0; j<Nout1; j++) {
-                
-               if(upC(i,j)<0.0) {
-                  Fout(i,j) = Fin(i+1,j);
+               
+               alpha = upC(i+1,j)+upC(i,j);  
+               if(alpha>=0.0) {
+                  d0 = 0.3;
+                  d1 = 0.6;
+                  d2 = 0.1;
+                  //
+                  f0 = (2.0*Fin(i,j) + 5.0*Fin(i+1,j) - 1.0*Fin(i+2,j))/6.0;
+                  f1 = (-1.0*Fin(i-1,j) + 5.0*Fin(i,j) + 2.0*Fin(i+1,j))/6.0;
+                  f2 = (2.0*Fin(i-2,j) - 7.0*Fin(i-1,j) + 11.0*Fin(i,j))/6.0;
+                  //
+                  b0 = 13.0/12.0*pow(Fin(i,j)-2.0*Fin(i+1,j)+Fin(i+2,j),2)
+                     + 1.0/4.0*pow(3.0*Fin(i,j)-4.0*Fin(i+1,j)+Fin(i+2,j),2);
+                  b1 = 13.0/12.0*pow(Fin(i-1,j)-2.0*Fin(i,j)+Fin(i+1,j),2)
+                     + 1.0/4.0*pow(Fin(i-1,j)-Fin(i+1,j),2);
+                  b2 = 13.0/12.0*pow(Fin(i-2,j)-2.0*Fin(i-1,j)+Fin(i,j),2)
+                     + 1.0/4.0*pow(Fin(i-2,j)-4.0*Fin(i-1,j)+3.0*Fin(i,j),2);
                } else {
-                  Fout(i,j) = Fin(i,j);
+                  d0 = 0.1;
+                  d1 = 0.6;
+                  d2 = 0.3;
+                  //
+                  f0 = (11.0*Fin(i+1,j) - 7.0*Fin(i+2,j) + 2.0*Fin(i+3,j))/6.0;
+                  f1 = (2.0*Fin(i,j) + 5.0*Fin(i+1,j) - 1.0*Fin(i+2,j))/6.0;
+                  f2 = (-1.0*Fin(i-1,j) + 5.0*Fin(i,j) + 2.0*Fin(i+1,j))/6.0;
+                  //
+                  b0 = 13.0/12.0*pow(Fin(i+1,j)-2.0*Fin(i+2,j)+Fin(i+3,j),2)
+                     + 1.0/4.0*pow(3.0*Fin(i+1,j)-4.0*Fin(i+2,j)+Fin(i+3,j),2);
+                  b1 = 13.0/12.0*pow(Fin(i,j)-2.0*Fin(i+1,j)+Fin(i+2,j),2)
+                     + 1.0/4.0*pow(Fin(i,j)-Fin(i+2,j),2);
+                  b2 = 13.0/12.0*pow(Fin(i-1,j)-2.0*Fin(i,j)+Fin(i+1,j),2)
+                     + 1.0/4.0*pow(Fin(i-1,j)-4.0*Fin(i,j)+3.0*Fin(i+1,j),2);
                }
 
+               w0b = d0/pow(ep+b0,2);
+               w1b = d1/pow(ep+b1,2);
+               w2b = d2/pow(ep+b2,2);
+
+               sumwb = w0b+w1b+w2b;
+               w0 = w0b/sumwb;
+               w1 = w1b/sumwb;
+               w2 = w2b/sumwb;
+
+               Fout(i,j) = w0*f0 + w1*f1 + w2*f2;
+         
 	    }
          }
+
       }
       else { // interp to Z-faces
-         for (auto i=0; i<Nout0; i++) {
-            for (auto j=0; j<Nout1; j++) {
-      
-               if(upC(i,j)<0.0) {
-                  Fout(i,j) = Fin(i,j+1);
+
+         assert(nZg >= 3);
+
+         for (auto j=nZg-1; j<Nout1-nZg+1; j++) {
+            for (auto i=0; i<Nout0; i++) {
+
+               alpha = upC(i,j+1)+upC(i,j);  
+               if(alpha>=0.0) {
+                  d0 = 0.3;
+                  d1 = 0.6;
+                  d2 = 0.1;
+                  //
+                  f0 = (2.0*Fin(i,j) + 5.0*Fin(i,j+1) - 1.0*Fin(i,j+2))/6.0;
+                  f1 = (-1.0*Fin(i,j-1) + 5.0*Fin(i,j) + 2.0*Fin(i,j+1))/6.0;
+                  f2 = (2.0*Fin(i,j-2) - 7.0*Fin(i,j-1) + 11.0*Fin(i,j))/6.0;
+                  //
+                  b0 = 13.0/12.0*pow(Fin(i,j)-2.0*Fin(i,j+1)+Fin(i,j+2),2)
+                     + 1.0/4.0*pow(3.0*Fin(i,j)-4.0*Fin(i,j+1)+Fin(i,j+2),2);
+                  b1 = 13.0/12.0*pow(Fin(i,j-1)-2.0*Fin(i,j)+Fin(i,j+1),2)
+                     + 1.0/4.0*pow(Fin(i,j-1)-Fin(i,j+1),2);
+                  b2 = 13.0/12.0*pow(Fin(i,j-2)-2.0*Fin(i,j-1)+Fin(i,j),2)
+                     + 1.0/4.0*pow(Fin(i,j-2)-4.0*Fin(i,j-1)+3.0*Fin(i,j),2);
                } else {
-                  Fout(i,j) = Fin(i,j);
+                  d0 = 0.1;
+                  d1 = 0.6;
+                  d2 = 0.3;
+                  //
+                  f0 = (11.0*Fin(i,j+1) - 7.0*Fin(i,j+2) + 2.0*Fin(i,j+3))/6.0;
+                  f1 = (2.0*Fin(i,j) + 5.0*Fin(i,j+1) - 1.0*Fin(i,j+2))/6.0;
+                  f2 = (-1.0*Fin(i,j-1) + 5.0*Fin(i,j) + 2.0*Fin(i,j+1))/6.0;
+                  //
+                  b0 = 13.0/12.0*pow(Fin(i,j+1)-2.0*Fin(i,j+2)+Fin(i,j+3),2)
+                     + 1.0/4.0*pow(3.0*Fin(i,j+1)-4.0*Fin(i,j+2)+Fin(i,j+3),2);
+                  b1 = 13.0/12.0*pow(Fin(i,j)-2.0*Fin(i,j+1)+Fin(i,j+2),2)
+                     + 1.0/4.0*pow(Fin(i,j)-Fin(i,j+2),2);
+                  b2 = 13.0/12.0*pow(Fin(i,j-1)-2.0*Fin(i,j)+Fin(i,j+1),2)
+                     + 1.0/4.0*pow(Fin(i,j-1)-4.0*Fin(i,j)+3.0*Fin(i,j+1),2);
                }
+
+               w0b = d0/pow(ep+b0,2);
+               w1b = d1/pow(ep+b1,2);
+               w2b = d2/pow(ep+b2,2);
+
+               sumwb = w0b+w1b+w2b;
+               w0 = w0b/sumwb;
+               w1 = w1b/sumwb;
+               w2 = w2b/sumwb;
+
+               Fout(i,j) = w0*f0 + w1*f1 + w2*f2;
 
 	    }
          }
+
       }
    
-   } // end METHOD=WENO3
+   } // end METHOD=WENO5
    
-
    else {
       cout << "advection scheme not valid," << endl;
       cout << "should be caught on initilization!" << endl;
@@ -1747,11 +1870,12 @@ void domainGrid::computeFluxTVDsimple(matrix2D<double> &Flout,
                                 const matrix2D<double> &Flin,
                                 const matrix2D<double> &upC,
                                 const matrix2D<double> &fin,
+                                const string& METHOD,
 				const int dir) const {
 
-   // similar to computeFluxTVD, but uses QUICK to compute
+   // similar to computeFluxTVD, but uses METHOD to compute
    // left and right going fluxes rather than MUSCL
-   // Note that it is not a TVD schem now
+   // Note that it may not be TVD scheme now
 
    // this function interpolates cell-center flux Flin
    // to Flout, defined at cell edges, using TVD scheme 
@@ -1790,8 +1914,8 @@ void domainGrid::computeFluxTVDsimple(matrix2D<double> &Flout,
    FlinR = 0.5*(Flin + upC*fin);
    FlinL = 0.5*(Flin - upC*fin);
   
-   InterpToCellEdges(FloutR,FlinR,upC,"QUICK",dir);
-   InterpToCellEdges(FloutL,FlinL,-upC,"QUICK",dir);
+   InterpToCellEdges(FloutR,FlinR,upC,METHOD,dir);
+   InterpToCellEdges(FloutL,FlinL,-upC,METHOD,dir);
   
    Flout = FloutR+FloutL;
 
