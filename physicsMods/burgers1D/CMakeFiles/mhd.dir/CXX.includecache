@@ -386,7 +386,7 @@ H5FDstdio.h
 H5FDwindows.h
 /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5FDwindows.h
 
-/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers1D.cpp
+/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers2D.cpp
 iostream
 -
 string
@@ -407,14 +407,14 @@ mpi.h
 -
 assert.h
 -
-vector
--
 cmath
 -
 json/json.h
 /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/json/json.h
 vectorMath.h
 /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/vectorMath.h
+matrix2D.h
+/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/matrix2D.h
 domainGrid.h
 /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/domainGrid.h
 timeDomain.h
@@ -528,6 +528,10 @@ matrix2D.h
 vector
 -
 mpi.h
+-
+math.h
+-
+cmath
 -
 matrix2D.cpp
 /Users/angus1/Programs/MHDmpi/src/./matrix2D.cpp
@@ -848,6 +852,10 @@ matrix2D.h
 vector
 -
 mpi.h
+-
+math.h
+-
+cmath
 -
 matrix2D.cpp
 /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp

@@ -104,7 +104,7 @@ CMakeFiles/mhd.dir/HDF5dataFile.cpp.o
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/topology_inln.h
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/win.h
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/win_inln.h
-CMakeFiles/mhd.dir/burgers1D.cpp.o
+CMakeFiles/mhd.dir/burgers2D.cpp.o
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5ACpublic.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5AbstractDs.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5Apublic.h
@@ -169,7 +169,7 @@ CMakeFiles/mhd.dir/burgers1D.cpp.o
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5public.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5version.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/hdf5.h
- /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers1D.cpp
+ /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers2D.cpp
  /Users/angus1/Programs/MHDmpi/src/./HDF5dataFile.h
  /Users/angus1/Programs/MHDmpi/src/./Physics.h
  /Users/angus1/Programs/MHDmpi/src/./domainGrid.h

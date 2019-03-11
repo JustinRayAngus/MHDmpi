@@ -1,8 +1,8 @@
 %%%%%%%%%%%%%
 %%%
-%%%   solution to Burger's equation
+%%%   solution to Burger's equation from Hopf-Cole transformation
 %%%
-%%%   ?F/?t + ?(F^2/2-K?F/?x)?x = 0
+%%%   dF/dt + d(F^2/2)/dx = K*d2F/dx2
 %%%
 %%%%%%%%%%%%%
 clear all;
@@ -12,8 +12,8 @@ clear all;
 %
 K = 0.002;
 nx = 1000;
-Xmin = -1.0;
-Xmax = 1.0;
+Xmin = -2.0;
+Xmax = 2.0;
 dx = (Xmax-Xmin)/nx;
 x = Xmin-dx:dx:Xmax+dx;
 a = 1;
@@ -25,7 +25,7 @@ F0 = a*exp(-xshift.^2/2);
 
 %%%   set time domain
 %
-time = 0:0.02:0.4;
+time = 0:0.02:2.0;
 
 
 %%%   initialize solution matrix and BC's
@@ -68,11 +68,11 @@ end
 
 %%%   plot solution
 %
-figure(2);
+f1=figure(1);
 plot(x,F(:,1));
 hold on; plot(x,F(:,round(end/2)));
 hold on; plot(x,F(:,end));
-xlim([-0.5 0.5]);
+xlim([Xmin Xmax]);
 
 
 

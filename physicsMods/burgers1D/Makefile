@@ -150,32 +150,32 @@ HDF5dataFile.cpp.s:
 	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/HDF5dataFile.cpp.s
 .PHONY : HDF5dataFile.cpp.s
 
-burgers1D.o: burgers1D.cpp.o
+burgers2D.o: burgers2D.cpp.o
 
-.PHONY : burgers1D.o
+.PHONY : burgers2D.o
 
 # target to build an object file
-burgers1D.cpp.o:
-	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/burgers1D.cpp.o
-.PHONY : burgers1D.cpp.o
+burgers2D.cpp.o:
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/burgers2D.cpp.o
+.PHONY : burgers2D.cpp.o
 
-burgers1D.i: burgers1D.cpp.i
+burgers2D.i: burgers2D.cpp.i
 
-.PHONY : burgers1D.i
+.PHONY : burgers2D.i
 
 # target to preprocess a source file
-burgers1D.cpp.i:
-	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/burgers1D.cpp.i
-.PHONY : burgers1D.cpp.i
+burgers2D.cpp.i:
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/burgers2D.cpp.i
+.PHONY : burgers2D.cpp.i
 
-burgers1D.s: burgers1D.cpp.s
+burgers2D.s: burgers2D.cpp.s
 
-.PHONY : burgers1D.s
+.PHONY : burgers2D.s
 
 # target to generate assembly for a file
-burgers1D.cpp.s:
-	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/burgers1D.cpp.s
-.PHONY : burgers1D.cpp.s
+burgers2D.cpp.s:
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/burgers2D.cpp.s
+.PHONY : burgers2D.cpp.s
 
 domainGrid.o: domainGrid.cpp.o
 
@@ -351,9 +351,9 @@ help:
 	@echo "... HDF5dataFile.o"
 	@echo "... HDF5dataFile.i"
 	@echo "... HDF5dataFile.s"
-	@echo "... burgers1D.o"
-	@echo "... burgers1D.i"
-	@echo "... burgers1D.s"
+	@echo "... burgers2D.o"
+	@echo "... burgers2D.i"
+	@echo "... burgers2D.s"
 	@echo "... domainGrid.o"
 	@echo "... domainGrid.i"
 	@echo "... domainGrid.s"

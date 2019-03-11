@@ -16,11 +16,13 @@
          "b":0.0,  // x-shift
          "c":0.1,  // width
          "d":0.0,  // y-shift
-         "advScheme":"WENO5", // "U1", "C2", "QUICK", "TVD"
+         "advScheme":"WENO5", // "U1", "C2", "QUICK", "TVD", "WENO5"
+         "TVDlimiter":"superbee", // "vanleer", "minmod", "superbee"
          //"diffC":0.00, // diffusion coefficient
          "diffC":0.002, // diffusion coefficient
-         "order":2,     // order in time (1 or 2)
-         "fluxDir":-1   // flux directin (+/-1)
+         "advCx":1,     // x-flux coefficient
+         "advCz":1,     // z-flux coefficient
+         "order":2     // order in time (1 or 2)
        }
 }
 

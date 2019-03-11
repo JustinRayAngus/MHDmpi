@@ -5,7 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/angus1/Programs/MHDmpi/src/HDF5dataFile.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles/mhd.dir/HDF5dataFile.cpp.o"
-  "/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers1D.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles/mhd.dir/burgers1D.cpp.o"
+  "/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers2D.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles/mhd.dir/burgers2D.cpp.o"
   "/Users/angus1/Programs/MHDmpi/src/domainGrid.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles/mhd.dir/domainGrid.cpp.o"
   "/Users/angus1/Programs/MHDmpi/src/jsoncpp.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles/mhd.dir/jsoncpp.cpp.o"
   "/Users/angus1/Programs/MHDmpi/src/main.cpp" "/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles/mhd.dir/main.cpp.o"

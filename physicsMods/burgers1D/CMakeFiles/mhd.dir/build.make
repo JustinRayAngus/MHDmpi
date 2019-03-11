@@ -225,28 +225,28 @@ CMakeFiles/mhd.dir/jsoncpp.cpp.o.provides: CMakeFiles/mhd.dir/jsoncpp.cpp.o.requ
 CMakeFiles/mhd.dir/jsoncpp.cpp.o.provides.build: CMakeFiles/mhd.dir/jsoncpp.cpp.o
 
 
-CMakeFiles/mhd.dir/burgers1D.cpp.o: CMakeFiles/mhd.dir/flags.make
-CMakeFiles/mhd.dir/burgers1D.cpp.o: burgers1D.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/mhd.dir/burgers1D.cpp.o"
-	mpicxx   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mhd.dir/burgers1D.cpp.o -c /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers1D.cpp
+CMakeFiles/mhd.dir/burgers2D.cpp.o: CMakeFiles/mhd.dir/flags.make
+CMakeFiles/mhd.dir/burgers2D.cpp.o: burgers2D.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/mhd.dir/burgers2D.cpp.o"
+	mpicxx   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/mhd.dir/burgers2D.cpp.o -c /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers2D.cpp
 
-CMakeFiles/mhd.dir/burgers1D.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mhd.dir/burgers1D.cpp.i"
-	mpicxx  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers1D.cpp > CMakeFiles/mhd.dir/burgers1D.cpp.i
+CMakeFiles/mhd.dir/burgers2D.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/mhd.dir/burgers2D.cpp.i"
+	mpicxx  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers2D.cpp > CMakeFiles/mhd.dir/burgers2D.cpp.i
 
-CMakeFiles/mhd.dir/burgers1D.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mhd.dir/burgers1D.cpp.s"
-	mpicxx  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers1D.cpp -o CMakeFiles/mhd.dir/burgers1D.cpp.s
+CMakeFiles/mhd.dir/burgers2D.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/mhd.dir/burgers2D.cpp.s"
+	mpicxx  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/angus1/Programs/MHDmpi/physicsMods/burgers1D/burgers2D.cpp -o CMakeFiles/mhd.dir/burgers2D.cpp.s
 
-CMakeFiles/mhd.dir/burgers1D.cpp.o.requires:
+CMakeFiles/mhd.dir/burgers2D.cpp.o.requires:
 
-.PHONY : CMakeFiles/mhd.dir/burgers1D.cpp.o.requires
+.PHONY : CMakeFiles/mhd.dir/burgers2D.cpp.o.requires
 
-CMakeFiles/mhd.dir/burgers1D.cpp.o.provides: CMakeFiles/mhd.dir/burgers1D.cpp.o.requires
-	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/burgers1D.cpp.o.provides.build
-.PHONY : CMakeFiles/mhd.dir/burgers1D.cpp.o.provides
+CMakeFiles/mhd.dir/burgers2D.cpp.o.provides: CMakeFiles/mhd.dir/burgers2D.cpp.o.requires
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/burgers2D.cpp.o.provides.build
+.PHONY : CMakeFiles/mhd.dir/burgers2D.cpp.o.provides
 
-CMakeFiles/mhd.dir/burgers1D.cpp.o.provides.build: CMakeFiles/mhd.dir/burgers1D.cpp.o
+CMakeFiles/mhd.dir/burgers2D.cpp.o.provides.build: CMakeFiles/mhd.dir/burgers2D.cpp.o
 
 
 # Object files for target mhd
@@ -258,7 +258,7 @@ mhd_OBJECTS = \
 "CMakeFiles/mhd.dir/timeDomain.cpp.o" \
 "CMakeFiles/mhd.dir/HDF5dataFile.cpp.o" \
 "CMakeFiles/mhd.dir/jsoncpp.cpp.o" \
-"CMakeFiles/mhd.dir/burgers1D.cpp.o"
+"CMakeFiles/mhd.dir/burgers2D.cpp.o"
 
 # External object files for target mhd
 mhd_EXTERNAL_OBJECTS =
@@ -270,7 +270,7 @@ mhd: CMakeFiles/mhd.dir/vectorMath.cpp.o
 mhd: CMakeFiles/mhd.dir/timeDomain.cpp.o
 mhd: CMakeFiles/mhd.dir/HDF5dataFile.cpp.o
 mhd: CMakeFiles/mhd.dir/jsoncpp.cpp.o
-mhd: CMakeFiles/mhd.dir/burgers1D.cpp.o
+mhd: CMakeFiles/mhd.dir/burgers2D.cpp.o
 mhd: CMakeFiles/mhd.dir/build.make
 mhd: /opt/local/lib/openmpi-gcc5/libmpi_cxx.dylib
 mhd: /opt/local/lib/openmpi-gcc5/libmpi.dylib
@@ -290,7 +290,7 @@ CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/vectorMath.cpp.o.requires
 CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/timeDomain.cpp.o.requires
 CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/HDF5dataFile.cpp.o.requires
 CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/jsoncpp.cpp.o.requires
-CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/burgers1D.cpp.o.requires
+CMakeFiles/mhd.dir/requires: CMakeFiles/mhd.dir/burgers2D.cpp.o.requires
 
 .PHONY : CMakeFiles/mhd.dir/requires
 

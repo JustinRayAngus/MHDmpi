@@ -114,7 +114,7 @@ CMAKE_NM:FILEPATH=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDef
 CMAKE_OBJCOPY:FILEPATH=CMAKE_OBJCOPY-NOTFOUND
 
 //Path to a program.
-CMAKE_OBJDUMP:FILEPATH=CMAKE_OBJDUMP-NOTFOUND
+CMAKE_OBJDUMP:FILEPATH=/usr/bin/objdump
 
 //Build architectures for OSX
 CMAKE_OSX_ARCHITECTURES:STRING=
@@ -125,7 +125,7 @@ CMAKE_OSX_DEPLOYMENT_TARGET:STRING=
 
 //The product will be built against the headers and libraries located
 // inside the indicated SDK.
-CMAKE_OSX_SYSROOT:STRING=
+CMAKE_OSX_SYSROOT:PATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk
 
 //Value Computed by CMake
 CMAKE_PROJECT_NAME:STATIC=MHDwithMPI

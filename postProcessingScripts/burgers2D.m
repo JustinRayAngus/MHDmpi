@@ -9,41 +9,40 @@ clear all;
 
 numProcs = 4;
 filePath = '../physicsMods/burgers2D/';
+filePath = '../physicsMods/burgers2D/dataSave/';
+filePath = '../physicsMods/burgers1D/';
 %filePath = '../physicsMods/sodShock/';
 
-for i=1:numProcs
-fileName = ['output',num2str(i-1),'.h5'];
-thisFile = [filePath,fileName];
-procID  = hdf5read(thisFile,'procID');
-fileinfo = hdf5info(thisFile);
-Xcc = hdf5read(thisFile,'Xcc');
-Zcc = hdf5read(thisFile,'Zcc');
-Xce = hdf5read(thisFile,'Xce');
+Xcc = loadData(filePath,numProcs,'Xcc');
+Xce = loadData(filePath,numProcs,'Xce');
+Zcc = loadData(filePath,numProcs,'Zcc');
+Zce = loadData(filePath,numProcs,'Zce');
+tout= loadData(filePath,numProcs,'tout');
+%
+F0 = loadData(filePath,numProcs,'F0');
+FluxLimL = loadData(filePath,numProcs,'FluxLimL_x');
+FluxLimR = loadData(filePath,numProcs,'FluxLimR_x');
+FluxL    = loadData(filePath,numProcs,'FluxL_x');
+FluxR    = loadData(filePath,numProcs,'FluxR_x');
+Flux     = loadData(filePath,numProcs,'Flux_x');
 
 
-F0  = hdf5read(thisFile,'F0');
-FluxLimL  = hdf5read(thisFile,'FluxLimL_x');
-FluxLimR  = hdf5read(thisFile,'FluxLimR_x');
-FluxL    = hdf5read(thisFile,'FluxL_x');
-FluxR    = hdf5read(thisFile,'FluxR_x');
-Flux  = hdf5read(thisFile,'Flux_x');
-tout= hdf5read(thisFile,'tout');
-
-
-f11=figure(12); 
+f1=figure(11); 
 %set(f1,'position',[1030 925 1100 420]);
-set(f11,'position',[1800 360 500 760]);
+set(f1,'position',[1100 360 500 760]);
 subplot(2,1,1);
-hold on; pcolor(Xcc,Zcc,F0(:,:,1)); shading flat;colorbar;
-xlabel('x direction'); axis('equal'); caxis([0,1]);
-ylabel('z direction');
+hold on; pcolor(Xce(2:end-1),Zce(2:end-1),F0(3:end-1,3:end-1,1)); shading flat; colorbar;
+xlabel('x direction'); caxis([0,1]);
+ylabel('z direction'); box on;
 title('initial profile');
+axis('equal'); axis([-0.5 0.5 -0.5 0.5]);
 %
 subplot(2,1,2);
-hold on; pcolor(Xcc,Zcc,F0(:,:,round(end))); colorbar;
-xlabel('x direction'); axis('equal'); caxis([0,1]);
-ylabel('z direction'); shading flat;
+hold on; pcolor(Xce(2:end-1),Zce(2:end-1),F0(3:end-1,3:end-1,end)); colorbar;
+xlabel('x direction');  caxis([0,1]);
+ylabel('z direction'); shading flat; box on;
 title('profile at final time step');
+axis('equal'); axis([-0.5 0.5 -0.5 0.5]);
 %
 map = colormap('jet');
 map(1,:) = [1 1 1];
@@ -64,22 +63,20 @@ hold on; plot(Xcc,F0(end/2,:,end),'r'); grid on;
 %hold on; plot(Zcc,F0(:,end/2,1)); box on;
 %hold on; plot(Zcc,F0(:,end/2,round(end/2)));
 %hold on; plot(Zcc,F0(:,end/2,end)); grid on;
-set(gca,'xtick',-0.5:0.1:0.5);
+set(gca,'xtick',Xce(2):0.1:Xce(end-1));
 xlabel('x'); ylabel('f');
 title('function');
-xlim([-0.5 0.5]);
+xlim([Xce(2) Xce(end-1)]);
 %
 subplot(2,1,2);
 %hold on; plot(Xce,FluxL(:,1)); box on;
 hold on; plot(Xce,FluxL(end/2,:,round(end/2)),'displayName','Left');
 hold on; plot(Xce,FluxR(end/2,:,round(end/2)),'displayName','right');
 %hold on; plot(Xce,FluxL(:,round(end))); grid on;
-set(gca,'xtick',-0.5:0.1:0.5);
+set(gca,'xtick',Xce(2):0.1:Xce(end-1));
 xlabel('x'); ylabel('flux'); grid on;
-title('flux'); xlim([-0.5 0.5]);
-if(i==1) 
-    lg1=legend('show');
-end
+title('flux'); xlim([Xce(2) Xce(end-1)]);
+lg1=legend('show');
 
 %
 %
@@ -115,5 +112,4 @@ end
 % title('right going Flux');
 % xlim([-0.5 0.5]);
 
-end
 

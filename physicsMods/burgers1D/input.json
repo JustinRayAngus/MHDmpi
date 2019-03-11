@@ -1,26 +1,40 @@
 {
 "Xgrid":{
-         "Xmin":-0.5,
-         "Xmax":0.5,
-         "nX":200,
-         "nXg":3 // number of guard cells each end
+         "Xmin":-1.0,
+         "Xmax":1.0,
+         "nX":400,
+         "nXg":2 // number of guard cells each end
+        },
+"Zgrid":{
+         "Zmin":-1.0,
+         "Zmax":1.0,
+         "nZ":2,
+         "nZg":2 // number of guard cells each end
         },
 "Time" :{
          "dtOut":0.02,     // output time intervals
-         "tOutSteps":20,   // number of output setps
+         "tOutSteps":100,   // number of output setps
          "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics" :{
-         "type":"Gaussian", // initial profile
-         "a":1.0,  // amplitude
-         "b":0.0,  // x-shift
-         "c":0.1,  // width
-         "d":0.0,  // y-shift
-         "advScheme":"WENO5", // "U1", "C2", "QUICK", "TVD"
+         "Xtype":"Gaussian", // initial profile
+         "Xa":1.0,  // amplitude
+         "Xb":0.0,  // x-shift
+         "Xc":0.1,  // width
+         "Xd":0.0,  // y-shift
+         "Ztype":"const", // initial profile
+         "Za":0.0,  // amplitude
+         "Zb":0.0,  // x-shift
+         "Zc":0.0,  // width
+         "Zd":1.0,  // y-shift
+         "advScheme":"QUICK", // "U1", "C2", "QUICK", "TVD", "WEN05"
+         "TVDlimiter":"superbee", // "vanleer", "minmod", "superbee"
+         "useLaxSplitting":true,
          //"diffC":0.00, // diffusion coefficient
          "diffC":0.002, // diffusion coefficient
-         "order":2,     // order in time (1 or 2)
-         "fluxDir":1   // flux directin (+/-1)
+         "advCx":1.0,   // x-advection coefficient
+         "advCz":1.0,   // z-advection coefficient
+         "order":2      // order in time (1 or 2)
        }
 }
 

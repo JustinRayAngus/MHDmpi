@@ -13,7 +13,7 @@
         },
 "Time" :{
          "dtOut":0.02,     // output time intervals
-         "tOutSteps":20,   // number of output setps
+         "tOutSteps":50,   // number of output setps
          "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics" :{
@@ -27,11 +27,13 @@
          "Zb":0.0,  // x-shift
          "Zc":0.1,  // width
          "Zd":0.0,  // y-shift
-         "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+         "advScheme":"QUICK", // "U1", "C2", "QUICK", "TVD", "WEN05"
+         "TVDlimiter":"superbee", // "vanleer", "minmod", "superbee"
          //"diffC":0.00, // diffusion coefficient
          "diffC":0.002, // diffusion coefficient
-         "order":2,     // order in time (1 or 2)
-         "XfluxDir":-1   // flux directin (+/-1)
+         "advCx":1.0,   // x-advection coefficient
+         "advCz":1.0,   // z-advection coefficient
+         "order":2      // order in time (1 or 2)
        }
 }
 

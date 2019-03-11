@@ -10,118 +10,373 @@ Output file output0.h5 created
 Non-extendable int procID written to output0.h5
 
 Initializing domain grid ...
-Xmin = -0.5
-Xmax = 0.5
-nX = 200
-nXsub = 50
+Xmin = -1
+Xmax = 1
+nX = 400
+nXsub = 100
 dX = 0.005
-nXg = 3
+nXg = 2
 
-value for key "Zgrid" is not object type !
-no Z-grid, problem is 1D
+Zmin = -1
+Zmax = 1
+nZ = 2
+nZsub = 2
+dZ = 1
+nZg = 2
 
 Non-extendable vector Xcc added to output0.h5
 Non-extendable vector Xce added to output0.h5
+Non-extendable int nXg written to output0.h5
+Non-extendable vector Zcc added to output0.h5
+Non-extendable vector Zce added to output0.h5
+Non-extendable int nZg written to output0.h5
 
 Initializing time domain ...
-tmax = 0.4
+tmax = 2
 tOut intervals = 0.02
 dtFrac = 2
 
 Extendable scalar tout added to output0.h5
-mesh->nXcc = 56
-mesh->nXcc = 56
-mesh->nXcc = 56
-mesh->nXcc = 56
-mesh->nXcc = 56
-mesh->nXcc = 56
-mesh->nXcc = 56
-mesh->nXcc = 56
+mesh->nXcc = 104
+mesh->nXcc = 104
+mesh->nXcc = 104
+mesh->nXcc = 104
+mesh->nXcc = 104
+mesh->nXcc = 104
+mesh->nXcc = 104
+mesh->nXcc = 104
 
 Initializing Physics ...
-adv scheme is WENO5
+advection diff/interp scheme is QUICK
+using Lax Friedrich's flux splitting 
 diffusion coefficent = 0.002
+x-advection coefficent = 1
+z-advection coefficent = 1
 order in time is 2
-flux direction is in -X direction
 Initial var is Gaussian with amplitude = 1
 center at x = 0
 width = 0.1
 and y-shift = 0
 Non-extendable scalar K written to output0.h5
-Extendable vector F0 added to output0.h5
-Extendable vector FluxRatio added to output0.h5
-Extendable vector FluxLim added to output0.h5
-Extendable vector Flux added to output0.h5
-Extendable vector FluxR added to output0.h5
-Extendable vector FluxL added to output0.h5
-max stable time step is 0.00500156
+Extendable matrix2D F0 added to output0.h5
+Extendable matrix2D FluxLimL_x added to output0.h5
+Extendable matrix2D FluxLimR_x added to output0.h5
+Extendable matrix2D Flux_x added to output0.h5
+Extendable matrix2D FluxR_x added to output0.h5
+Extendable matrix2D FluxL_x added to output0.h5
+Extendable matrix2D FluxLimL_z added to output0.h5
+Extendable matrix2D FluxLimR_z added to output0.h5
+Extendable matrix2D Flux_z added to output0.h5
+Extendable matrix2D FluxR_z added to output0.h5
+Extendable matrix2D FluxL_z added to output0.h5
+dtSim = 0.000625195
 
-Initial simulation time step: 0.00250078
+Initial simulation time step: 0.000625195
 
-max stable time step is 0.00502146
+dtSim = 0.000627685
 
-Output variables dumped at t = 0.0200381
-max stable time step is 0.0050412
+Output variables dumped at t = 0.0200411
+dtSim = 0.000630139
 
-Output variables dumped at t = 0.0401561
-max stable time step is 0.00506093
+Output variables dumped at t = 0.0401623
+dtSim = 0.000632579
 
-Output variables dumped at t = 0.060354
-max stable time step is 0.00508092
+Output variables dumped at t = 0.0603636
+dtSim = 0.000634948
 
-Output variables dumped at t = 0.0806329
-max stable time step is 0.00510157
+Output variables dumped at t = 0.0800102
+dtSim = 0.000637509
 
-Output variables dumped at t = 0.100995
-max stable time step is 0.00512347
+Output variables dumped at t = 0.10037
+dtSim = 0.000640094
 
-Output variables dumped at t = 0.12144
-max stable time step is 0.00514543
+Output variables dumped at t = 0.12017
+dtSim = 0.00064248
 
-Output variables dumped at t = 0.141971
-max stable time step is 0.00516638
+Output variables dumped at t = 0.140049
+dtSim = 0.000645279
 
-Output variables dumped at t = 0.160009
-max stable time step is 0.00518922
+Output variables dumped at t = 0.160007
+dtSim = 0.000647775
 
-Output variables dumped at t = 0.180713
-max stable time step is 0.00521766
+Output variables dumped at t = 0.180047
+dtSim = 0.000650742
 
-Output variables dumped at t = 0.201518
-max stable time step is 0.00524967
+Output variables dumped at t = 0.200172
+dtSim = 0.000654035
 
-Output variables dumped at t = 0.22244
-max stable time step is 0.00528171
+Output variables dumped at t = 0.22039
+dtSim = 0.000657496
 
-Output variables dumped at t = 0.240859
-max stable time step is 0.00532712
+Output variables dumped at t = 0.240055
+dtSim = 0.000661922
 
-Output variables dumped at t = 0.262065
-max stable time step is 0.00537673
+Output variables dumped at t = 0.260503
+dtSim = 0.000668151
 
-Output variables dumped at t = 0.280784
-max stable time step is 0.00544339
+Output variables dumped at t = 0.280448
+dtSim = 0.00067565
 
-Output variables dumped at t = 0.302404
-max stable time step is 0.00550844
+Output variables dumped at t = 0.30059
+dtSim = 0.000683685
 
-Output variables dumped at t = 0.32155
-max stable time step is 0.0055812
+Output variables dumped at t = 0.320284
+dtSim = 0.000692939
 
-Output variables dumped at t = 0.340933
-max stable time step is 0.00566113
+Output variables dumped at t = 0.340227
+dtSim = 0.000703235
 
-Output variables dumped at t = 0.360576
-max stable time step is 0.00574037
+Output variables dumped at t = 0.360448
+dtSim = 0.000712925
 
-Output variables dumped at t = 0.380497
-max stable time step is 0.0058236
+Output variables dumped at t = 0.380253
+dtSim = 0.000723177
 
-Output variables dumped at t = 0.40071
+Output variables dumped at t = 0.400352
+dtSim = 0.000733685
 
-Final simulation time step = 0.0029118
+Output variables dumped at t = 0.420023
+dtSim = 0.000745447
 
-Ending simulation: wall time = 0.0755091
+Output variables dumped at t = 0.440731
+dtSim = 0.000756446
+
+Output variables dumped at t = 0.460244
+dtSim = 0.0007668
+
+Output variables dumped at t = 0.480044
+dtSim = 0.000778502
+
+Output variables dumped at t = 0.500131
+dtSim = 0.000785354
+
+Output variables dumped at t = 0.520467
+dtSim = 0.000790519
+
+Output variables dumped at t = 0.540166
+dtSim = 0.000796327
+
+Output variables dumped at t = 0.56079
+dtSim = 0.000801081
+
+Output variables dumped at t = 0.580755
+dtSim = 0.000806336
+
+Output variables dumped at t = 0.600041
+dtSim = 0.00081097
+
+Output variables dumped at t = 0.620255
+dtSim = 0.000816261
+
+Output variables dumped at t = 0.640592
+dtSim = 0.000820567
+
+Output variables dumped at t = 0.660232
+dtSim = 0.000825545
+
+Output variables dumped at t = 0.680806
+dtSim = 0.000829902
+
+Output variables dumped at t = 0.70067
+dtSim = 0.000834301
+
+Output variables dumped at t = 0.720639
+dtSim = 0.000838939
+
+Output variables dumped at t = 0.740715
+dtSim = 0.000842722
+
+Output variables dumped at t = 0.760052
+dtSim = 0.000847041
+
+Output variables dumped at t = 0.780328
+dtSim = 0.000851285
+
+Output variables dumped at t = 0.800706
+dtSim = 0.000854989
+
+Output variables dumped at t = 0.820326
+dtSim = 0.000858921
+
+Output variables dumped at t = 0.840036
+dtSim = 0.000863061
+
+Output variables dumped at t = 0.860697
+dtSim = 0.000866546
+
+Output variables dumped at t = 0.880585
+dtSim = 0.000870226
+
+Output variables dumped at t = 0.900558
+dtSim = 0.00087402
+
+Output variables dumped at t = 0.920615
+dtSim = 0.000877526
+
+Output variables dumped at t = 0.940755
+dtSim = 0.000880755
+
+Output variables dumped at t = 0.960095
+dtSim = 0.000884213
+
+Output variables dumped at t = 0.980392
+dtSim = 0.000887751
+
+Output variables dumped at t = 1.00077
+dtSim = 0.000891088
+
+Output variables dumped at t = 1.02033
+dtSim = 0.000894185
+
+Output variables dumped at t = 1.04086
+dtSim = 0.00089725
+
+Output variables dumped at t = 1.06056
+dtSim = 0.000900341
+
+Output variables dumped at t = 1.08034
+dtSim = 0.000903441
+
+Output variables dumped at t = 1.10018
+dtSim = 0.000906536
+
+Output variables dumped at t = 1.12009
+dtSim = 0.00090952
+
+Output variables dumped at t = 1.14006
+dtSim = 0.000912313
+
+Output variables dumped at t = 1.1601
+dtSim = 0.000915126
+
+Output variables dumped at t = 1.1802
+dtSim = 0.000917946
+
+Output variables dumped at t = 1.20036
+dtSim = 0.000920763
+
+Output variables dumped at t = 1.22059
+dtSim = 0.00092357
+
+Output variables dumped at t = 1.24088
+dtSim = 0.00092621
+
+Output variables dumped at t = 1.2603
+dtSim = 0.000928975
+
+Output variables dumped at t = 1.2807
+dtSim = 0.000931558
+
+Output variables dumped at t = 1.30023
+dtSim = 0.000934146
+
+Output variables dumped at t = 1.32075
+dtSim = 0.000936586
+
+Output variables dumped at t = 1.34039
+dtSim = 0.000939006
+
+Output variables dumped at t = 1.36009
+dtSim = 0.000941499
+
+Output variables dumped at t = 1.38077
+dtSim = 0.000943878
+
+Output variables dumped at t = 1.40057
+dtSim = 0.000946234
+
+Output variables dumped at t = 1.42041
+dtSim = 0.000948566
+
+Output variables dumped at t = 1.44031
+dtSim = 0.000950874
+
+Output variables dumped at t = 1.46025
+dtSim = 0.000953158
+
+Output variables dumped at t = 1.48025
+dtSim = 0.000955416
+
+Output variables dumped at t = 1.50029
+dtSim = 0.000957651
+
+Output variables dumped at t = 1.52037
+dtSim = 0.000959861
+
+Output variables dumped at t = 1.54051
+dtSim = 0.000962047
+
+Output variables dumped at t = 1.56069
+dtSim = 0.000964209
+
+Output variables dumped at t = 1.58091
+dtSim = 0.000966247
+
+Output variables dumped at t = 1.60022
+dtSim = 0.000968364
+
+Output variables dumped at t = 1.62053
+dtSim = 0.000970458
+
+Output variables dumped at t = 1.64089
+dtSim = 0.000972438
+
+Output variables dumped at t = 1.66032
+dtSim = 0.000974491
+
+Output variables dumped at t = 1.68076
+dtSim = 0.000976437
+
+Output variables dumped at t = 1.70027
+dtSim = 0.000978451
+
+Output variables dumped at t = 1.7208
+dtSim = 0.000980367
+
+Output variables dumped at t = 1.74038
+dtSim = 0.000982272
+
+Output variables dumped at t = 1.76001
+dtSim = 0.000984236
+
+Output variables dumped at t = 1.78066
+dtSim = 0.000986118
+
+Output variables dumped at t = 1.80036
+dtSim = 0.000987935
+
+Output variables dumped at t = 1.8201
+dtSim = 0.000989809
+
+Output variables dumped at t = 1.84086
+dtSim = 0.000991557
+
+Output variables dumped at t = 1.86067
+dtSim = 0.000993296
+
+Output variables dumped at t = 1.88052
+dtSim = 0.000995026
+
+Output variables dumped at t = 1.9004
+dtSim = 0.00099675
+
+Output variables dumped at t = 1.92032
+dtSim = 0.000998467
+
+Output variables dumped at t = 1.94027
+dtSim = 0.00100018
+
+Output variables dumped at t = 1.96026
+dtSim = 0.00100189
+
+Output variables dumped at t = 1.98028
+dtSim = 0.0010036
+
+Output variables dumped at t = 2.00033
+
+Final simulation time step = 0.0010036
+
+Ending simulation: wall time = 5.56815
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

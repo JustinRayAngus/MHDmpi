@@ -1,2 +1,2 @@
-export PHYScpp=burgers1D.cpp
+export PHYScpp=burgers2D.cpp
 export PHYS_HOME="../physicsMods/burgers1D"
