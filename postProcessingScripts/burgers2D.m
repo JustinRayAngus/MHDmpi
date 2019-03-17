@@ -9,8 +9,8 @@ clear all;
 
 numProcs = 4;
 filePath = '../physicsMods/burgers2D/';
-filePath = '../physicsMods/burgers2D/dataSave/';
-filePath = '../physicsMods/burgers1D/';
+%filePath = '../physicsMods/burgers2D/dataSave/';
+%filePath = '../physicsMods/burgers1D/';
 %filePath = '../physicsMods/sodShock/';
 
 Xcc = loadData(filePath,numProcs,'Xcc');
@@ -27,26 +27,24 @@ FluxR    = loadData(filePath,numProcs,'FluxR_x');
 Flux     = loadData(filePath,numProcs,'Flux_x');
 
 
-f1=figure(11); 
-%set(f1,'position',[1030 925 1100 420]);
-set(f1,'position',[1100 360 500 760]);
+f1=figure(12); set(f1,'position',[1750 200 600 860])
 subplot(2,1,1);
 hold on; pcolor(Xce(2:end-1),Zce(2:end-1),F0(3:end-1,3:end-1,1)); shading flat; colorbar;
-xlabel('x direction'); caxis([0,1]);
-ylabel('z direction'); box on;
+xlabel('X'); caxis([0,1]);
+ylabel('Z'); box on;
 title('initial profile');
 axis('equal'); axis([-0.5 0.5 -0.5 0.5]);
 %
 subplot(2,1,2);
 hold on; pcolor(Xce(2:end-1),Zce(2:end-1),F0(3:end-1,3:end-1,end)); colorbar;
-xlabel('x direction');  caxis([0,1]);
+xlabel('x direction');  caxis([0 0.5]);
 ylabel('z direction'); shading flat; box on;
 title('profile at final time step');
 axis('equal'); axis([-0.5 0.5 -0.5 0.5]);
 %
 map = colormap('jet');
 map(1,:) = [1 1 1];
-colormap(map)
+colormap(map);
     
 %%%
 %

@@ -514,7 +514,7 @@ vector<T> operator/(const T &b, const vector<T> &a)
    const int imax = a.size();
    vector<T> result;
    result.resize(a.size());
-   for (auto i=1; i<imax; i++) {
+   for (auto i=0; i<imax; i++) {
       result.at(i) = b/a.at(i);
    }
 

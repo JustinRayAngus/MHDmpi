@@ -407,8 +407,6 @@ mpi.h
 -
 assert.h
 -
-vector
--
 cmath
 -
 json/json.h
@@ -528,6 +526,10 @@ matrix2D.h
 vector
 -
 mpi.h
+-
+math.h
+-
+cmath
 -
 matrix2D.cpp
 /Users/angus1/Programs/MHDmpi/src/./matrix2D.cpp
@@ -848,6 +850,10 @@ matrix2D.h
 vector
 -
 mpi.h
+-
+math.h
+-
+cmath
 -
 matrix2D.cpp
 /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp

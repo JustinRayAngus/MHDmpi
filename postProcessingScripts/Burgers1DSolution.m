@@ -69,9 +69,9 @@ end
 %%%   plot solution
 %
 f1=figure(1);
-plot(x,F(:,1));
-hold on; plot(x,F(:,round(end/2)));
-hold on; plot(x,F(:,end));
+plot(x+0.5,F(:,1));
+hold on; plot(x+0.5,F(:,round(end/2)));
+hold on; plot(x+0.5,F(:,end));
 xlim([Xmin Xmax]);
 
 

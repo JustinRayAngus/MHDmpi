@@ -43,16 +43,16 @@ mesh->nXcc = 29
 mesh->nXcc = 29
 mesh->nXcc = 29
 mesh->nXcc = 29
-mesh->nXcc = 29
-mesh->nXcc = 29
 
 Initializing Physics ...
 advection diff/interp scheme is QUICK
- using Lax Friedrich's flux splitting 
+using Lax Friedrich's flux splitting 
 diffusion coefficent = 0.002
 x-advection coefficent = 1
-z-advection coefficent = 1
+z-advection coefficent = -1
 order in time is 2
+mesh->nXcc = 29
+mesh->nXcc = 29
 Initial var is Gaussian with amplitude = 1
 center at x = 0
 width = 0.1
@@ -230,7 +230,7 @@ Output variables dumped at t = 1.00099
 
 Final simulation time step = 0.00261376
 
-Ending simulation: wall time = 7.18001
+Ending simulation: wall time = 7.01079
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
