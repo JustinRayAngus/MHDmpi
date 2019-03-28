@@ -11,74 +11,37 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear all;
 
-numProcs = 2;
+numProcs = 4;
 filePath = '../physicsMods/sodShock2Dmatrix/';
-%filePath = '../physicsMods/testing/';
+filePath = '../physicsMods/sodShock2Dmatrix/data_weno5_refined/';
 
 fluxDir = 0; % 0 for x and 1 for z
 
-for i=1:numProcs
-fileName = ['output',num2str(i-1),'.h5'];
-thisFile = [filePath,fileName];
-procID  = hdf5read(thisFile,'procID');
-fileinfo = hdf5info(thisFile);
-Xcc = hdf5read(thisFile,'Xcc');
-Xce = hdf5read(thisFile,'Xce');
-Zcc = hdf5read(thisFile,'Zcc');
-Zce = hdf5read(thisFile,'Zce');
 
-N  = hdf5read(thisFile,'N');
-Mx = hdf5read(thisFile,'Mx');
-Mz = hdf5read(thisFile,'Mz');
-E  = hdf5read(thisFile,'E');
-P  = hdf5read(thisFile,'P');
-Vx = hdf5read(thisFile,'Vx');
-Vz = hdf5read(thisFile,'Vz');
-Cs  = hdf5read(thisFile,'Cs');
-gamma0 = hdf5read(thisFile,'gamma0');
-%FluxLimLx = hdf5read(thisFile,'FluxLimLx');
-%FluxLimRx    = hdf5read(thisFile,'FluxLimRx');
-%FluxLx    = hdf5read(thisFile,'FluxLx');
-%FluxRx    = hdf5read(thisFile,'FluxRx');
-%FluxN_x  = hdf5read(thisFile,'FluxN_x');
-FluxMx_x = hdf5read(thisFile,'FluxMx_x');
-FluxMx_z = hdf5read(thisFile,'FluxMx_z');
-FluxMz_x = hdf5read(thisFile,'FluxMz_x');
-FluxMz_z = hdf5read(thisFile,'FluxMz_z');
-%FluxMz_x = hdf5read(thisFile,'FluxMz_x');
-%FluxE_x  = hdf5read(thisFile,'FluxE_x');
-tout= hdf5read(thisFile,'tout');
-
-
-
-f11=figure(12); 
-%set(f1,'position',[1030 925 1100 420]);
-set(f11,'position',[1800 360 500 760]);
-subplot(2,1,1);
-hold on; surf(Xcc,Zcc,N(:,:,1)); shading flat;colorbar;
-xlabel('x direction');  %caxis([0,1]);
-ylabel('z direction');
-title('initial density profile');
-axis([-0.5 0.5 -0.5 0.5]); axis('equal');
+tout = loadData(filePath,numProcs,'tout');
+Xcc = loadData(filePath,numProcs,'Xcc');
+Xce = loadData(filePath,numProcs,'Xce');
+Zcc = loadData(filePath,numProcs,'Zcc');
+Zce = loadData(filePath,numProcs,'Zce');
 %
-subplot(2,1,2);
-hold on; surf(Xcc,Zcc,N(:,:,round(end))); colorbar;
-xlabel('x direction');  %caxis([0,1]);
-ylabel('z direction'); shading flat;
-title('density profile at final time step');
-axis([-0.5 0.5 -0.5 0.5]); axis('equal');
-%
-map = colormap('jet');
-map(1,:) = [1 1 1];
-colormap(map)
+N  = loadData(filePath,numProcs,'N');
+Vx = loadData(filePath,numProcs,'Vx');
+Vz = loadData(filePath,numProcs,'Vz');
+P  = loadData(filePath,numProcs,'P');
+E  = loadData(filePath,numProcs,'E');
+Cs = loadData(filePath,numProcs,'Cs');
+gamma0 = loadData(filePath,numProcs,'gamma0');
 
 
 
-%%%
-%
+%fileName = ['output',num2str(i-1),'.h5'];
+%thisFile = [filePath,fileName];
+%procID  = hdf5read(thisFile,'procID');
+%fileinfo = hdf5info(thisFile);
 
-f1=figure(2); 
-set(f1,'position',[540 1 900 800]);
+
+f11=figure(11); 
+set(f11,'position',[1100 400 900 800]);
 %set(f1,'position',[341 436 900 840]);
 
 if(fluxDir==0)
@@ -152,7 +115,4 @@ axis([0 0.08 0.3 0.306]); grid on;
 xlabel('x');
 title('bad oscillations early on using U1 with nx>3000');
 
-
-
-end
 

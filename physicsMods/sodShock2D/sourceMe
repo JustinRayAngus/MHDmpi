@@ -1,2 +1,0 @@
-export PHYScpp=sodShock2D.cpp
-export PHYS_HOME="../physicsMods/sodShock2D"

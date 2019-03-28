@@ -1,0 +1,91 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Initiating simulation
+mpi job with 4 processors
+
+Input file ./input.json parsed successfully
+
+Output file output0.h5 created 
+Non-extendable int procID written to output0.h5
+
+Initializing domain grid ...
+Xmin = -0.5
+Xmax = 0.5
+nX = 400
+nXsub = 100
+dX = 0.0025
+nXg = 3
+
+Zmin = -0.5
+Zmax = 0.5
+nZ = 4
+nZsub = 4
+dZ = 0.25
+nZg = 3
+
+Non-extendable vector Xcc added to output0.h5
+Non-extendable vector Xce added to output0.h5
+Non-extendable int nXg written to output0.h5
+Non-extendable vector Zcc added to output0.h5
+Non-extendable vector Zce added to output0.h5
+Non-extendable int nZg written to output0.h5
+
+Initializing time domain ...
+tmax = 0.2
+tOut intervals = 0.02
+dtFrac = 2
+
+Extendable scalar tout added to output0.h5
+
+Initializing Physics ...
+advection diff/interp scheme is WENO5
+adiabatic coefficent = 1.4
+Nsub = 2
+Extendable matrix2D N added to output0.h5
+Extendable matrix2D Mx added to output0.h5
+Extendable matrix2D Mz added to output0.h5
+Extendable matrix2D E added to output0.h5
+Extendable matrix2D P added to output0.h5
+Extendable matrix2D Vx added to output0.h5
+Extendable matrix2D Vz added to output0.h5
+Extendable matrix2D Cs added to output0.h5
+Non-extendable scalar gamma0 written to output0.h5
+Extendable matrix2D FluxN_x added to output0.h5
+Extendable matrix2D FluxMx_x added to output0.h5
+Extendable matrix2D FluxMz_x added to output0.h5
+Extendable matrix2D FluxE_x added to output0.h5
+Extendable matrix2D FluxN_z added to output0.h5
+Extendable matrix2D FluxMx_z added to output0.h5
+Extendable matrix2D FluxMz_z added to output0.h5
+Extendable matrix2D FluxE_z added to output0.h5
+max stable time step is 0.00104598
+Initial simulation time step: 0.000522991
+
+max stable time step is 0.000552809
+Output variables dumped at t = 0.0201244
+max stable time step is 0.000556497
+Output variables dumped at t = 0.040114
+max stable time step is 0.000557088
+Output variables dumped at t = 0.0601589
+max stable time step is 0.000557908
+Output variables dumped at t = 0.0802294
+max stable time step is 0.000558301
+Output variables dumped at t = 0.100043
+max stable time step is 0.000558817
+Output variables dumped at t = 0.120151
+max stable time step is 0.000559067
+Output variables dumped at t = 0.140273
+max stable time step is 0.000559634
+Output variables dumped at t = 0.16013
+max stable time step is 0.000559802
+Output variables dumped at t = 0.180279
+max stable time step is 0.000560253
+Output variables dumped at t = 0.200159
+
+Final simulation time step = 0.000280127
+
+Ending simulation: wall time = 18.647
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

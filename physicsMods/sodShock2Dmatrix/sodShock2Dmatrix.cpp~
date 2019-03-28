@@ -400,33 +400,41 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    //
    if(advScheme0 == "TVD") {
       Xgrid.computeFluxTVD(FluxN_x, FluxLx,FluxRx,FluxLimLx,FluxLimRx,
-                           FluxNcc_x,Cspeed,N,0,order);
+                           FluxNcc_x, Cspeed,N, "vanleer",0,order);
       Xgrid.computeFluxTVD(FluxMx_x,FluxLx,FluxRx,FluxLimLx,FluxLimRx,
-                           FluxMxcc_x,Cspeed,Mx,0,order);
+                           FluxMxcc_x,Cspeed,Mx,"vanleer",0,order);
       Xgrid.computeFluxTVD(FluxMz_x,FluxLx,FluxRx,FluxLimLx,FluxLimRx,
-                           FluxMzcc_x,Cspeed,Mz,0,order);
+                           FluxMzcc_x,Cspeed,Mz,"vanleer",0,order);
       Xgrid.computeFluxTVD(FluxE_x, FluxLx,FluxRx,FluxLimLx,FluxLimRx,
-                           FluxEcc_x,Cspeed,E,0,order);
+                           FluxEcc_x, Cspeed,E, "vanleer",0,order);
       //
       Xgrid.computeFluxTVD(FluxN_z, FluxLz,FluxRz,FluxLimLz,FluxLimRz,
-                           FluxNcc_z,Cspeed,N,1,order);
+                           FluxNcc_z, Cspeed,N, "vanleer",1,order);
       Xgrid.computeFluxTVD(FluxMx_z,FluxLz,FluxRz,FluxLimLz,FluxLimRz,
-                           FluxMxcc_z,Cspeed,Mx,1,order);
+                           FluxMxcc_z,Cspeed,Mx,"vanleer",1,order);
       Xgrid.computeFluxTVD(FluxMz_z,FluxLz,FluxRz,FluxLimLz,FluxLimRz,
-                           FluxMzcc_z,Cspeed,Mz,1,order);
+                           FluxMzcc_z,Cspeed,Mz,"vanleer",1,order);
       Xgrid.computeFluxTVD(FluxE_z, FluxLz,FluxRz,FluxLimLz,FluxLimRz,
-                           FluxEcc_z,Cspeed,E,1,order);
+                           FluxEcc_z, Cspeed,E, "vanleer",1,order);
    }      
    else {
-      Xgrid.InterpToCellEdges(FluxN_x, FluxNcc_x,N,advScheme0,0);
-      Xgrid.InterpToCellEdges(FluxMx_x,FluxMxcc_x,Mx,advScheme0,0);
-      Xgrid.InterpToCellEdges(FluxMz_x,FluxMzcc_x,Mz,advScheme0,0);
-      Xgrid.InterpToCellEdges(FluxE_x, FluxEcc_x,E,advScheme0,0);
+      Xgrid.computeFluxTVDsimple(FluxN_x, FluxLx,FluxRx,FluxNcc_x, 
+		                 Cspeed,N, advScheme0,0);
+      Xgrid.computeFluxTVDsimple(FluxMx_x,FluxLx,FluxRx,FluxMxcc_x,
+		                 Cspeed,Mx,advScheme0,0);
+      Xgrid.computeFluxTVDsimple(FluxMz_x,FluxLx,FluxRx,FluxMzcc_x,
+		                 Cspeed,Mz,advScheme0,0);
+      Xgrid.computeFluxTVDsimple(FluxE_x, FluxLx,FluxRx,FluxEcc_x, 
+		                 Cspeed,E, advScheme0,0);
       //
-      Xgrid.InterpToCellEdges(FluxN_z, FluxNcc_z,N,advScheme0,0);
-      Xgrid.InterpToCellEdges(FluxMx_z,FluxMxcc_z,Mx,advScheme0,0);
-      Xgrid.InterpToCellEdges(FluxMz_z,FluxMzcc_z,Mz,advScheme0,0);
-      Xgrid.InterpToCellEdges(FluxE_z, FluxEcc_z,E,advScheme0,0);
+      Xgrid.computeFluxTVDsimple(FluxN_z, FluxLz,FluxRz,FluxNcc_z, 
+		                 Cspeed,N, advScheme0,1);
+      Xgrid.computeFluxTVDsimple(FluxMx_z,FluxLz,FluxRz,FluxMxcc_z,
+		                 Cspeed,Mx,advScheme0,1);
+      Xgrid.computeFluxTVDsimple(FluxMz_z,FluxLz,FluxRz,FluxMzcc_z,
+		                 Cspeed,Mz,advScheme0,1);
+      Xgrid.computeFluxTVDsimple(FluxE_z, FluxLz,FluxRz,FluxEcc_z, 
+		                 Cspeed,E, advScheme0,1);
    } 
 
 
@@ -567,7 +575,7 @@ void setZmaxBoundary(matrix2D<double>& var,
 
 
 
-void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
+void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid, const int verbose)
 {
    int procID;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
@@ -584,7 +592,7 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    
    double dtmax = 0.5*dX*dZ/(dX+dZ)/Cmax;
    dtSim = min(dtmax/tDom.dtFrac,tDom.dtOut);
-   if(procID==0) {
+   if(procID==0 && verbose) {
       cout << "max stable time step is " << dtmax << endl;
    }
 }

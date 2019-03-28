@@ -2,14 +2,14 @@
 "Xgrid":{
          "Xmin":-0.5,
          "Xmax":0.5,
-         "nX":4,
-         "nXg":2 // number of guard cells each end
+         "nX":100,
+         "nXg":3 // number of guard cells each end
         },
 "Zgrid":{
          "Zmin":-0.5,
          "Zmax":0.5,
-         "nZ":200,
-         "nZg":2 // number of guard cells each end
+         "nZ":2,
+         "nZg":3 // number of guard cells each end
         },
 "Time":{
         "dtOut":0.02,     // output time intervals
@@ -17,32 +17,32 @@
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
-           "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+           "advScheme":"WENO5", // "U1", "C2", "QUICK", "TVD", "WENO5"
            "Nsub":2, // time solver order (1 or 2)
            "gammaC":1.4, // adiabatic coefficient
            "N":{
-                "Xtype":"constant", // initial profile
-                "Xa":0.0,  // amplitude
+                "Xtype":"step", // initial profile
+                "Xa":1.0,  // amplitude
                 "Xb":0.0,  // x-shift
-                "Xc":0.0,  // width
-                "Xd":1.0,  // y-shift
-                "Ztype":"step", // initial profile
-                "Za":1.0,  // amplitude
+                "Xc":0.125,  // width
+                "Xd":0.0,  // y-shift
+                "Ztype":"constant", // initial profile
+                "Za":0.0,  // amplitude
                 "Zb":0.0,  // x-shift
-                "Zc":0.125,  // width
-                "Zd":0.0  // y-shift
+                "Zc":0.0,  // width
+                "Zd":1.0  // y-shift
                },
            "P":{
-                "Xtype":"constant", // initial profile
-                "Xa":0.0,  // left value
+                "Xtype":"step", // initial profile
+                "Xa":1.0,  // left value
                 "Xb":0.0,  // x-shift
-                "Xc":0.0,  // right value
-                "Xd":1.0,     // nothing
-                "Ztype":"step", // initial profile
-                "Za":1.0,  // amplitude
+                "Xc":0.1,  // right value
+                "Xd":0.0,     // nothing
+                "Ztype":"constant", // initial profile
+                "Za":0.0,  // amplitude
                 "Zb":0.0,  // x-shift
-                "Zc":0.1,  // width
-                "Zd":0.0  // y-shift
+                "Zc":0.0,  // width
+                "Zd":1.0  // y-shift
                },
            "Vx":{
                 "Xtype":"const", // initial profile

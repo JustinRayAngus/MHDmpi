@@ -23,6 +23,7 @@ numProcs = 4;
 filePath = '../physicsMods/sodShock/data_nx200/';
 %filePath = '../physicsMods/sodShock/data_nx400/';
 filePath = '../physicsMods/sodShock/data_nx800/';
+filePath = '../physicsMods/sodShock/data_nx800/';
 
 for i=1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
@@ -51,8 +52,8 @@ tout= hdf5read(thisFile,'tout');
 %%%
 %
 
-f1=figure(21); 
-set(f1,'position',[540 1 900 800]);
+f2=figure(22); 
+set(f2,'position',[540 1 900 800]);
 %set(f1,'position',[341 436 900 840]);
 
 subplot(2,2,1);
