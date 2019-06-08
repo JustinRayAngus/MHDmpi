@@ -1,0 +1,1 @@
+srun -N 2 -n 50 -p pbatch -t 02:00:00 ./mhd >> log.txt &
