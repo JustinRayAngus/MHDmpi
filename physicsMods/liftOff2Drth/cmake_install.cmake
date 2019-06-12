@@ -35,5 +35,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

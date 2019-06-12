@@ -144,7 +144,10 @@ CMakeFiles/mhd.dir/domainGrid.cpp.o
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/topology_inln.h
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/win.h
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/win_inln.h
-CMakeFiles/mhd.dir/dpfRundown2D.cpp.o
+CMakeFiles/mhd.dir/jsoncpp.cpp.o
+ /Users/angus1/Programs/MHDmpi/src/json/json.h
+ /Users/angus1/Programs/MHDmpi/src/jsoncpp.cpp
+CMakeFiles/mhd.dir/liftOff2Drth.cpp.o
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5ACpublic.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5AbstractDs.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5Apublic.h
@@ -209,7 +212,7 @@ CMakeFiles/mhd.dir/dpfRundown2D.cpp.o
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5public.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5version.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/hdf5.h
- /Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/dpfRundown2D.cpp
+ /Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/liftOff2Drth.cpp
  /Users/angus1/Programs/MHDmpi/src/./HDF5dataFile.h
  /Users/angus1/Programs/MHDmpi/src/./Physics.h
  /Users/angus1/Programs/MHDmpi/src/./domainGrid.h
@@ -251,9 +254,6 @@ CMakeFiles/mhd.dir/dpfRundown2D.cpp.o
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/topology_inln.h
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/win.h
  /opt/local/include/openmpi-gcc5/openmpi/ompi/mpi/cxx/win_inln.h
-CMakeFiles/mhd.dir/jsoncpp.cpp.o
- /Users/angus1/Programs/MHDmpi/src/json/json.h
- /Users/angus1/Programs/MHDmpi/src/jsoncpp.cpp
 CMakeFiles/mhd.dir/main.cpp.o
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5ACpublic.h
  /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5AbstractDs.h

@@ -6,7 +6,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/mhd.dir/timeDomain.cpp.o"
   "CMakeFiles/mhd.dir/HDF5dataFile.cpp.o"
   "CMakeFiles/mhd.dir/jsoncpp.cpp.o"
-  "CMakeFiles/mhd.dir/dpfRundown2D.cpp.o"
+  "CMakeFiles/mhd.dir/liftOff2Drth.cpp.o"
   "mhd.pdb"
   "mhd"
 )

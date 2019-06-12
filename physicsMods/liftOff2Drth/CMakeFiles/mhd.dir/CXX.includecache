@@ -386,7 +386,7 @@ H5FDstdio.h
 H5FDwindows.h
 /Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include/H5FDwindows.h
 
-/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/dpfRundown2D.cpp
+/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/liftOff2Drth.cpp
 iostream
 -
 string
@@ -410,19 +410,19 @@ assert.h
 cmath
 -
 json/json.h
-/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/json/json.h
+/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/json/json.h
 vectorMath.h
-/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/vectorMath.h
+/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/vectorMath.h
 matrix2D.h
-/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/matrix2D.h
+/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/matrix2D.h
 domainGrid.h
-/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/domainGrid.h
+/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/domainGrid.h
 timeDomain.h
-/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/timeDomain.h
+/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/timeDomain.h
 HDF5dataFile.h
-/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/HDF5dataFile.h
+/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/HDF5dataFile.h
 Physics.h
-/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/Physics.h
+/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/Physics.h
 
 /Users/angus1/Programs/MHDmpi/src/./HDF5dataFile.h
 matrix2D.h
@@ -528,6 +528,10 @@ matrix2D.h
 vector
 -
 mpi.h
+-
+math.h
+-
+cmath
 -
 matrix2D.cpp
 /Users/angus1/Programs/MHDmpi/src/./matrix2D.cpp
@@ -848,6 +852,10 @@ matrix2D.h
 vector
 -
 mpi.h
+-
+math.h
+-
+cmath
 -
 matrix2D.cpp
 /Users/angus1/Programs/MHDmpi/src/matrix2D.cpp

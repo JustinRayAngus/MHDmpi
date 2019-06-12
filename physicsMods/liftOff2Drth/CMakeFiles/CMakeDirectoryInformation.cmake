@@ -3,7 +3,7 @@
 
 # Relative path conversion top directories.
 set(CMAKE_RELATIVE_PATH_TOP_SOURCE "/Users/angus1/Programs/MHDmpi/src")
-set(CMAKE_RELATIVE_PATH_TOP_BINARY "/Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD")
+set(CMAKE_RELATIVE_PATH_TOP_BINARY "/Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth")
 
 # Force unix paths in dependencies.
 set(CMAKE_FORCE_UNIX_PATHS 1)

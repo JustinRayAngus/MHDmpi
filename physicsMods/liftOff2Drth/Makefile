@@ -51,7 +51,7 @@ EQUALS = =
 CMAKE_SOURCE_DIR = /Users/angus1/Programs/MHDmpi/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD
+CMAKE_BINARY_DIR = /Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/CMakeFiles /Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/CMakeFiles /Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/angus1/Programs/MHDmpi/physicsMods/dpfRundown2D/resistiveMHD/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/angus1/Programs/MHDmpi/physicsMods/liftOff2Drth/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -177,33 +177,6 @@ domainGrid.cpp.s:
 	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/domainGrid.cpp.s
 .PHONY : domainGrid.cpp.s
 
-dpfRundown2D.o: dpfRundown2D.cpp.o
-
-.PHONY : dpfRundown2D.o
-
-# target to build an object file
-dpfRundown2D.cpp.o:
-	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/dpfRundown2D.cpp.o
-.PHONY : dpfRundown2D.cpp.o
-
-dpfRundown2D.i: dpfRundown2D.cpp.i
-
-.PHONY : dpfRundown2D.i
-
-# target to preprocess a source file
-dpfRundown2D.cpp.i:
-	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/dpfRundown2D.cpp.i
-.PHONY : dpfRundown2D.cpp.i
-
-dpfRundown2D.s: dpfRundown2D.cpp.s
-
-.PHONY : dpfRundown2D.s
-
-# target to generate assembly for a file
-dpfRundown2D.cpp.s:
-	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/dpfRundown2D.cpp.s
-.PHONY : dpfRundown2D.cpp.s
-
 jsoncpp.o: jsoncpp.cpp.o
 
 .PHONY : jsoncpp.o
@@ -230,6 +203,33 @@ jsoncpp.s: jsoncpp.cpp.s
 jsoncpp.cpp.s:
 	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/jsoncpp.cpp.s
 .PHONY : jsoncpp.cpp.s
+
+liftOff2Drth.o: liftOff2Drth.cpp.o
+
+.PHONY : liftOff2Drth.o
+
+# target to build an object file
+liftOff2Drth.cpp.o:
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/liftOff2Drth.cpp.o
+.PHONY : liftOff2Drth.cpp.o
+
+liftOff2Drth.i: liftOff2Drth.cpp.i
+
+.PHONY : liftOff2Drth.i
+
+# target to preprocess a source file
+liftOff2Drth.cpp.i:
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/liftOff2Drth.cpp.i
+.PHONY : liftOff2Drth.cpp.i
+
+liftOff2Drth.s: liftOff2Drth.cpp.s
+
+.PHONY : liftOff2Drth.s
+
+# target to generate assembly for a file
+liftOff2Drth.cpp.s:
+	$(MAKE) -f CMakeFiles/mhd.dir/build.make CMakeFiles/mhd.dir/liftOff2Drth.cpp.s
+.PHONY : liftOff2Drth.cpp.s
 
 main.o: main.cpp.o
 
@@ -354,12 +354,12 @@ help:
 	@echo "... domainGrid.o"
 	@echo "... domainGrid.i"
 	@echo "... domainGrid.s"
-	@echo "... dpfRundown2D.o"
-	@echo "... dpfRundown2D.i"
-	@echo "... dpfRundown2D.s"
 	@echo "... jsoncpp.o"
 	@echo "... jsoncpp.i"
 	@echo "... jsoncpp.s"
+	@echo "... liftOff2Drth.o"
+	@echo "... liftOff2Drth.i"
+	@echo "... liftOff2Drth.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

@@ -6,5 +6,5 @@ CXX_FLAGS =  -Wall -isysroot /Applications/Xcode.app/Contents/Developer/Platform
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/p/lscratchh/angus1/myMHD/dpfRundown2D/resistiveMHD -I/Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include -I/opt/local/include/openmpi-gcc5 -I/Users/angus1/Programs/MHDmpi/src/. 
+CXX_INCLUDES = -I/Users/angus1/Programs/MHDmpi/src/../physicsMods/liftOff2Drth -I/Users/angus1/HDF5/hdf5-1.10.0-patch1/hdf5/include -I/opt/local/include/openmpi-gcc5 -I/Users/angus1/Programs/MHDmpi/src/. 
 

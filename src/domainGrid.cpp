@@ -1574,11 +1574,15 @@ void domainGrid::InterpToCellCenter(matrix2D<double> &Fout,
    const int Nout1 = Fout.size1();
    const int Nin0  = Fin.size0();
    const int Nin1  = Fin.size1();
+   //cout << " Nout0 = " << Nout0 << endl;
+   //cout << " Nout1 = " << Nout1 << endl;
+   //cout << " nXcc = " << nXcc << endl;
+   //cout << " nZcc = " << nZcc << endl;
    assert(Nout0 == nXcc);
    assert(Nout1 == nZcc);
    assert(Nin0==nXce || Nin1==nZce); // at least one direction stag
 
-   if(Nin0==nXce) { // input stag in X-direction
+   if(Nin0==nXce && Nin1==nZcc) { // input stag in X-direction
    
       for (auto i=1; i<Nout0-1; i++) {
          for (auto j=0; j<Nout1; j++) {
@@ -1587,11 +1591,21 @@ void domainGrid::InterpToCellCenter(matrix2D<double> &Fout,
       }
 
    }
-   else {  // input stag in Z-direction
+   if(Nin0==nXcc && Nin1==nZce) { // input stag in Z-direction
+   //else {  // input stag in Z-direction
       
       for (auto i=0; i<Nout0; i++) {
          for (auto j=1; j<Nout1-1; j++) {
             Fout(i,j) = (Fin(i,j) + Fin(i,j-1))/2.0;
+         }
+      }
+
+   }
+   if(Nin0==nXce && Nin1==nZce) { // input stag in both directions
+   
+      for (auto i=1; i<Nout0-1; i++) {
+         for (auto j=1; j<Nout1-1; j++) {
+            Fout(i,j) = (Fin(i,j) + Fin(i-1,j) + Fin(i,j-1) + Fin(i-1,j-1))/4.0;
          }
       }
 

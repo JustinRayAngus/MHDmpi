@@ -1,0 +1,53 @@
+{
+"Xgrid":{
+         "Xmin":1.0, // [cm]
+         "Xmax":1.4, // [cm]
+         "nX":40,
+         "nXg":2 // number of guard cells each end
+        },
+"Zgrid":{ // being used as Ygrid here
+         "Zmin":0,       // [cm] or [radians]
+         "Zmax":1.0, // [cm] or [radians]
+         "nZ":32,
+         "nZg":2 // number of guard cells each end
+        },
+"Time":{
+        "dtOut":1.0e1,  // output time intervals [ns]
+        "tOutSteps":100,  // number of output setps
+        "dtFrac":2.0     // dtSim = dtMax/dtFrac
+       },
+"Physics":{
+           "geometry":"CYL", // "CAR", "CYL"
+           "gammaC":1.6667, // adiabatic coefficient
+           "epsilonRel":1.0e3, // c_eff  = cvac/sqrt(epsilonRel)
+           "N0":1.0e17,    // fill density [1/cm^3]
+           "Ti0":1.0e-1,  // ion temp [eV]
+           "CurrScale_kA":13.0,    // current scale [kA]
+           "dtCurrScale_ns":50.0,  // rise time [ns]
+           "Te":{ // electron temp [eV]
+                "Xtype":"const", // initial profile
+                "Xa":0.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.0,  // width
+                "Xd":1.0e-1,   // y-shift
+		"Ztype":"const",
+		"Za":0.0,
+		"Zb":0.0,
+		"Zc":0.0,
+		"Zd":1.0
+               },
+           "deltaTe":{
+                "Xtype":"gaussian", // initial profile
+                "Xa":-1.0e-1,  // amplitude
+                "Xb":1.0,  // x-shift
+                "Xc":0.3333,  // width
+                "Xd":0.0,   // y-shift
+		"Ztype":"cos",
+		"Za":1.0,
+		"Zb":0.0,
+		"Zc":1.0,
+		"Zd":0.0
+               }
+          }
+}
+
