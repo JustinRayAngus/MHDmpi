@@ -12,6 +12,8 @@
        },
 "Physics":{
            "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+           "XlowBoundary":"axis", // "axis", "insulator", "conductor"
+           "XhiBoundary":"insulator", // "insulator", "conductor"
            "geometry":"CYL", // "CAR", "CYL"
            "Nsub":2, // this actually refers to order
            "gammaC":1.6667, // adiabatic coefficient

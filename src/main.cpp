@@ -138,7 +138,8 @@ int main(int argc, char** argv) {
    int thistOutInt = 1;
    vector<double> F0m(Xgrid.nX,0.0), errorVec(Xgrid.nX,0.0);
 
-  
+   int thisStep = 0;
+
    // advance variables in time
    //
    while(thist<tDom.tmax) {
@@ -148,6 +149,7 @@ int main(int argc, char** argv) {
       // advance variables from n => n+1
       //
       phys.advance(Xgrid, dtSim);
+      thisStep = thisStep + 1;
 
       // check if thist is an output time
       //
@@ -160,6 +162,7 @@ int main(int argc, char** argv) {
          verbose = 0;
          if(procID==0) {
             cout << "Output variables dumped at t = " << thist << endl; 
+            cout << "Total number of Steps = " << thisStep << endl; 
          }
       }
       else {

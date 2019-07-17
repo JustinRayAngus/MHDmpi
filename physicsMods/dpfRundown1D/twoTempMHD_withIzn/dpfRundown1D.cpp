@@ -86,6 +86,7 @@
 using namespace std;
 
 string advScheme0;  // advection differencing scheme
+string XlowBC, XhiBC;  // boundary condition strings
 string geometry0;   // CAR or CYL
 double gamma0;      // adiabatic coefficient
 double eta0;        // resistivity coefficient
@@ -141,7 +142,9 @@ void setXminBoundary(vector<double>&, const double, const double);
 void setXminExtrap(vector<double>&);
 void setXmaxBoundary(vector<double>&, const double, const double);
 void setXminBoundaryEz(vector<double>&);
+void setXminBy(vector<double>&, const double);
 void setXmaxBy(vector<double>&, const double);
+void setXmaxJneumman(vector<double>&);
 
 void parseInputFile(const domainGrid&, const Json::Value& );
 void addMembersToDataFile( HDF5dataFile& );
@@ -177,7 +180,7 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    //
    Ne = Zbar*N;
    Nn = N-Ne; 
-   M = N*V;
+   M  = N*V;
    Pe = Ne*Te;
    Pi = N*Ti;
    Ei = 0.5*M*M/N + Pi/(gamma0-1.0);
@@ -282,22 +285,27 @@ void Physics::advance(const domainGrid& Xgrid, const double a_dt)
       //if(thist>=0.03) B0 = B00*pow(0.03/thist,2);
 
       if(procID==0) {
-         //setXminBoundary(N, N.at(2), 0.0);   
-         //setXminBoundary(M, -M.at(2), 0.0);   
-         //setXminBoundary(E, E.at(2), 0.0);
          setXminBoundary(N, 0.0, 1.0);   
          setXminBoundary(Ne, 0.0, 1.0);   
          setXminBoundary(M, 0.0, -1.0);   
          setXminBoundary(Ei, 0.0, 1.0);
          setXminBoundary(Ee, 0.0, 1.0);
-         //setXminExtrap(N);
-         //setXminExtrap(M);
-         //setXminExtrap(E);
-         setXminBoundary(B, 0.0, -1.0);   
 	 if(N.at(0)<Nthresh || N.at(1)<Nthresh) {
             N.at(0) = Nthresh;
             N.at(1) = Nthresh;
 	 }
+         //setXminBoundary(B, 0.0, -1.0);   
+         
+         if(XlowBC.compare("axis") == 0 || XlowBC.compare("symmetry") == 0) {
+            setXminBoundary(B, 0.0, -1.0);   
+         } 
+         else if(XlowBC.compare("insulator") == 0) {
+            setXminBy(B,B0);   
+         } 
+         else {
+            cout << "low MagFieldBC not defined !!!! " << endl;
+         }
+         
       }
      
       if(procID==numProcs-1) {
@@ -306,8 +314,19 @@ void Physics::advance(const domainGrid& Xgrid, const double a_dt)
          setXmaxBoundary(M, 0.0, -1.0);   
          setXmaxBoundary(Ei, 0.0, 1.0);   
          setXmaxBoundary(Ee, 0.0, 1.0); 
-         //cout << "hy_cc.at(nXcc-nXg) = " << hy_cc.at(nXcc-nXg) << endl;	 
-         setXmaxBy(B,B0);   
+         //setXmaxBy(B,B0); 
+         
+         if(XhiBC.compare("conductor") ==0 ) {
+            setXmaxJneumman(B);   
+         } 
+         else if(XhiBC.compare("insulator") == 0) {
+            //cout << "hy_cc.at(nXcc-nXg) = " << hy_cc.at(nXcc-nXg) << endl;	 
+            setXmaxBy(B,B0); 
+         } 
+         else {
+            cout << "Xhi MagFieldBC not defined !!!! " << endl;
+         }
+         
       }
 
       Xgrid.communicate(N);
@@ -556,7 +575,10 @@ void updateCollisionTerms( const domainGrid&  Xgrid )
    nue = nue_spi + nue_neu + nue_vac;
    double nueR_min = pow(Tscale,1.5)/taue0*(1.0/pow(0.1,1.5));
    const int thisnX = nue.size();
-   if(procID==numProcs-1) { // set resistivity at insulator boundary
+   if(procID==0 && XlowBC.compare("insulator") == 0) { // set resistivity at insulator boundary
+      if(nue.at(1) < nueR_min) setXminBoundary(nue, nueR_min, 0.0);
+   }
+   if(procID==numProcs-1 && XhiBC.compare("insulator") == 0) { // set resistivity at insulator boundary
       if(nue.at(thisnX-nXg+1) < nueR_min) setXmaxBoundary(nue, nueR_min, 0.0);
    }
    /*  // trying different vac res method
@@ -591,7 +613,7 @@ void computeJ0( vector<double>&  a_J0_ce,
       
    Xgrid.DDX(a_J0_ce,hy_cc*a_By_cc);
    a_J0_ce = a_J0_ce/hy_ce;
-   if(procID==0 && geometry0=="CYL") {
+   if(procID==0 && geometry0=="CYL" && XlowBC.compare("axis") == 0) {
       setXminBoundary(a_J0_ce,2.0*a_By_cc.at(nXg)/hy_cc.at(nXg),0.0);
    } 
    Xgrid.communicate(a_J0_ce);
@@ -863,7 +885,25 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
       //Json::Value etaVal    = Phys.get("eta0",defValue);
       //Json::Value etaVal    = Phys.get("eta0",defValue);
       Json::Value etaVisVal   = Phys.get("etaVis0",defValue);
+     
+  
+      // parse stuff for boundary conditions
+      //
+      Json::Value XlowBoundary = Phys.get("XlowBoundary",defValue);
+      Json::Value XhiBoundary  = Phys.get("XhiBoundary",defValue);
+      XlowBC = XlowBoundary.asString();
+      XhiBC  = XhiBoundary.asString();
+      if(XlowBoundary == defValue || XhiBoundary == defValue) {
+         cout << "input ERROR: XlowBoundary or XhiBoundary set incorrectly" << endl;
+	 exit (EXIT_FAILURE);
+      } else { 
+         if(procID==0) {
+            cout << "X low boundary is " << XlowBC << endl;
+            cout << "X hi boundary is " << XhiBC << endl;
+         }
+      }
       
+ 
       //   get characteristic scales from input file
       // 
       Json::Value NscaleVal   = Phys.get("DensScale_invmc",defValue);
@@ -1147,10 +1187,10 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
    const Json::Value Bvar = Phys.get("B",defValue);
    if(Bvar.isObject()) { 
       Xgrid.setInitialProfile(B,Bvar);
-      B0 = 0;
-      if(procID==0) setXminBoundary(B, 0.0, 0.0);   
-      if(procID==numProcs-1) setXmaxBy(B,B0);
-      Xgrid.communicate(B);
+      //B0 = 0;
+      //if(procID==0) setXminBoundary(B, 0.0, 0.0);   
+      //if(procID==numProcs-1) setXmaxBy(B,B0);
+      //Xgrid.communicate(B);
    } else {
       cout << "value for Physics variable \"B\" is not object type !" << endl;
       exit (EXIT_FAILURE);
@@ -1209,6 +1249,16 @@ void setXminBoundaryEz(vector<double>& var)
       
 }
 
+void setXminBy(vector<double>& var, const double B0)
+{
+   domainGrid* mesh = domainGrid::mesh;
+   
+   for (auto i=0; i<mesh->nXg; i++) {
+      var.at(i) = hy_cc.at(i)*B0;
+   }
+
+}
+
 void setXmaxBy(vector<double>& var, const double B0)
 {
    const int thisnX = var.size();
@@ -1220,6 +1270,21 @@ void setXmaxBy(vector<double>& var, const double B0)
       var.at(i) = B0/hy_cc.at(i);
    }
 
+}
+
+void setXmaxJneumman(vector<double>& var)
+{
+   const int thisnX = var.size();
+   domainGrid* mesh = domainGrid::mesh;
+   const int ishift = thisnX-mesh->nXg;
+   
+   for (auto i=ishift; i<thisnX; i++) {
+      var.at(i) = var.at(2*ishift-i-1)*hy_cc.at(2*ishift-i-1)/hy_cc.at(i);
+      //cout << "i = " << i << endl;
+      //cout << "hy_cc.at(2*ishift-i-1) = " << hy_cc.at(2*ishift-i-1) << endl;
+      //cout << "hy_cc.at(i) = " << hy_cc.at(i) << endl;
+   }
+      
 }
 
 
