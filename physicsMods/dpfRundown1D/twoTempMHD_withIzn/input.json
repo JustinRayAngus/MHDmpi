@@ -1,0 +1,61 @@
+{
+"Xgrid":{
+         "Xmin":0.0,
+         "Xmax":1.0,
+         "nX":800,
+         "nXg":2 // number of guard cells each end
+        },
+"Time":{
+        "dtOut":0.015,  // output time intervals
+        "tOutSteps":100,  // number of output setps
+        "dtFrac":2.0     // dtSim = dtMax/dtFrac
+       },
+"Physics":{
+           "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+           "geometry":"CYL", // "CAR", "CYL"
+           "Nsub":2, // this actually refers to order
+           "gammaC":1.6667, // adiabatic coefficient
+           "Zmin":1.0e-4,   // min/initial Zbar
+           "etaVis0":0.0e-30, // numerical viscosity
+           //"eta0":0.0278, // will override calculated resistivity
+           "epsilonRel":1.0e2, // c_eff  = cvac/sqrt(epsilonRel)
+           "meRel":1.0,        // me_eff = me*meRel
+           "DensScale_invmc":3.86e23,
+           "SpatScale_m":0.038,
+           "CurrScale_Amps":1.2e6,
+           "dtCurrScale":0.05,   // rise time
+           "Amass":2.0,            // atomic mass
+           "Nthresh":1.0e-8,       // density threshold (normalized)
+           "NvacC":1.0e-2,   // N = NvacC is where vac nue is 1% spitzer at 1eV
+           "NvacP":4,        // nue_vac ~ N*(NvacC/N)^NvacP
+           "N":{
+                "type":"const", // initial profile
+                "a":0.0,  // amplitude
+                "b":0.0,  // x-shift
+                "c":0.0,  // width
+                "d":1.0   // y-shift
+               },
+           "T":{ // initial Ti=Te [eV]
+                "type":"const", // initial profile
+                "a":0.0,  // amplitude
+                "b":0.0,  // x-shift
+                "c":0.0,  // width
+                "d":0.1   // y-shift
+               },
+           "V":{
+                "type":"const", // initial profile
+                "a":0.0,  // amplitude
+                "b":0.0,  // x-shift
+                "c":0.0,  // width
+                "d":0.0   // y-shift
+               },
+           "B":{
+                "type":"const", // initial profile
+                "a":0.0, // amplitude
+                "b":0.0,  // x-shift
+                "c":0.0,  // width
+                "d":0.0   // y-shift
+               }
+          }
+}
+
