@@ -26,6 +26,7 @@
            "SpatScale_m":0.038,
            "CurrScale_Amps":1.2e6,
            "dtCurrScale":0.05,   // rise time
+           "riseTime_units":"code", // "code", "ns"
            "Amass":2.0,            // atomic mass
            "Nthresh":1.0e-8,       // density threshold (normalized)
            "NvacC":1.0e-2,   // N = NvacC is where vac nue is 1% spitzer at 1eV

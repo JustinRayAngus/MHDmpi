@@ -6,7 +6,7 @@
          "nXg":2 // number of guard cells each end
         },
 "Time":{
-        "dtOut":0.03,  // output time intervals
+        "dtOut":0.025,  // output time intervals
         "tOutSteps":100,  // number of output setps
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
@@ -24,8 +24,9 @@
            "meRel":1.0,        // me_eff = me*meRel
            "DensScale_invmc":3.86e23,
            "SpatScale_m":0.038,
-           "CurrScale_Amps":1.2e6,
-           "dtCurrScale":4.00,   // rise time
+           "CurrScale_Amps":1.0e6,
+           "dtCurrScale":1.0e3,   // rise time
+           "riseTime_units":"ns", // "code", "ns"
            "Amass":2.0,          // atomic mass
            "Nthresh":1.0e-8,       // density threshold (normalized)
            "NvacC":1.0e-2,   // N = NvacC is where vac nue is 1% spitzer at 1eV

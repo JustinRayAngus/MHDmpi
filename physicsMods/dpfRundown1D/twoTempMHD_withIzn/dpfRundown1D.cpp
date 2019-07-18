@@ -910,6 +910,7 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
       Json::Value XscaleVal   = Phys.get("SpatScale_m",    defValue);
       Json::Value IscaleVal   = Phys.get("CurrScale_Amps", defValue);
       Json::Value dtIscaleVal = Phys.get("dtCurrScale",    defValue);
+      Json::Value riseTime_unitsVal = Phys.get("riseTime_units", defValue);
       Json::Value AmassVal    = Phys.get("Amass",          defValue);
       Json::Value NthreshVal  = Phys.get("Nthresh",        defValue);
       Json::Value epsilonRelVal = Phys.get("epsilonRel",defValue);
@@ -950,8 +951,18 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
 	 exit (EXIT_FAILURE);
       } else {
          dtIscale = dtIscaleVal.asDouble();
-         if(procID==0) cout << "current rise time / tpinch = " << dtIscale << endl;
+         if(procID==0) cout << "current rise time = " << dtIscale << endl;
       }
+      //
+      string riseTime_units;
+      if(riseTime_unitsVal == defValue) {
+         cout << "input ERROR: did not set riseTime_units correctly" << endl;
+	 exit (EXIT_FAILURE);
+      } else {
+         riseTime_units = riseTime_unitsVal.asString();
+         if(procID==0) cout << "current rise time units = " << riseTime_units << endl;
+      }
+
       //
       if(AmassVal == defValue) {
          cout << "input ERROR: did not set Amass correctly" << endl;
@@ -1027,6 +1038,8 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
       //
       double Lescale  = cvac/wpescale;    // ele inertial scale [m]
       double Liscale  = cvac/wpiscale;         // ion inertial scale [m]
+      
+      if(riseTime_units.compare("ns") == 0 ) dtIscale = dtIscale*1.0e-9/tscale;
       
       if(procID==0) {
          cout << endl;
