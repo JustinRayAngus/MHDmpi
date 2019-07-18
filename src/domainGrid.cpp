@@ -2088,3 +2088,55 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
 
 } // end TVD flux calculation
 
+
+///////////////////////////////////////////////////////
+//
+//     boundary condition functions
+//
+//
+
+void domainGrid::setXminBoundary( vector<double>&  var,
+                            const double           C0,
+                            const double           C1 ) const
+{
+   for (auto i=0; i<nXg; i++) {
+      var.at(nXg-i-1) = C0 + C1*var.at(nXg+i);
+   }
+}
+
+void domainGrid::setXmaxBoundary( vector<double>&  var,
+                            const double           C0,
+                            const double           C1 ) const
+{
+   const int thisnX = var.size();
+   const int ishift = thisnX-nXg;
+
+   for (auto i=ishift; i<thisnX; i++) {
+      var.at(i) = C0 + C1*var.at(2*ishift-i-1);
+   }
+}
+
+void domainGrid::setXminBoundary_J( vector<double>&  var,
+                              const double           C0,
+                              const double           C1 ) const
+{
+   for (auto i=0; i<nXg; i++) {
+      var.at(nXg-i-1) = (C0 + C1*var.at(nXg+i)*Xcc.at(nXg+i))/Xcc.at(nXg-i-1);
+   }
+}
+
+void domainGrid::setXmaxBoundary_J( vector<double>&  var,
+                              const double           C0,
+                              const double           C1 ) const
+{
+   const int thisnX = var.size();
+   const int ishift = thisnX-nXg;
+
+   for (auto i=ishift; i<thisnX; i++) {
+      var.at(i) = (C0 + C1*var.at(2*ishift-i-1)*Xcc.at(2*ishift-i-1))/Xcc.at(i);
+   }
+}
+
+
+
+

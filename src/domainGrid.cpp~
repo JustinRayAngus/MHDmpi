@@ -1574,10 +1574,10 @@ void domainGrid::InterpToCellCenter(matrix2D<double> &Fout,
    const int Nout1 = Fout.size1();
    const int Nin0  = Fin.size0();
    const int Nin1  = Fin.size1();
-   cout << " Nout0 = " << Nout0 << endl;
-   cout << " Nout1 = " << Nout1 << endl;
-   cout << " nXcc = " << nXcc << endl;
-   cout << " nZcc = " << nZcc << endl;
+   //cout << " Nout0 = " << Nout0 << endl;
+   //cout << " Nout1 = " << Nout1 << endl;
+   //cout << " nXcc = " << nXcc << endl;
+   //cout << " nZcc = " << nZcc << endl;
    assert(Nout0 == nXcc);
    assert(Nout1 == nZcc);
    assert(Nin0==nXce || Nin1==nZce); // at least one direction stag
@@ -2087,4 +2087,33 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
 
 
 } // end TVD flux calculation
+
+
+///////////////////////////////////////////////////////
+//
+//    boundary condition functions
+//
+
+void setXminBoundary( vector<double>&  var, 
+		const double           C0, 
+		const double           C1 ) const
+{
+   for (auto i=0; i<nXg; i++) {
+      var.at(nXg-i-1) = C0 + C1*var.at(nXg+i);
+   }
+}
+
+void setXmaxBoundary( vector<double>&  var, 
+		const double           C0, 
+		const double           C1 ) const
+{
+   const int thisnX = var.size();
+   const int ishift = thisnX-nXg;
+
+   for (auto i=ishift; i<thisnX; i++) {
+      var.at(i) = C0 + C1*var.at(2*ishift-i-1);
+   }
+}
+
+
 

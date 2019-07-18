@@ -109,6 +109,11 @@ public:
   void DDZ(matrix2D<double>&, const matrix2D<double>&) const;
   void D2DZ2(matrix2D<double>&, const matrix2D<double>&) const;
 
+  void setXminBoundary( vector<double>&, const double, const double ) const;
+  void setXmaxBoundary( vector<double>&, const double, const double ) const;
+  void setXminBoundary_J( vector<double>&, const double, const double ) const;
+  void setXmaxBoundary_J( vector<double>&, const double, const double ) const;
+
 //domainGrid() {};
 
 };

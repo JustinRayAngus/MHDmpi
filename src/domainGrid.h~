@@ -92,13 +92,15 @@ public:
                       const matrix2D<double>&, 
 		      const matrix2D<double>&,
 		      const matrix2D<double>&,
+                      const string&,
 		      const int) const;
   void computeFluxTVDsimple(vector<double>&, 
                       vector<double> &,
 		      vector<double> &, 
                       const vector<double>&, 
 		      const vector<double>&,
-		      const vector<double>&) const;
+		      const vector<double>&,
+		      const string&) const;
   
   void DDX(vector<double>&, const vector<double>&) const;
   void DDX(vector<vector<double>>&, const vector<vector<double>>&) const;
@@ -106,6 +108,9 @@ public:
   void DDX(matrix2D<double>&, const matrix2D<double>&) const;
   void DDZ(matrix2D<double>&, const matrix2D<double>&) const;
   void D2DZ2(matrix2D<double>&, const matrix2D<double>&) const;
+
+  void setXminBoundary( vector<double>&, const double, const double ) const;
+  void setXmaxBoundary( vector<double>&, const double, const double ) const;
 
 //domainGrid() {};
 
