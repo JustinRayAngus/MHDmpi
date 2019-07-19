@@ -119,12 +119,12 @@ void domainGrid::initialize(const Json::Value& root)
          exit (EXIT_FAILURE);
       } 
       nZ = nZVal.asInt();
-      if(nZ != nZVal.asDouble() || nZ < 1) {
+      if(nZ != nZVal.asDouble() || nZ <= 0) {
          printf("ERROR: nZ is not set as a positive integer in input file\n");
          exit (EXIT_FAILURE);
       }
       nZg = nZgVal.asInt();
-      if(nZg != nZgVal.asDouble() || nZg < 1 || nZg>4) {
+      if(nZg != nZgVal.asDouble() || nZg < 0 || nZg>4) {
          cout << "ERROR: number of guard cells nZg" << endl;
          cout << "is not set correctly in input file" << endl;
          exit (EXIT_FAILURE);
@@ -2091,7 +2091,7 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
 
 ///////////////////////////////////////////////////////
 //
-//     boundary condition functions
+//     boundary condition functions for vectors
 //
 //
 
@@ -2138,5 +2138,123 @@ void domainGrid::setXmaxBoundary_J( vector<double>&  var,
 }
 
 
+///////////////////////////////////////////////////////
+//
+//     boundary condition functions for matrix2D
+//
+//
 
+void domainGrid::setXminBoundary( matrix2D<double>&  var,
+                            const vector<double>&    C0 ) const
+{
+   const int thisnZ = var.size1();
+   assert( thisnZ==C0.size() );
+   const int ishift = nXg;
+
+   for (auto i=0; i<ishift; i++) {
+      for (auto j=0; j<thisnZ; j++) {
+         var(ishift-i-1,j) = C0.at(j);
+      }
+   }
+
+}
+
+void domainGrid::setXminBoundary( matrix2D<double>&  var,
+                            const double             C0,
+                            const double             C1 ) const
+{
+   const int thisnZ = var.size1();
+   const int ishift = nXg;
+
+   for (auto i=0; i<ishift; i++) {
+      for (auto j=0; j<thisnZ; j++) {
+         var(ishift-i-1,j) = C0 + C1*var(ishift+i,j);
+      }
+   }
+
+}
+
+void domainGrid::setXmaxBoundary( matrix2D<double>&  var,
+                            const vector<double>&    C0 ) const
+{
+   const int thisnX = var.size0();
+   const int thisnZ = var.size1();
+   assert( thisnZ==C0.size() );
+   const int ishift = thisnX-nXg;
+
+   for (auto i=ishift; i<thisnX; i++) {
+      for (auto j=0; j<thisnZ; j++) {
+         var(i,j) = C0.at(j);
+      }
+   }
+
+}
+
+void domainGrid::setXmaxBoundary( matrix2D<double>&  var,
+                            const double             C0,
+                            const double             C1 ) const
+{
+   const int thisnX = var.size0();
+   const int thisnZ = var.size1();
+   const int ishift = thisnX-nXg;
+
+   for (auto i=ishift; i<thisnX; i++) {
+      for (auto j=0; j<thisnZ; j++) {
+         var(i,j) = C0 + C1*var(2*ishift-i-1,j);
+      }
+   }
+
+}
+
+void domainGrid::setXminBoundary_J( matrix2D<double>&  var,
+                              const double             C0,
+                              const double             C1 ) const
+{
+   const int thisnZ = var.size1();
+
+   for (auto i=0; i<nXg; i++) {
+      for (auto j=0; j<thisnZ; j++) {
+         var(nXg-i-1,j) = (C0 + C1*var(nXg+i,j)*Xcc.at(nXg+i))/Xcc.at(nXg-i-1);
+      }
+   }
+}
+
+void domainGrid::setXmaxBoundary_J( matrix2D<double>&  var,
+                              const double             C0,
+                              const double             C1 ) const
+{
+   const int thisnX = var.size0();
+   const int thisnZ = var.size1();
+   const int ishift = thisnX-nXg;
+
+   for (auto i=ishift; i<thisnX; i++) {
+      for (auto j=0; j<thisnZ; j++) {
+         var(i,j) = (C0 + C1*var(2*ishift-i-1,j)*Xcc.at(2*ishift-i-1))/Xcc.at(i);
+      }
+   } 
+}
+
+void domainGrid::setZboundaryPeriodic( matrix2D<double>&  var ) const
+{
+   const int thisnX = var.size0();
+   const int thisnZ = var.size1();
+
+   //assert(nZg==2 || nZg==1);
+   if(nZg==2) {
+      for (auto i=0; i<thisnX; i++) {
+	 var(i,1) = var(i,thisnZ-3);
+	 var(i,0) = var(i,thisnZ-4);
+
+	 var(i,thisnZ-2) = var(i,2);
+	 var(i,thisnZ-1) = var(i,3);
+      }
+   }
+   if(nZg==1) {
+      for (auto i=0; i<thisnX; i++) {
+	 var(i,0) = var(i,thisnZ-2);
+	 var(i,thisnZ-1) = var(i,1);
+      }
+   }
+
+}
 

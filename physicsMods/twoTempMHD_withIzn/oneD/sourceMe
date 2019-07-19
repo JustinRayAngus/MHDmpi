@@ -1,0 +1,2 @@
+export PHYScpp=twoTempMHD_1D.cpp
+export PHYS_HOME="../physicsMods/twoTempMHD_withIzn/oneD/"

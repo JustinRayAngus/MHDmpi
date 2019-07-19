@@ -1,6 +1,7 @@
-twoTempMHD_withIzn is most recent. Set up to do
-run in and lift off. Also major refactoring creating
-functions to make the code more readable.
+twoTempMHD_withIzn, which is its own module now,
+is most recent. Set up to do run in and lift off. 
+Also major refactoring creating functions to make 
+the code more readable.
 
 twoTempMHD is what was used for paper.
 

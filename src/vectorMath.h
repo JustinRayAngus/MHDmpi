@@ -498,9 +498,12 @@ vector<T> operator/(const vector<T>& a, const T &b)
 
    vector<T> result;
    result.reserve(a.size());
-   result = a;
-   transform(result.begin(), result.end(), result.begin(),
-             bind1st(multiplies<T>(),1.0/b));
+   const T binv = 1.0/b;
+   result = a*binv;
+   
+   //result = a;
+   //transform(result.begin(), result.end(), result.begin(),
+   //          bind1st(multiplies<T>(),1.0/b));
 
    return result;
 }

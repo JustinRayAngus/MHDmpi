@@ -103,7 +103,7 @@ int main(int argc, char** argv) {
    dataFile.add(Xgrid.Xcc, "Xcc", 0); 
    dataFile.add(Xgrid.Xce, "Xce", 0); 
    dataFile.add(Xgrid.nXg, "nXg", 0); 
-   if(Xgrid.nZ>1) {
+   if(Xgrid.nZg>0) {
       dataFile.add(Xgrid.Zcc, "Zcc", 0); 
       dataFile.add(Xgrid.Zce, "Zce", 0);
       dataFile.add(Xgrid.nZg, "nZg", 0); 
@@ -143,12 +143,12 @@ int main(int argc, char** argv) {
    // advance variables in time
    //
    while(thist<tDom.tmax) {
-      thist = thist + dtSim; // new time at end of this time step
-      tDom.tSim = thist;
 
       // advance variables from n => n+1
       //
       phys.advance(Xgrid, dtSim);
+      thist = thist + dtSim; // new time at end of this time step
+      tDom.tSim = thist;
       thisStep = thisStep + 1;
 
       // check if thist is an output time
