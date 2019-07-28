@@ -845,8 +845,9 @@ void domainGrid::DDX(vector<vector<double>>& Fout,
 
 }
 
-void domainGrid::DDX(matrix2D<double>& Fout, 
-		const matrix2D<double>& Fin) const {
+void domainGrid::DDX( matrix2D<double>&  Fout, 
+		const matrix2D<double>&  Fin ) const 
+{
 
    // check that Fin (at cell center) and 
    // use Fout size to determine how to take DDX
@@ -1500,6 +1501,164 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
 
 }
 
+void domainGrid::InterpCellToEdges( matrix2D<double>&  Fout, 
+                              const matrix2D<double>&  Fin,
+                              const matrix2D<double>&  a_V,
+                              const string&            METHOD,
+			      const int                dir ) const 
+{
+   // this function interpolates cell-center Fin to
+   // Fout defined at cell edges
+   // a_V is the velocity on cell edges used for upwinding
+   // METHOD referes to interpolation scheme
+   // All methods here are flux-limited schemes right now
+
+
+   // check that vectors in call are proper size
+   //
+   const int Nout0 = Fout.size0();
+   const int Nout1 = Fout.size1();
+   const int Nin0  = Fin.size0();
+   const int Nin1  = Fin.size1();
+   const int NV0   = a_V.size0();
+   const int NV1   = a_V.size1();
+   assert(NV0==Nout0);  // velocity lives with Fout
+   assert(NV1==Nout1);  // velocity lives with Fout
+   if(dir==0) {
+      assert(Nin0==nXcc);  // input cell-center in X 
+      assert(Nout0==nXce); // output cell-edge in X
+      assert(Nin1==Nout1); // input and output same size in Z
+   }   
+   else if(dir==1) {
+      assert(Nin1==nZcc);  // input cell-center in Z 
+      assert(Nout1==nZce); // output cell-edge in Z
+      assert(Nin0==Nout0); // input and output same size in X
+   }   
+   else {
+      cout << "dir in call to InterpToCellEdges most be 0 or 1" << endl;
+      exit (EXIT_FAILURE);
+   }
+
+   //  interpolate to edge using C2 and U1
+   //
+   double rlim, limiter, FoutC2, FoutU1;
+   double numer, denom, lim0, lim1;   
+   int ii=0, jj=0;
+   if(dir==0) ii = 1;
+   if(dir==1) jj = 1;
+
+
+   for (auto i=0+ii; i<Nout0; i++) {
+      for (auto j=0+jj; j<Nout1; j++) {
+           
+         // set argument for flux limiter
+         //
+         numer = Fin(i,j) - Fin(i-ii,j-jj);
+         denom = Fin(i+ii,j+jj) - Fin(i,j);
+         rlim = numer/denom;
+         if(denom==0.0) {
+            rlim = 10000.0;
+         } 
+         else {       
+            rlim = numer/denom;
+         }
+
+         // 2nd order central
+         //
+         FoutC2 = (Fin(i+ii,j+jj) + Fin(i,j))/2.0;
+            
+         // 1st order upwind
+         //
+         if(a_V(i,j)<0.0) {
+            FoutU1 = Fin(i+ii,j+jj);
+         } else {
+            FoutU1 = Fin(i,j);
+         }
+         
+         // set limiter value
+         //
+         if( METHOD=="uw1" ) {
+            limiter = 0.0;
+         } 
+         else if( METHOD=="vanLeer" ) {
+            limiter = (rlim + abs(rlim))/(1.0 + abs(rlim));
+            //cout << "JRA: vanLeer with rlim    = " << rlim << endl;
+            //cout << "JRA: vanLeer with limiter = " << limiter << endl;
+         }
+         else if( METHOD=="minmod" ) {
+            limiter = min(1.0,rlim);
+         }
+         else if( METHOD=="superbee" ) {
+              lim0 = min(rlim,2.0);
+              lim1 = min(2.0*rlim,1.0);
+              limiter = max(lim0,lim1);
+         }
+         else if( METHOD=="vanAlbada1" ) {
+              limiter = (rlim*rlim + rlim)/(rlim*rlim + 1.0);
+         }
+         else if( METHOD=="vanAlbada2" ) {
+              limiter = (2.0*rlim)/(rlim*rlim + 1.0);
+         }
+         else if (METHOD=="C2" ) { // no upwind => c2 scheme
+           limiter = 1.0;
+         }
+         else {
+            printf("ERROR: upwind method (limiter) not recognized \n");
+         }
+         limiter = max(0.0,limiter);
+
+         // set edge value using limiter
+         //
+         Fout(i,j) = FoutU1 + limiter*(FoutC2 - FoutU1);
+      }
+   }
+   
+}
+
+void domainGrid::InterpEdgesToEdges( matrix2D<double>&  Fout, 
+                               const matrix2D<double>&  Fin ) const 
+{
+   // this function interpolates Fin defined on one edge
+   // to the oposite edge using central scheme
+
+   // check that vectors in call are proper size
+   //
+   const int Nout0 = Fout.size0();
+   const int Nout1 = Fout.size1();
+   const int Nin0  = Fin.size0();
+   const int Nin1  = Fin.size1();
+   if(Nin0==nXce) { // going from x-edges to z-edges
+      assert(Nin1==nZcc);
+      assert(Nout0==nXcc);
+      assert(Nout1==nZce);
+   }   
+   else {           // going from z-edges to x-edges
+      assert(Nin1==nZce);
+      assert(Nout0==nXce);
+      assert(Nout1==nZcc);
+   }   
+
+   //  interpolate to edge using C2 and U1
+   //
+   double Fup, Fdown; 
+
+   for (auto i=1; i<Nout0; i++) {
+      for (auto j=1; j<Nout1; j++) {
+   
+         if(Nin0==nXce) {        
+            Fup   = (Fin(i+1,j+1) + Fin(i+0,j+1))/2.0;
+            Fdown = (Fin(i,j)     + Fin(i-1,j-0))/2.0;
+         }
+         else {
+            Fup   = (Fin(i+1,j+1) + Fin(i+1,j+0))/2.0;
+            Fdown = (Fin(i,j)     + Fin(i-0,j-1))/2.0; 
+         }
+         Fout(i,j) = ( Fup + Fdown )/2.0;
+
+      }
+   }
+
+}
 
 
 void domainGrid::InterpToCellCenter(vector<double> &Fout, 

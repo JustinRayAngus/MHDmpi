@@ -1,0 +1,1003 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Initiating simulation
+mpi job with 25 processors
+
+Input file ./input.json parsed successfully
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+
+Output file output0.h5 created 
+Non-extendable int procID written to output0.h5
+
+Initializing domain grid ...
+Xmin = 0
+Xmax = 1
+nX = 800
+nXsub = 32
+dX = 0.00125
+nXg = 2
+
+Zmin = -0.5
+Zmax = 0.5
+nZ = 2
+nZsub = 2
+dZ = 0.5
+nZg = 2
+
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+Non-extendable vector Xcc added to output0.h5
+Non-extendable vector Xce added to output0.h5
+Non-extendable int nXg written to output0.h5
+Non-extendable vector Zcc added to output0.h5
+Non-extendable vector Zce added to output0.h5
+Non-extendable int nZg written to output0.h5
+
+Initializing time domain ...
+tmax = 1.5
+tOut intervals = 0.015
+dtFrac = 2
+
+Extendable scalar tout added to output0.h5
+
+Initializing Physics ...
+X low boundary is axis
+X hi boundary is insulator
+
+input values:
+density scale [1/m^3] = 3.86e+23
+spatial scale [m] = 0.038
+current scale [Amps] = 1.2e+06
+current rise time = 0.05
+current rise time units = code
+atomic mass = 2
+Nthresh = 1e-08
+epsilon/epsilon0 = 100
+me/me0 = 1
+NvacC = 0.01
+NvacP = 4
+
+derived scales:
+pressure scale [J/m^3]     = 1.58714e+07
+velocity scale [m/s]       = 111270
+electric field scale [V/m] = 496927
+magnetic field scale [T]   = 4.46594
+temperature scale [eV]     = 256.632
+time scale [s]             = 3.4151e-07
+resistivity scale [Ohm-m]  = 0.00531341
+ele plasma freq [rad/s]    = 3.50407e+13
+ion plasma freq [rad/s]    = 5.80341e+11
+ele cyclotron freq [rad/s] = 7.85488e+11
+ion cyclotron freq [rad/s] = 2.15457e+08
+ele collision time [s]     = 3.66385e-10
+ion collision time [s]     = 3.13664e-08
+ele inertial length [m]    = 8.55548e-06
+ion inertial length [m]    = 0.000516576
+
+dimensionless parameters:
+normalized resistivity = 4.71517e-07
+taue/tscale = 0.00107284
+taui/tscale = 0.0918461
+wce*taue = 287.791
+wci*taui = 6.75811
+(Li0/r0)   = 0.0135941 norm ion inert length 
+(Le0/r0)^2 = 5.06899e-08 norm ele inert length squared
+(V0/c)^2   = 1.37761e-05 (Jz relaxation const)
+advection diff/interp scheme is TVD
+Hall advection diff/interp scheme is vanLeer
+geometry is CYL
+adiabatic coefficent = 1.6667
+Zmin = 0.0001
+Nsub = 2
+viscosity = 0
+JRA: setting deltaN profile
+Initial var is Gaussian with amplitude = -0
+center at x = 1
+width = 0.3333
+and y-shift = 0
+Initial F0 is cos with mode number  = 1
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+JRA: setting deltaN profile
+Extendable matrix2D N added to output0.h5
+Extendable matrix2D Mx added to output0.h5
+Extendable matrix2D Mz added to output0.h5
+Extendable matrix2D By added to output0.h5
+Extendable matrix2D Ei added to output0.h5
+Extendable matrix2D Ee added to output0.h5
+Extendable matrix2D P added to output0.h5
+Extendable matrix2D Pi added to output0.h5
+Extendable matrix2D Pe added to output0.h5
+Extendable matrix2D Ti added to output0.h5
+Extendable matrix2D Te added to output0.h5
+Extendable matrix2D eta added to output0.h5
+Extendable matrix2D eta_eff added to output0.h5
+Extendable matrix2D taue added to output0.h5
+Extendable matrix2D nue_spi added to output0.h5
+Extendable matrix2D nue_vac added to output0.h5
+Extendable matrix2D Ne added to output0.h5
+Extendable matrix2D Zbar added to output0.h5
+Extendable matrix2D nue_neu added to output0.h5
+Extendable matrix2D nue_izn added to output0.h5
+Extendable matrix2D Jz added to output0.h5
+Extendable matrix2D Jx added to output0.h5
+Extendable matrix2D Jzcc added to output0.h5
+Extendable matrix2D Jxcc added to output0.h5
+Extendable matrix2D Jz0 added to output0.h5
+Extendable matrix2D Jx0 added to output0.h5
+Extendable matrix2D Ez added to output0.h5
+Extendable matrix2D Ex added to output0.h5
+Extendable matrix2D Ezcc added to output0.h5
+Extendable matrix2D Excc added to output0.h5
+Extendable matrix2D Ehallz added to output0.h5
+Extendable matrix2D Ehallx added to output0.h5
+Extendable matrix2D Egradz added to output0.h5
+Extendable matrix2D Egradx added to output0.h5
+Extendable matrix2D curlJ0 added to output0.h5
+Extendable matrix2D Omegay added to output0.h5
+Extendable matrix2D curlVe added to output0.h5
+Extendable matrix2D Vex_z added to output0.h5
+Extendable matrix2D Vez_x added to output0.h5
+Extendable matrix2D Cs added to output0.h5
+Extendable matrix2D JdotE added to output0.h5
+Extendable matrix2D NeUdotE added to output0.h5
+Extendable matrix2D Qie added to output0.h5
+Extendable matrix2D SEe added to output0.h5
+Non-extendable scalar gamma0 written to output0.h5
+Non-extendable scalar delta0 written to output0.h5
+Non-extendable scalar Li0 written to output0.h5
+Non-extendable scalar Le0sq written to output0.h5
+Extendable matrix2D FluxN_x added to output0.h5
+Extendable matrix2D FluxMx_x added to output0.h5
+Extendable matrix2D FluxMz_x added to output0.h5
+Extendable matrix2D FluxEi_x added to output0.h5
+Extendable matrix2D FluxEe_x added to output0.h5
+Extendable matrix2D FluxNe_x added to output0.h5
+Non-extendable scalar Iscale written to output0.h5
+Non-extendable scalar Nscale written to output0.h5
+Non-extendable scalar Tscale written to output0.h5
+Non-extendable scalar Xscale written to output0.h5
+Non-extendable scalar Bscale written to output0.h5
+Non-extendable scalar Ezscale written to output0.h5
+Non-extendable scalar Jscale written to output0.h5
+Non-extendable scalar Pscale written to output0.h5
+Non-extendable scalar Vscale written to output0.h5
+Non-extendable scalar tscale written to output0.h5
+Non-extendable scalar Mi written to output0.h5
+Non-extendable scalar Mn written to output0.h5
+Non-extendable matrix2D hy_cc added to output0.h5
+Non-extendable matrix2D hy_ce added to output0.h5
+sigma_0*dt/delta = 357125
+dtCFL_sound = 0.0490473
+dtCFL_hall  = inf
+dt_izn      = 3.08932e+56
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Initial simulation time step: 2.31976e-06
+
+sigma_0*dt/delta = 357125
+dtCFL_sound = 0.00146085
+dtCFL_hall  = inf
+dt_izn      = 0.0060433
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.0150019
+Total number of Steps = 6467
+sigma_0*dt/delta = 357125
+dtCFL_sound = 0.000155186
+dtCFL_hall  = inf
+dt_izn      = 0.00520264
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.0300014
+Total number of Steps = 12933
+sigma_0*dt/delta = 357125
+dtCFL_sound = 3.13139e-05
+dtCFL_hall  = inf
+dt_izn      = 0.00426917
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.045001
+Total number of Steps = 19399
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.76233e-05
+dtCFL_hall  = inf
+dt_izn      = 0.00273224
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.0600005
+Total number of Steps = 25865
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.34661e-05
+dtCFL_hall  = inf
+dt_izn      = 0.0023045
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.0750001
+Total number of Steps = 32331
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.14645e-05
+dtCFL_hall  = inf
+dt_izn      = 0.00250748
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.0900019
+Total number of Steps = 38798
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.0436e-05
+dtCFL_hall  = inf
+dt_izn      = 0.00238558
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.105001
+Total number of Steps = 45264
+sigma_0*dt/delta = 357125
+dtCFL_sound = 9.8616e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00227487
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.120001
+Total number of Steps = 51730
+sigma_0*dt/delta = 357125
+dtCFL_sound = 9.51681e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00254322
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.135001
+Total number of Steps = 58196
+sigma_0*dt/delta = 357125
+dtCFL_sound = 9.29464e-06
+dtCFL_hall  = inf
+dt_izn      = 0.0022622
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.15
+Total number of Steps = 64662
+sigma_0*dt/delta = 357125
+dtCFL_sound = 9.14144e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00209705
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.165002
+Total number of Steps = 71129
+sigma_0*dt/delta = 357125
+dtCFL_sound = 9.02871e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00210074
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.180002
+Total number of Steps = 77595
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.94186e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00202781
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.195001
+Total number of Steps = 84061
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.87238e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00220992
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.210001
+Total number of Steps = 90527
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.81537e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00211021
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.225
+Total number of Steps = 96993
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.76785e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00224715
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.240002
+Total number of Steps = 103460
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.72782e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00206358
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.255002
+Total number of Steps = 109926
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.69408e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00205574
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.270001
+Total number of Steps = 116392
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.66549e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00209243
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.285001
+Total number of Steps = 122858
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.64094e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00178903
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.3
+Total number of Steps = 129324
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.61904e-06
+dtCFL_hall  = inf
+dt_izn      = 0.0019503
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.315002
+Total number of Steps = 135791
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.56947e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00194848
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.330002
+Total number of Steps = 142257
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.44121e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00182772
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.345001
+Total number of Steps = 148723
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.30815e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00173001
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.360001
+Total number of Steps = 155189
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.17161e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00168594
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.375
+Total number of Steps = 161655
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.02883e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00166306
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.390002
+Total number of Steps = 168122
+sigma_0*dt/delta = 357125
+dtCFL_sound = 7.87673e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00158617
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.405002
+Total number of Steps = 174588
+sigma_0*dt/delta = 357125
+dtCFL_sound = 7.71509e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00164884
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.420001
+Total number of Steps = 181054
+sigma_0*dt/delta = 357125
+dtCFL_sound = 7.54568e-06
+dtCFL_hall  = inf
+dt_izn      = 0.0016274
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.435001
+Total number of Steps = 187520
+sigma_0*dt/delta = 357125
+dtCFL_sound = 7.36989e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00144797
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.45
+Total number of Steps = 193986
+sigma_0*dt/delta = 357125
+dtCFL_sound = 7.18795e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00153508
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.465002
+Total number of Steps = 200453
+sigma_0*dt/delta = 357125
+dtCFL_sound = 6.99961e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00144587
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.480002
+Total number of Steps = 206919
+sigma_0*dt/delta = 357125
+dtCFL_sound = 6.80454e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00149787
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.495001
+Total number of Steps = 213385
+sigma_0*dt/delta = 357125
+dtCFL_sound = 6.60263e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00143473
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.510001
+Total number of Steps = 219851
+sigma_0*dt/delta = 357125
+dtCFL_sound = 6.39389e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00128224
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.525
+Total number of Steps = 226317
+sigma_0*dt/delta = 357125
+dtCFL_sound = 6.1783e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00134344
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.54
+Total number of Steps = 232783
+sigma_0*dt/delta = 357125
+dtCFL_sound = 5.95575e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00129121
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.555002
+Total number of Steps = 239250
+sigma_0*dt/delta = 357125
+dtCFL_sound = 5.72611e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00114798
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.570001
+Total number of Steps = 245716
+sigma_0*dt/delta = 357125
+dtCFL_sound = 5.48905e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00109567
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.585001
+Total number of Steps = 252182
+sigma_0*dt/delta = 357125
+dtCFL_sound = 5.24428e-06
+dtCFL_hall  = inf
+dt_izn      = 0.00105718
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.600001
+Total number of Steps = 258648
+sigma_0*dt/delta = 357125
+dtCFL_sound = 4.99146e-06
+dtCFL_hall  = inf
+dt_izn      = 0.0009451
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.615
+Total number of Steps = 265114
+sigma_0*dt/delta = 357125
+dtCFL_sound = 4.73032e-06
+dtCFL_hall  = inf
+dt_izn      = 0.000917798
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.630002
+Total number of Steps = 271581
+sigma_0*dt/delta = 343356
+dtCFL_sound = 4.46064e-06
+dtCFL_hall  = inf
+dt_izn      = 0.000752475
+dtCFL_light = 4.63951e-06
+dtSim = 2.23032e-06
+Output variables dumped at t = 0.645001
+Total number of Steps = 278131
+sigma_0*dt/delta = 321916
+dtCFL_sound = 4.1821e-06
+dtCFL_hall  = inf
+dt_izn      = 21050.3
+dtCFL_light = 4.63951e-06
+dtSim = 2.09105e-06
+Output variables dumped at t = 0.660001
+Total number of Steps = 285074
+sigma_0*dt/delta = 299773
+dtCFL_sound = 3.89444e-06
+dtCFL_hall  = inf
+dt_izn      = 19677.6
+dtCFL_light = 4.63951e-06
+dtSim = 1.94722e-06
+Output variables dumped at t = 0.675001
+Total number of Steps = 292505
+sigma_0*dt/delta = 276949
+dtCFL_sound = 3.59792e-06
+dtCFL_hall  = inf
+dt_izn      = 18337
+dtCFL_light = 4.63951e-06
+dtSim = 1.79896e-06
+Output variables dumped at t = 0.690002
+Total number of Steps = 300516
+sigma_0*dt/delta = 253480
+dtCFL_sound = 3.29303e-06
+dtCFL_hall  = inf
+dt_izn      = 17060.3
+dtCFL_light = 4.63951e-06
+dtSim = 1.64651e-06
+Output variables dumped at t = 0.705001
+Total number of Steps = 309227
+sigma_0*dt/delta = 229519
+dtCFL_sound = 2.98175e-06
+dtCFL_hall  = inf
+dt_izn      = 16282.3
+dtCFL_light = 4.63951e-06
+dtSim = 1.49087e-06
+Output variables dumped at t = 0.72
+Total number of Steps = 318795
+sigma_0*dt/delta = 205479
+dtCFL_sound = 2.66944e-06
+dtCFL_hall  = inf
+dt_izn      = 14880.5
+dtCFL_light = 4.63951e-06
+dtSim = 1.33472e-06
+Output variables dumped at t = 0.735
+Total number of Steps = 329424
+sigma_0*dt/delta = 182404
+dtCFL_sound = 2.36966e-06
+dtCFL_hall  = inf
+dt_izn      = 13480.5
+dtCFL_light = 4.63951e-06
+dtSim = 1.18483e-06
+Output variables dumped at t = 0.750001
+Total number of Steps = 341354
+sigma_0*dt/delta = 231256
+dtCFL_sound = 3.00431e-06
+dtCFL_hall  = inf
+dt_izn      = 11574.4
+dtCFL_light = 4.63951e-06
+dtSim = 1.50215e-06
+Output variables dumped at t = 0.765001
+Total number of Steps = 353113
+sigma_0*dt/delta = 233234
+dtCFL_sound = 3.03001e-06
+dtCFL_hall  = inf
+dt_izn      = 10709.6
+dtCFL_light = 4.63951e-06
+dtSim = 1.51501e-06
+Output variables dumped at t = 0.78
+Total number of Steps = 363654
+sigma_0*dt/delta = 230915
+dtCFL_sound = 2.99988e-06
+dtCFL_hall  = inf
+dt_izn      = 10237.6
+dtCFL_light = 4.63951e-06
+dtSim = 1.49994e-06
+Output variables dumped at t = 0.795001
+Total number of Steps = 373385
+sigma_0*dt/delta = 259937
+dtCFL_sound = 3.37691e-06
+dtCFL_hall  = inf
+dt_izn      = 9679.71
+dtCFL_light = 4.63951e-06
+dtSim = 1.68846e-06
+Output variables dumped at t = 0.810001
+Total number of Steps = 382411
+sigma_0*dt/delta = 295693
+dtCFL_sound = 3.84144e-06
+dtCFL_hall  = inf
+dt_izn      = 9176.13
+dtCFL_light = 4.63951e-06
+dtSim = 1.92072e-06
+Output variables dumped at t = 0.825001
+Total number of Steps = 390688
+sigma_0*dt/delta = 329174
+dtCFL_sound = 4.2764e-06
+dtCFL_hall  = inf
+dt_izn      = 8665.3
+dtCFL_light = 4.63951e-06
+dtSim = 2.1382e-06
+Output variables dumped at t = 0.840002
+Total number of Steps = 398116
+sigma_0*dt/delta = 357125
+dtCFL_sound = 4.74854e-06
+dtCFL_hall  = inf
+dt_izn      = 8270.05
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.855002
+Total number of Steps = 404763
+sigma_0*dt/delta = 357125
+dtCFL_sound = 5.223e-06
+dtCFL_hall  = inf
+dt_izn      = 8035.35
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.870001
+Total number of Steps = 411229
+sigma_0*dt/delta = 357125
+dtCFL_sound = 5.69562e-06
+dtCFL_hall  = inf
+dt_izn      = 7833.55
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.885001
+Total number of Steps = 417695
+sigma_0*dt/delta = 357125
+dtCFL_sound = 6.12612e-06
+dtCFL_hall  = inf
+dt_izn      = 5372.56
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.900001
+Total number of Steps = 424161
+sigma_0*dt/delta = 357125
+dtCFL_sound = 6.52539e-06
+dtCFL_hall  = inf
+dt_izn      = 2969.74
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.915
+Total number of Steps = 430627
+sigma_0*dt/delta = 357125
+dtCFL_sound = 6.91259e-06
+dtCFL_hall  = inf
+dt_izn      = 2076.85
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.930002
+Total number of Steps = 437094
+sigma_0*dt/delta = 357125
+dtCFL_sound = 7.28447e-06
+dtCFL_hall  = inf
+dt_izn      = 2690.05
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.945002
+Total number of Steps = 443560
+sigma_0*dt/delta = 357125
+dtCFL_sound = 7.64083e-06
+dtCFL_hall  = inf
+dt_izn      = 3319.04
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.960001
+Total number of Steps = 450026
+sigma_0*dt/delta = 357125
+dtCFL_sound = 7.96651e-06
+dtCFL_hall  = inf
+dt_izn      = 3970.36
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.975001
+Total number of Steps = 456492
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.26253e-06
+dtCFL_hall  = inf
+dt_izn      = 4462.5
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 0.99
+Total number of Steps = 462958
+sigma_0*dt/delta = 357125
+dtCFL_sound = 8.89294e-06
+dtCFL_hall  = inf
+dt_izn      = 5001.12
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.005
+Total number of Steps = 469425
+sigma_0*dt/delta = 357125
+dtCFL_sound = 9.28136e-06
+dtCFL_hall  = inf
+dt_izn      = 4748.55
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.02
+Total number of Steps = 475891
+sigma_0*dt/delta = 357125
+dtCFL_sound = 9.44276e-06
+dtCFL_hall  = inf
+dt_izn      = 4008.41
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.035
+Total number of Steps = 482357
+sigma_0*dt/delta = 357125
+dtCFL_sound = 9.73944e-06
+dtCFL_hall  = inf
+dt_izn      = 3634.48
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.05
+Total number of Steps = 488823
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.04085e-05
+dtCFL_hall  = inf
+dt_izn      = 3462.62
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.065
+Total number of Steps = 495289
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.07631e-05
+dtCFL_hall  = inf
+dt_izn      = 3485.67
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.08
+Total number of Steps = 501756
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.11598e-05
+dtCFL_hall  = inf
+dt_izn      = 3431.75
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.095
+Total number of Steps = 508222
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.15776e-05
+dtCFL_hall  = inf
+dt_izn      = 3121.31
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.11
+Total number of Steps = 514688
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.22387e-05
+dtCFL_hall  = inf
+dt_izn      = 2905.74
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.125
+Total number of Steps = 521154
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.28822e-05
+dtCFL_hall  = inf
+dt_izn      = 2806.16
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.14
+Total number of Steps = 527620
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.36656e-05
+dtCFL_hall  = inf
+dt_izn      = 2544.65
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.155
+Total number of Steps = 534087
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.45856e-05
+dtCFL_hall  = inf
+dt_izn      = 2855.94
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.17
+Total number of Steps = 540553
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.56918e-05
+dtCFL_hall  = inf
+dt_izn      = 3708.67
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.185
+Total number of Steps = 547019
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.69927e-05
+dtCFL_hall  = inf
+dt_izn      = 4409.89
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.2
+Total number of Steps = 553485
+sigma_0*dt/delta = 357125
+dtCFL_sound = 1.85317e-05
+dtCFL_hall  = inf
+dt_izn      = 4399.74
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.215
+Total number of Steps = 559951
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.03967e-05
+dtCFL_hall  = inf
+dt_izn      = 4378.06
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.23
+Total number of Steps = 566418
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.25023e-05
+dtCFL_hall  = inf
+dt_izn      = 4584.99
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.245
+Total number of Steps = 572884
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.37724e-05
+dtCFL_hall  = inf
+dt_izn      = 5097.1
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.26
+Total number of Steps = 579350
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.45339e-05
+dtCFL_hall  = inf
+dt_izn      = 5848.65
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.275
+Total number of Steps = 585816
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.53201e-05
+dtCFL_hall  = inf
+dt_izn      = 6773.47
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.29
+Total number of Steps = 592282
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.61181e-05
+dtCFL_hall  = inf
+dt_izn      = 7761.99
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.305
+Total number of Steps = 598749
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.69154e-05
+dtCFL_hall  = inf
+dt_izn      = 7922.07
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.32
+Total number of Steps = 605215
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.7701e-05
+dtCFL_hall  = inf
+dt_izn      = 8227.95
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.335
+Total number of Steps = 611681
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.84699e-05
+dtCFL_hall  = inf
+dt_izn      = 8726.63
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.35
+Total number of Steps = 618147
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.92184e-05
+dtCFL_hall  = inf
+dt_izn      = 9207.66
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.365
+Total number of Steps = 624613
+sigma_0*dt/delta = 357125
+dtCFL_sound = 2.99499e-05
+dtCFL_hall  = inf
+dt_izn      = 9769.19
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.38
+Total number of Steps = 631079
+sigma_0*dt/delta = 357125
+dtCFL_sound = 3.066e-05
+dtCFL_hall  = inf
+dt_izn      = 10335
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.395
+Total number of Steps = 637546
+sigma_0*dt/delta = 357125
+dtCFL_sound = 3.13501e-05
+dtCFL_hall  = inf
+dt_izn      = 9741.01
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.41
+Total number of Steps = 644012
+sigma_0*dt/delta = 357125
+dtCFL_sound = 3.20205e-05
+dtCFL_hall  = inf
+dt_izn      = 9375.47
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.425
+Total number of Steps = 650478
+sigma_0*dt/delta = 357125
+dtCFL_sound = 3.22709e-05
+dtCFL_hall  = inf
+dt_izn      = 9109.18
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.44
+Total number of Steps = 656944
+sigma_0*dt/delta = 357125
+dtCFL_sound = 3.23182e-05
+dtCFL_hall  = inf
+dt_izn      = 9673.01
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.455
+Total number of Steps = 663410
+sigma_0*dt/delta = 357125
+dtCFL_sound = 3.22638e-05
+dtCFL_hall  = inf
+dt_izn      = 10683.5
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.47
+Total number of Steps = 669877
+sigma_0*dt/delta = 357125
+dtCFL_sound = 3.23655e-05
+dtCFL_hall  = inf
+dt_izn      = 12389.5
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.485
+Total number of Steps = 676343
+sigma_0*dt/delta = 357125
+dtCFL_sound = 3.25275e-05
+dtCFL_hall  = inf
+dt_izn      = 13616.8
+dtCFL_light = 4.63951e-06
+dtSim = 2.31976e-06
+Output variables dumped at t = 1.5
+Total number of Steps = 682809
+
+Final simulation time step = 2.31976e-06
+
+Ending simulation: wall time = 653.57
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

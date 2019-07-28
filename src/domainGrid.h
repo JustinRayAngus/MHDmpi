@@ -56,6 +56,14 @@ public:
                    const matrix2D<double>&, 
 		   const string&, const int) const;
   
+  void InterpCellToEdges( matrix2D<double>&, 
+		   const  matrix2D<double>&,
+                   const  matrix2D<double>&, 
+		   const  string&, 
+                   const  int ) const;
+  void InterpEdgesToEdges( matrix2D<double>&, 
+                     const matrix2D<double>&  ) const; 
+  
   
   void InterpToCellCenter(vector<double>&, const vector<double>&) const;
   void InterpToCellCenter(vector<vector<double>>&, 
