@@ -13,3 +13,6 @@ law. Try turning ionization off. Look at why I have so
 much noise-like stuff in front of shock front. What parts
 of E/J are these from?
 
+build_v2:
+This version has electron heat flux and ion viscosity.
+Using relaxation scheme for both.
