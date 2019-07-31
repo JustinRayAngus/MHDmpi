@@ -6,8 +6,6 @@ used for the viscosity coefficient is set in the input deck.
 I should probably do something similar for electron heat flux.
 
 I'm using relaxation scheme for both heat flux and viscosity
-since these can be diffusive in nature. I currently only
-have the xx component, which is the only non-zero component in 1D
-done using relaxtion, I need to do the other two as well.
+since these can be diffusive in nature.
 
 Maybe define maximum mean free paths for heat flux and viscosity?
