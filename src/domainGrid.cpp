@@ -1512,6 +1512,9 @@ void domainGrid::InterpCellToEdges( matrix2D<double>&  Fout,
    // a_V is the velocity on cell edges used for upwinding
    // METHOD referes to interpolation scheme
    // All methods here are flux-limited schemes right now
+   
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
 
 
    // check that vectors in call are proper size
@@ -1603,7 +1606,10 @@ void domainGrid::InterpCellToEdges( matrix2D<double>&  Fout,
            limiter = 1.0;
          }
          else {
-            printf("ERROR: upwind method (limiter) not recognized \n");
+            if(!procID) {
+               cout << "limiter = " << METHOD << endl;
+               printf("ERROR: upwind method (limiter) not recognized \n");
+            }
          }
          limiter = max(0.0,limiter);
 

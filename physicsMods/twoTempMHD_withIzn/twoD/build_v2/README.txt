@@ -9,3 +9,17 @@ I'm using relaxation scheme for both heat flux and viscosity
 since these can be diffusive in nature.
 
 Maybe define maximum mean free paths for heat flux and viscosity?
+
+
+Aug 16, 2019
+
+Signicicant refactoring and additions. Added full stress tensor
+to Ohm's law and electron viscosity. The viscosity is working, but
+only set for 1D right now. Need to revisit the tensor and divergence
+calculations considering velocity at cell edges. Added both of these
+to try and mitigate small scale structures in J formed when using
+finite ion scale corrections. I have not tried ion-scale corrections
+since getting viscosity to work because I need to get viscosity
+working for full 2D first.
+
+

@@ -27,7 +27,8 @@
            "Nsub":2, // this actually refers to order
            "gammaC":1.6667, // adiabatic coefficient
            "Zmin":1.0e-4,   // min/initial Zbar
-           "tauiMax":0.0e-4, // maximum taui in viscosity
+           "tauiMax":0.0e-6, // maximum taui in numerical viscosity
+           "taueMax":0.0e-6, // maximum taue in numerical viscosity
            "epsilonRel":1.0e2, // c_eff  = cvac/sqrt(epsilonRel)
            "meRel":1.0,        // me_eff = me*meRel
            "DensScale_invmc":3.86e23,
