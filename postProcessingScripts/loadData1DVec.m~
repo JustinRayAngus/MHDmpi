@@ -58,9 +58,10 @@ elseif(Rank==1) % grid vector
       thisFile = [dataPath,fileName];
       thisProcData = hdf5read(thisFile,thisVar);
     
-      max0 = length(varData)-nXg+offset_ce;
+      thisProcData = thisProcData(nXg+1:end);
+      max0 = length(varData)-nXg;
       thisLength = length(thisProcData);
-      varData(max0+1:max0+thisLength-nXg) = thisProcData(nXg+1:end);
+      varData(max0+1:max0+thisLength) = thisProcData;
       
       %max0 = length(varData)-2*nXg+offset_ce;
       %thisLength = length(thisProcData);
@@ -71,30 +72,18 @@ elseif(Rank==2) % vector Data growing in time
     
    varData = hdf5read(thisFile,thisVar);
    Xce = hdf5read(thisFile,'Xce');
-   Xce2 = 100;
-   try Xce2 = hdf5read(thisFile,'Xce2');
-   end
    offset_ce = 0;
    if(length(varData(:,1))==length(Xce))
        offset_ce = 1;
-   end
-   if(length(varData(:,1))==length(Xce2))
-       offset_ce = -1;
    end
    for j=1:numProcs-1
       fileName = ['output',num2str(j),'.h5'];
       thisFile = [dataPath,fileName];
       thisProcData = hdf5read(thisFile,thisVar);
     
-      max0 = length(varData(:,1))-nXg+offset_ce;
+      max0 = length(varData(:,1))-2*nXg+offset_ce;
       thisLength = length(thisProcData(:,1));
-      %index0 = max0+1
-      %index1 = max0-nXg+thisLength
-      varData(max0+1:max0+thisLength-nXg,:) = thisProcData(nXg+1:end,:);
-      
-      %max0 = length(varData(:,1))-2*nXg+offset_ce;
-      %thisLength = length(thisProcData(:,1));
-      %varData(max0+1:max0+thisLength,:) = thisProcData;
+      varData(max0+1:max0+thisLength,:) = thisProcData;
    end
    
 end

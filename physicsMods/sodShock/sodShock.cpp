@@ -87,7 +87,8 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    Cs.assign(nXcc,0.0);
    V.assign(nXcc,0.0);
    //
-   const int nXce = Xgrid.Xce.size();
+   //const int nXce = Xgrid.Xce.size();
+   const int nXce = Xgrid.Xce2.size();
    FluxRatio.assign(nXce,0.0);
    FluxLim.assign(nXce,0.0);
    FluxN.assign(nXce,0.0);
@@ -229,9 +230,12 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
       thisdt = dt*n/Nsub;
 
       for (auto i=nXg; i<nMax-nXg; i++) {
-         N.at(i) = Nold.at(i) - thisdt*(FluxN.at(i)-FluxN.at(i-1))/Xgrid.dX;
-         M.at(i) = Mold.at(i) - thisdt*(FluxM.at(i)-FluxM.at(i-1))/Xgrid.dX;
-         E.at(i) = Eold.at(i) - thisdt*(FluxE.at(i)-FluxE.at(i-1))/Xgrid.dX;
+         //N.at(i) = Nold.at(i) - thisdt*(FluxN.at(i)-FluxN.at(i-1))/Xgrid.dX;
+         //M.at(i) = Mold.at(i) - thisdt*(FluxM.at(i)-FluxM.at(i-1))/Xgrid.dX;
+         //E.at(i) = Eold.at(i) - thisdt*(FluxE.at(i)-FluxE.at(i-1))/Xgrid.dX;
+         N.at(i) = Nold.at(i) - thisdt*(FluxN.at(i+1)-FluxN.at(i))/Xgrid.dX;
+         M.at(i) = Mold.at(i) - thisdt*(FluxM.at(i+1)-FluxM.at(i))/Xgrid.dX;
+         E.at(i) = Eold.at(i) - thisdt*(FluxE.at(i+1)-FluxE.at(i))/Xgrid.dX;
       }
 
       if(procID==0) {
@@ -267,6 +271,9 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 
 void computeFluxes(const domainGrid& Xgrid, const int order)
 {
+   int procID, numProcs;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+   MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
 
    const int nCE = FluxN.size();
    const int nCC = N.size();
@@ -290,12 +297,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    // compute advection flux at cell center
    //
    
-   Cspeed  = abs(V + Cs); // adv flux jacobian
-   Cspeed2 = abs(V - Cs); // adv flux jacobian
-   const int nXcc = Cspeed.size();
-   for (auto i=0; i<nXcc; i++) {
-      if(Cspeed2.at(i)>Cspeed.at(i)) Cspeed.at(i) = Cspeed2.at(i);
-   }
+   Cspeed  = abs(V) + Cs; // adv flux jacobian
    FluxNcc = M;
    FluxMcc = M*M/N + P;
    FluxEcc = V*(E + P);
@@ -305,12 +307,13 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    // specified scheme from input file
    //
    if(advScheme0 == "TVD") {
+      const string limiter0 = "minmod";
       Xgrid.computeFluxTVD(FluxN,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxNcc,Cspeed,N,order);
+                           FluxNcc,Cspeed,N,limiter0,order);
       Xgrid.computeFluxTVD(FluxM,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxMcc,Cspeed,M,order);
+                           FluxMcc,Cspeed,M,limiter0,order);
       Xgrid.computeFluxTVD(FluxE,FluxL,FluxR,FluxRatio,FluxLim,
-                           FluxEcc,Cspeed,E,order);
+                           FluxEcc,Cspeed,E,limiter0,order);
    }      
    else {
       Xgrid.InterpToCellEdges(FluxN,FluxNcc,N,advScheme0);
@@ -320,7 +323,13 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       Xgrid.InterpToCellEdges(FluxM,FluxMcc,M,advScheme0);
       Xgrid.InterpToCellEdges(FluxE,FluxEcc,E,advScheme0);
    } 
-
+   if(procID==0) {
+      Xgrid.setXminFluxBC(FluxN,0.0,0.0);
+   }
+   if(procID==numProcs-1) {
+      Xgrid.setXmaxFluxBC(FluxN,0.0,0.0);
+   }
+   Xgrid.communicate(FluxN);
 
 } // end computeFluxes
 
@@ -354,7 +363,8 @@ void setXmaxBoundary(vector<double>& var, const double C0, const double C1)
 }
 
 
-void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& Xgrid)
+void Physics::setdtSim(double& dtSim, const timeDomain& tDom, 
+		       const domainGrid& Xgrid, const int verbose)
 {
    int procID;
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
@@ -368,8 +378,8 @@ void Physics::setdtSim(double& dtSim, const timeDomain& tDom, const domainGrid& 
    const double dX = Xgrid.dX;
    double dtmax = dX/Cmax;
    dtSim = min(dtmax/tDom.dtFrac,tDom.dtOut);
-   //if(procID==0) {
-   //   cout << "max stable time step is " << dtmax << endl;
-   //}
+   if(procID==0 && verbose) {
+      cout << "max stable time step is " << dtmax << endl;
+   }
 }
 

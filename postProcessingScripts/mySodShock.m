@@ -24,35 +24,61 @@ filePath = '../physicsMods/sodShock/data_nx200/';
 %filePath = '../physicsMods/sodShock/data_nx400/';
 filePath = '../physicsMods/sodShock/data_nx800/';
 filePath = '../physicsMods/sodShock/data_nx800/';
+filePath = '../../myMHDworkSpace/sodShock/';
 
-for i=1:numProcs
+Xcc = loadData1DVec(filePath,numProcs,'Xcc');
+Xce = loadData1DVec(filePath,numProcs,'Xce');
+Xce2 = loadData1DVec(filePath,numProcs,'Xce2');
+tout = loadData1DVec(filePath,numProcs,'tout');
+
+N = loadData1DVec(filePath,numProcs,'N');
+M = loadData1DVec(filePath,numProcs,'M');
+E = loadData1DVec(filePath,numProcs,'E');
+N = loadData1DVec(filePath,numProcs,'N');
+P = loadData1DVec(filePath,numProcs,'P');
+V = loadData1DVec(filePath,numProcs,'V');
+Cs = loadData1DVec(filePath,numProcs,'Cs');
+gamma0 = loadData1DVec(filePath,numProcs,'gamma0');
+FluxN = loadData1DVec(filePath,numProcs,'FluxN');
+
+% FluxRatio  = hdf5read(thisFile,'FluxRatio');
+% FluxLim    = hdf5read(thisFile,'FluxLim');
+% FluxL    = hdf5read(thisFile,'FluxL');
+% FluxR    = hdf5read(thisFile,'FluxR');
+% FluxN  = hdf5read(thisFile,'FluxN');
+% FluxM  = hdf5read(thisFile,'FluxM');
+% FluxE  = hdf5read(thisFile,'FluxE');
+
+
+for i=1 %1:numProcs
 fileName = ['output',num2str(i-1),'.h5'];
 thisFile = [filePath,fileName];
 procID  = hdf5read(thisFile,'procID');
 fileinfo = hdf5info(thisFile);
-Xcc = hdf5read(thisFile,'Xcc');
-Xce = hdf5read(thisFile,'Xce');
-N  = hdf5read(thisFile,'N');
-M  = hdf5read(thisFile,'M');
-E  = hdf5read(thisFile,'E');
-P  = hdf5read(thisFile,'P');
-V  = hdf5read(thisFile,'V');
-Cs  = hdf5read(thisFile,'Cs');
-gamma0 = hdf5read(thisFile,'gamma0');
-FluxRatio  = hdf5read(thisFile,'FluxRatio');
-FluxLim    = hdf5read(thisFile,'FluxLim');
-FluxL    = hdf5read(thisFile,'FluxL');
-FluxR    = hdf5read(thisFile,'FluxR');
-FluxN  = hdf5read(thisFile,'FluxN');
-FluxM  = hdf5read(thisFile,'FluxM');
-FluxE  = hdf5read(thisFile,'FluxE');
-tout= hdf5read(thisFile,'tout');
+%Xcc = hdf5read(thisFile,'Xcc');
+%Xce = hdf5read(thisFile,'Xce');
+% N  = hdf5read(thisFile,'N');
+% M  = hdf5read(thisFile,'M');
+% E  = hdf5read(thisFile,'E');
+% P  = hdf5read(thisFile,'P');
+% V  = hdf5read(thisFile,'V');
+% Cs  = hdf5read(thisFile,'Cs');
+% gamma0 = hdf5read(thisFile,'gamma0');
+% FluxRatio  = hdf5read(thisFile,'FluxRatio');
+% FluxLim    = hdf5read(thisFile,'FluxLim');
+% FluxL    = hdf5read(thisFile,'FluxL');
+% FluxR    = hdf5read(thisFile,'FluxR');
+% FluxN  = hdf5read(thisFile,'FluxN');
+% FluxM  = hdf5read(thisFile,'FluxM');
+% FluxE  = hdf5read(thisFile,'FluxE');
+% tout= hdf5read(thisFile,'tout');
 
 
 %%%
 %
+end
 
-f2=figure(22); 
+f2=figure(2); 
 set(f2,'position',[540 1 900 800]);
 %set(f1,'position',[341 436 900 840]);
 
@@ -114,11 +140,11 @@ xlabel('x');
 title('bad oscillations early on using U1 with nx>3000');
 
 
-f6=figure(6); %set(f6,'position', [1945 45 560 420]); 
-hold on; plot(Xce,FluxRatio(:,2),'black'); box on;
-hold on; plot(Xce,FluxRatio(:,end),'r'); box on;
-%axis([-0.5 0.5 0 1.2]); grid on;
-xlabel('x');
-title('flux ratio');
-end
+% f6=figure(6); %set(f6,'position', [1945 45 560 420]); 
+% hold on; plot(Xce,FluxRatio(:,2),'black'); box on;
+% hold on; plot(Xce,FluxRatio(:,end),'r'); box on;
+% %axis([-0.5 0.5 0 1.2]); grid on;
+% xlabel('x');
+% title('flux ratio');
+
 

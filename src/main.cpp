@@ -102,10 +102,12 @@ int main(int argc, char** argv) {
    Xgrid.initialize(inputRoot);
    dataFile.add(Xgrid.Xcc, "Xcc", 0); 
    dataFile.add(Xgrid.Xce, "Xce", 0); 
+   dataFile.add(Xgrid.Xce2, "Xce2", 0); 
    dataFile.add(Xgrid.nXg, "nXg", 0); 
    if(Xgrid.nZg>0) {
       dataFile.add(Xgrid.Zcc, "Zcc", 0); 
       dataFile.add(Xgrid.Zce, "Zce", 0);
+      dataFile.add(Xgrid.Zce2, "Zce2", 0);
       dataFile.add(Xgrid.nZg, "nZg", 0); 
    }   
    //

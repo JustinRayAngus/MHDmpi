@@ -14,6 +14,21 @@ nZg = 2;
 try nZg = hdf5read(thisFile,'nZg');
 end
 
+
+%%%   get the number of processors
+%
+% numProcs = procID+1;
+% while (numProcs<procID)
+%    fileName = ['output',num2str(procID+1),'.h5'];
+%    thisFile = [dataPath,fileName];
+%    try 
+%       procID = hdf5read(thisFile,'procID');
+%    catch
+%       break;
+%    end
+% end   
+
+
 %Name1 = fileinfo.GroupHierarchy.Datasets(1).Name
 
 numVars = length(dsets);
