@@ -91,13 +91,18 @@ void domainGrid::initialize(const Json::Value& root)
    Xcc.assign(nXsub+2*nXg,0.0);
    nXcc = Xcc.size();
    Xce.assign(nXsub+2*nXg-1,0.0);
+   Xce2.assign(nXsub+2*nXg+1,0.0);
    nXce = Xce.size();
+   nXce2 = Xce2.size();
    double offset = procID*(Xmax-Xmin)/numProcs-(0.5+nXg-1.0)*dX;
    for (auto n=0; n<nXce; n++) {
       Xcc.at(n) = Xmin + offset + n*dX;
       Xce.at(n) = Xmin + offset + n*dX + 0.5*dX;
    }
    Xcc.at(nXce) = Xcc.at(nXce-1)+dX;
+   for (auto n=0; n<nXce2; n++) {
+      Xce2.at(n) = Xmin + offset + n*dX - 0.5*dX;
+   }
    //Xcc[nX/numProcs+1] = Xmin + offset + (nXsub+1)*dX;
 
 
@@ -119,12 +124,12 @@ void domainGrid::initialize(const Json::Value& root)
          exit (EXIT_FAILURE);
       } 
       nZ = nZVal.asInt();
-      if(nZ != nZVal.asDouble() || nZ < 1) {
+      if(nZ != nZVal.asDouble() || nZ <= 0) {
          printf("ERROR: nZ is not set as a positive integer in input file\n");
          exit (EXIT_FAILURE);
       }
       nZg = nZgVal.asInt();
-      if(nZg != nZgVal.asDouble() || nZg < 1 || nZg>4) {
+      if(nZg != nZgVal.asDouble() || nZg < 0 || nZg>4) {
          cout << "ERROR: number of guard cells nZg" << endl;
          cout << "is not set correctly in input file" << endl;
          exit (EXIT_FAILURE);
@@ -180,6 +185,8 @@ void domainGrid::initialize(const Json::Value& root)
    nZcc = Zcc.size();
    Zce.assign(nZsub+2*nZg-1,0.0);
    nZce = Zce.size();
+   Zce2.assign(nZsub+2*nZg+1,0.0);
+   nZce2 = Zce2.size();
    //double offsetZ = procID*(Zmax-Zmin)/numProcsZ-(0.5+nZg-1.0)*dZ;
    double offsetZ = -(0.5+nZg-1.0)*dZ;
    for (auto n=0; n<nZce; n++) {
@@ -187,6 +194,9 @@ void domainGrid::initialize(const Json::Value& root)
       Zce.at(n) = Zmin + offsetZ + n*dZ + 0.5*dZ;
    }
    Zcc.at(nZce) = Zcc.at(nZce-1)+dZ;
+   for (auto n=0; n<nZce2; n++) {
+      Zce2.at(n) = Zmin + offsetZ + n*dZ - 0.5*dZ;
+   }
    //Zcc[nZ/numProcsZ+1] = Zmin + offset + (nZsub+1)*dZ;
    
 }
@@ -270,96 +280,6 @@ void domainGrid::setInitialProfile(vector<double> &var,
 
 } // end setInitialProfile
 
-
-void domainGrid::setInitialProfile(vector<vector<double>> &var, 
-                   const Json::Value &varRoot) const
-{
-   int procID, numProcs;
-   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
-   MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
-
-   double Xa, Xb, Xc, Xd;
-   double Za, Zb, Zc, Zd;
-   vector<double> Xprofile, Zprofile, Xvec, Zvec;
-   string Xtype0, Ztype0;
-   Xvec = Xcc;
-   Zvec = Zcc;
-
-   const int Nvar0 = var.size();
-   const int Nvar1 = var[0].size();
-   Xprofile.assign(Nvar0,0.0); 
-   Zprofile.assign(Nvar1,0.0); 
-
-   if(Nvar0==nXce) { 
-      Xvec.clear();
-      Xvec = Xce;
-      //Xvec.swap(Xce);
-   }   
-   if(Nvar1==nZce) {
-      Zvec.clear();
-      Zvec = Zce;
-   }
-
-   //  get X-direction stuff
-   //
-   const Json::Value defValue; // used for default reference
-   Json::Value aVal = varRoot.get("Xa",defValue);
-   Json::Value bVal = varRoot.get("Xb",defValue);
-   Json::Value cVal = varRoot.get("Xc",defValue);
-   Json::Value dVal = varRoot.get("Xd",defValue);
-   Json::Value type = varRoot.get("Xtype",defValue);
-   if(aVal == defValue || bVal == defValue || 
-      cVal == defValue || dVal == defValue || 
-      type == defValue) {
-      cout << "ERROR: at least 1 initial profile value " << endl;
-      cout << "not declared in input file" << endl;
-      exit (EXIT_FAILURE);
-   } 
-   Xa = aVal.asDouble();
-   Xb = bVal.asDouble();
-   Xc = cVal.asDouble();
-   Xd = dVal.asDouble();   
-   Xtype0 = type.asString();
-
-   //  set X-profile
-   //
-   setInitialProfileArbDir(Xprofile,Xvec,Xmin,Xmax,Xa,Xb,Xc,Xd,Xtype0);
-
-
-   //  get Z-direction stuff
-   //
-   aVal = varRoot.get("Za",defValue);
-   bVal = varRoot.get("Zb",defValue);
-   cVal = varRoot.get("Zc",defValue);
-   dVal = varRoot.get("Zd",defValue);
-   type = varRoot.get("Ztype",defValue);
-   if(aVal == defValue || bVal == defValue || 
-      cVal == defValue || dVal == defValue || 
-      type == defValue) {
-      cout << "ERROR: at least 1 initial profile value " << endl;
-      cout << "not declared in input file" << endl;
-      exit (EXIT_FAILURE);
-   } 
-   Za = aVal.asDouble();
-   Zb = bVal.asDouble();
-   Zc = cVal.asDouble();
-   Zd = dVal.asDouble();   
-   Ztype0 = type.asString();
-   
-   //  set Z-profile
-   //
-   setInitialProfileArbDir(Zprofile,Zvec,Zmin,Zmax,Za,Zb,Zc,Zd,Ztype0);
-
-   
-   //  multiply X and Z profiles together
-   //
-   for (auto i=0; i<Nvar0; i++) {
-      for (auto j=0; j<Nvar1; j++) {
-         var[i][j] = Xprofile[i]*Zprofile[j];
-      }
-   }
-
-}  // end setInitialProfile
 
 void domainGrid::setInitialProfile(matrix2D<double> &var, 
                    const Json::Value &varRoot) const
@@ -584,9 +504,10 @@ void domainGrid::setInitialProfileArbDir(vector<double> &var,
 void domainGrid::communicate(vector<double> &F0) const {
 
    const int nMax = F0.size(); // number of cell-center points
-   const int nXce = Xce.size(); // number of cell-center points
    int thisnXg = nXg;
+   int ishift = 0;
    if(nMax == nXce) thisnXg = nXg-1; // receiving for fluxes 
+   if(nMax == nXce2) ishift = 1; // receiving for fluxes 
 
    int procID, numProcs;
    double Fsend[nXg], Frecv[nXg];
@@ -602,7 +523,7 @@ void domainGrid::communicate(vector<double> &F0) const {
    if (procID>0) {
       int tag = 1;
       for (auto i=0; i<thisnXg; i++) {
-         Fsend[i] = F0.at(nXg+i);
+         Fsend[i] = F0.at(nXg+i+ishift);
       }
       MPI_Send(Fsend, thisnXg, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
       //MPI_Send(&F0.at(nXg), 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
@@ -624,7 +545,7 @@ void domainGrid::communicate(vector<double> &F0) const {
    if (procID<numProcs-1) {
       int tag = 2;
       for (auto i=0; i<thisnXg; i++) {
-         Fsend[i] = F0.at(nMax-2*nXg+i);
+         Fsend[i] = F0.at(nMax-2*nXg+i-ishift);
          if(nMax==nXce) Fsend[i] = F0.at(nMax+1-2*nXg+i);
       }
       MPI_Send(Fsend, thisnXg, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
@@ -645,79 +566,15 @@ void domainGrid::communicate(vector<double> &F0) const {
 
 }
 
-void domainGrid::communicate(vector<vector<double>> &F0) const {
-
-   const int nMax = F0.size(); // number of cell-center points
-   const int thisnZ = F0[0].size(); // number of Z points
-   const int nXce = Xce.size(); // number of cell-center points
-   int thisnXg = nXg;
-   if(nMax == nXce) thisnXg = nXg-1; // receiving for fluxes 
-
-   int procID, numProcs;
-   double Fsend[nXg], Frecv[nXg];
-
-   MPI_Status status;
-   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
-   MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
-
-   for (auto j=0; j<thisnZ; j++) { // loop over z-direction
-
-   //  send F0[nXg+i][j], i<nXg for ID>0 to proc ID-1
-   //
-   if (procID>0) {
-      int tag = 1;
-      for (auto i=0; i<thisnXg; i++) {
-         Fsend[i] = F0[nXg+i][j];
-      }
-      MPI_Send(Fsend, thisnXg, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
-      //MPI_Send(&F0.at(nXg), 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
-   }  
-  
-   // receive: F0[nXg+i,ID+1][j] => F0[nMax-nXg+i,ID]
-   //
-   if (procID<numProcs-1) {
-      int tag = 1;
-      MPI_Recv(Frecv, thisnXg, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD, &status);
-      //MPI_Recv(&F0[nXsub+1], 1, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD, &status);
-      for (auto i=0; i<thisnXg; i++) {
-         F0[nMax-thisnXg+i][j] = Frecv[i];
-      }
-   }
-
-   // send: F0[nMax-2*nXg+i,ID][j] => ID+1
-   //
-   if (procID<numProcs-1) {
-      int tag = 2;
-      for (auto i=0; i<thisnXg; i++) {
-         Fsend[i] = F0[nMax-2*nXg+i][j];
-         if(nMax==nXce) Fsend[i] = F0[nMax+1-2*nXg+i][j];
-      }
-      MPI_Send(Fsend, thisnXg, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
-      //MPI_Send(&F0[nXsub], 1, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
-   }  
-
-   // receive: F0[nMax-2*nXg+i,ID][j] => F0[i,ID+1][j]
-   //
-   if (procID>0) {
-      int tag = 2;
-      MPI_Recv(Frecv, thisnXg, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD, &status);
-      //MPI_Recv(&F0[0], 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD, &status);
-      for (auto i=0; i<thisnXg; i++) {
-         F0[i][j] = Frecv[i];
-      }
-   }
-
-   }
-
-}
-
 void domainGrid::communicate(matrix2D<double> &F0) const {
 
    const int nMax = F0.size0();     // number of X points
    const int thisnZ = F0.size1();  // number of Z points
    const int nXce = Xce.size(); // number of cell-center points
+   int ishift = 0;
    int thisnXg = nXg;
    if(nMax == nXce) thisnXg = nXg-1; // receiving for fluxes 
+   if(nMax == nXce2) ishift = 1; // receiving for fluxes 
 
    int procID, numProcs;
    double Fsend[thisnZ], Frecv[thisnZ];
@@ -735,7 +592,7 @@ void domainGrid::communicate(matrix2D<double> &F0) const {
    if (procID>0) {
       int tag = 1;
       for (auto j=0; j<thisnZ; j++) { // loop over z-direction
-         Fsend[j] = F0(nXg+i,j);
+         Fsend[j] = F0(nXg+i+ishift,j);
       }
       MPI_Send(Fsend, thisnZ, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
       //MPI_Send(&F0.at(nXg), 1, MPI_DOUBLE, procID-1, tag, MPI_COMM_WORLD);
@@ -760,7 +617,7 @@ void domainGrid::communicate(matrix2D<double> &F0) const {
       for (auto j=0; j<thisnZ; j++) {
          Fsend[j] = F0(nMax-2*nXg+i,j);
          //if(nMax==nXce) Fsend[i] = F0[nMax+1-2*nXg+i][j];
-         if(nMax==nXce) Fsend[j] = F0(nMax+1-2*nXg+i,j);
+         if(nMax==nXce) Fsend[j] = F0(nMax+1-2*nXg+i-ishift,j);
       }
       MPI_Send(Fsend, thisnZ, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
       //MPI_Send(&F0[nXsub], 1, MPI_DOUBLE, procID+1, tag, MPI_COMM_WORLD);
@@ -790,63 +647,34 @@ void domainGrid::DDX(vector<double>& Fout, const vector<double>& Fin) const {
    
    const int Nout = Fout.size();
    const int Nin  = Fin.size();
-   //assert(Nout == nXce);
    //assert(Nin == nXcc);
 
-   if(Nout == nXce && Nin == nXcc) { // Fout is at cell edges
-      for (auto i=0; i<Nout; i++) {
-         Fout.at(i) = (Fin.at(i+1)-Fin.at(i))/dX;
-      }   
-   } 
-   else if (Nout == nXcc && Nin == nXcc) {
+   int ishift = 0;
+   if(Nout==nXce2) ishift = 1; 
+
+   if (Nout==Nin) {
       for (auto i=1; i<Nout-1; i++) {
          Fout.at(i) = (Fin.at(i+1)-Fin.at(i-1))/2.0/dX;
       }   
    }
-   else if (Nout == nXcc && Nin == nXce) {
-      for (auto i=1; i<Nout-1; i++) {
-         Fout.at(i) = (Fin.at(i)-Fin.at(i-1))/dX;
-      }   
-   }
    else {
-      printf("ERROR: Nout and Nin combo failed for DDX");
-      exit (EXIT_FAILURE);
-   }
-
-}
-
-void domainGrid::DDX(vector<vector<double>>& Fout, 
-		const vector<vector<double>>& Fin) const {
-
-   // check that Fin (at cell center) and 
-   // use Fout size to determine how to take DDX
-   
-   const int Nout0 = Fout.size();
-   const int Nout1 = Fout[0].size();
-   const int Nin0  = Fin.size();
-   const int Nin1  = Fin[0].size();
-   assert(Nin0 == nXcc);
-   assert(Nin1 == Nout1);
-
-   if(Nout0 == nXce) { // Fout is at cell edges in X-direction
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=0; j<Nout1; j++) {
-            Fout[i][j] = (Fin[i+1][j]-Fin[i][j])/dX;
-	 }
-      }   
-   } 
-   else {  // Fout is at cell center in X-direction
-      for (auto i=1; i<Nout0-1; i++) {
-         for (auto j=0; j<Nout1; j++) {
-            Fout[i][j] = (Fin[i+1][j]-Fin[i-1][j])/2.0/dX;
+      if (Nout==nXcc) {
+         for (auto i=1-ishift; i<Nout-1+ishift; i++) {
+            Fout.at(i) = (Fin.at(i+ishift)-Fin.at(i-1+ishift))/dX;
          }
-      }	 
+      }
+      else {
+         for (auto i=ishift; i<Nout-ishift; i++) {
+            Fout.at(i) = (Fin.at(i+1-ishift)-Fin.at(i-ishift))/dX;
+         }   
+      }      
    }
 
 }
 
-void domainGrid::DDX(matrix2D<double>& Fout, 
-		const matrix2D<double>& Fin) const {
+void domainGrid::DDX( matrix2D<double>&  Fout, 
+		const matrix2D<double>&  Fin ) const 
+{
 
    // check that Fin (at cell center) and 
    // use Fout size to determine how to take DDX
@@ -887,35 +715,6 @@ void domainGrid::DDX(matrix2D<double>& Fout,
 
 }
 
-void domainGrid::DDZ(vector<vector<double>>& Fout, 
-		const vector<vector<double>>& Fin) const {
-
-   // check that Fin (at cell center) and 
-   // use Fout size to determine how to take DDZ
-   
-   const int Nout0 = Fout.size();
-   const int Nout1 = Fout[0].size();
-   const int Nin0  = Fin.size();
-   const int Nin1  = Fin[0].size();
-   assert(Nout0 == Nin0);
-   assert(Nin1 == nZcc);
-
-   if(Nout1 == nZce) { // Fout is at cell edges in Z-direction
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=0; j<Nout1; j++) {
-            Fout[i][j] = (Fin[i][j+1]-Fin[i][j])/dZ;
-	 }
-      }   
-   } 
-   else {  // Fout is at cell center in Z-direction
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=1; j<Nout1-1; j++) {
-            Fout[i][j] = (Fin[i][j+1]-Fin[i][j-1])/2.0/dZ;
-         }
-      }	 
-   }
-
-}
 
 void domainGrid::DDZ(matrix2D<double>& Fout, 
 		const matrix2D<double>& Fin) const {
@@ -996,29 +795,37 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
    const int Nout = Fout.size();
    const int Nin  = Fin.size();
    const int NupC = upC.size();
-   assert(Nout == nXce);
+   assert(Nout == nXce || nXce2);
    assert(Nin  == nXcc);
    assert(NupC == nXcc);
 
+   double Uface;
+   int ishift = 0;
+   if(Nout==nXce2) ishift = 1;
 
    //  interpolate using specifed method
    //
    if(METHOD == "C2") { // 2nd order central
 
-      for (auto i=0; i<Nout; i++) {
-         Fout.at(i) = (Fin.at(i+1)+Fin.at(i))/2.0;
+      //for (auto i=0; i<Nout; i++) {
+      //   Fout.at(i) = (Fin.at(i+1)+Fin.at(i))/2.0;
+      //}
+      for (auto i=ishift; i<Nout-ishift; i++) {
+         Fout.at(i) = (Fin.at(i+1-ishift)+Fin.at(i-ishift))/2.0;
       }
 
    } // end METHOD=C2
 
    else if(METHOD == "U1") { // first order upwind
   
-      for (auto i=0; i<Nout; i++) {
+      for (auto i=ishift; i<Nout-ishift; i++) {
       
-         if(upC.at(i)<0.0) {
-            Fout.at(i) = Fin.at(i+1);
+         Uface = upC.at(i);
+	 if(ishift==1) Uface = (upC.at(i)+upC.at(i-1))/2.0;
+         if(Uface<0.0) {
+            Fout.at(i) = Fin.at(i+1-ishift);
          } else {
-            Fout.at(i) = Fin.at(i);
+            Fout.at(i) = Fin.at(i-ishift);
          }
    
       }
@@ -1030,27 +837,28 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
       assert(nXg >= 2);
       // Use 2nd order QUICK upwinding
       //
-      double Ui, ap, am;
+      double ap, am;
       double a0 = 3.0/4.0, a1 = 3.0/8.0, a2 = 1.0/8.0;
-      for (auto i=0; i<Nout; i++) {
+      for (auto i=nXg-1+ishift; i<Nout-nXg; i++) {
       
-         Ui = upC.at(i);
+         Uface = upC.at(i);
+	 if(ishift==1) Uface = (upC.at(i)+upC.at(i-1))/2.0;
          ap = 1.0;
          am = 0.0;
-         if(Ui<0.0) {
+         if(Uface<0.0) {
             ap = 0.0;
             am = 1.0; 
          }
 
-         if(i==0 || i==Nout-1) {
-            Fout.at(i) = ap*Fin.at(i) + am*Fin.at(i+1);
+         if(i==ishift || i==Nout-1-ishift) {
+            Fout.at(i) = ap*Fin.at(i-ishift) + am*Fin.at(i+1-ishift);
          } else {
-            Fout.at(i) = ap*( a0*Fin.at(i) 
-                           +  a1*Fin.at(i+1) 
-                           -  a2*Fin.at(i-1) ) 
-                       + am*( a0*Fin.at(i+1) 
-                           +  a1*Fin.at(i)
-                           -  a2*Fin.at(i+2) ); 
+            Fout.at(i) = ap*( a0*Fin.at(i-ishift) 
+                           +  a1*Fin.at(i+1-ishift) 
+                           -  a2*Fin.at(i-1-ishift) ) 
+                       + am*( a0*Fin.at(i+1-ishift) 
+                           +  a1*Fin.at(i-ishift)
+                           -  a2*Fin.at(i+2-ishift) ); 
          }
       }
 
@@ -1062,11 +870,14 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
       // Use 5th order WENO upwinding (see Ren 2003)
       //
       double ep, d0, d1, d2, f0, f1, f2, b0, b1, b2;
-      double df, alpha, w0, w1, w2, w0b, w1b, w2b, sumwb;
+      double alpha, w0, w1, w2, w0b, w1b, w2b, sumwb;
+      //double df;
       ep = 1.0e-6;
+      int j;
 
-      for (auto i=nXg-1; i<Nout-nXg+1; i++) {
+      for (auto i=nXg-1+ishift; i<Nout-nXg+1-ishift; i++) {
       
+	 j = i-ishift;
          //df = Fin.at(i+1)/upC.at(i+1)-Fin.at(i)/upC.at(i);
          //if(df==df && df != 0.0) {
          //   alpha = (Fin.at(i+1)-Fin.at(i))/df;
@@ -1074,39 +885,39 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
          //else {
          //   alpha = upC.at(i+1)+upC.at(i);
          //}
-         alpha = upC.at(i+1)+upC.at(i);
+         alpha = upC.at(j+1)+upC.at(j);
         
 	 if(alpha>=0.0) {
             d0 = 0.3;
             d1 = 0.6;
             d2 = 0.1;
 	    //
-            f0 = (2.0*Fin.at(i)+5.0*Fin.at(i+1)-1.0*Fin.at(i+2))/6.0;
-            f1 = (-1.0*Fin.at(i-1)+5.0*Fin.at(i)+2.0*Fin.at(i+1))/6.0;
-            f2 = (2.0*Fin.at(i-2)-7.0*Fin.at(i-1)+11.0*Fin.at(i))/6.0;
+            f0 = (2.0*Fin.at(j)+5.0*Fin.at(j+1)-1.0*Fin.at(j+2))/6.0;
+            f1 = (-1.0*Fin.at(j-1)+5.0*Fin.at(j)+2.0*Fin.at(j+1))/6.0;
+            f2 = (2.0*Fin.at(j-2)-7.0*Fin.at(j-1)+11.0*Fin.at(j))/6.0;
             //
-            b0 = 13.0/12.0*pow(Fin.at(i)-2.0*Fin.at(i+1)+Fin.at(i+2),2)
-               + 1.0/4.0*pow(3.0*Fin.at(i)-4.0*Fin.at(i+1)+Fin.at(i+2),2);
-            b1 = 13.0/12.0*pow(Fin.at(i-1)-2.0*Fin.at(i)+Fin.at(i+1),2)
-               + 1.0/4.0*pow(Fin.at(i-1)-Fin.at(i+1),2);
-            b2 = 13.0/12.0*pow(Fin.at(i-2)-2.0*Fin.at(i-1)+Fin.at(i),2)
-               + 1.0/4.0*pow(Fin.at(i-2)-4.0*Fin.at(i-1)+3.0*Fin.at(i),2);
+            b0 = 13.0/12.0*pow(Fin.at(j)-2.0*Fin.at(j+1)+Fin.at(j+2),2)
+               + 1.0/4.0*pow(3.0*Fin.at(j)-4.0*Fin.at(j+1)+Fin.at(j+2),2);
+            b1 = 13.0/12.0*pow(Fin.at(j-1)-2.0*Fin.at(j)+Fin.at(j+1),2)
+               + 1.0/4.0*pow(Fin.at(j-1)-Fin.at(j+1),2);
+            b2 = 13.0/12.0*pow(Fin.at(j-2)-2.0*Fin.at(j-1)+Fin.at(j),2)
+               + 1.0/4.0*pow(Fin.at(j-2)-4.0*Fin.at(j-1)+3.0*Fin.at(j),2);
 	 }
 	 else {
             d0 = 0.1;
             d1 = 0.6;
             d2 = 0.3;
 	    //
-            f0 = (11.0*Fin.at(i+1)-7.0*Fin.at(i+2)+2.0*Fin.at(i+3))/6.0;
-            f1 = (2.0*Fin.at(i)+5.0*Fin.at(i+1)-1.0*Fin.at(i+2))/6.0;
-            f2 = (-1.0*Fin.at(i-1)+5.0*Fin.at(i)+2.0*Fin.at(i+1))/6.0;
+            f0 = (11.0*Fin.at(j+1)-7.0*Fin.at(j+2)+2.0*Fin.at(j+3))/6.0;
+            f1 = (2.0*Fin.at(j)+5.0*Fin.at(j+1)-1.0*Fin.at(j+2))/6.0;
+            f2 = (-1.0*Fin.at(j-1)+5.0*Fin.at(j)+2.0*Fin.at(j+1))/6.0;
             //
-            b0 = 13.0/12.0*pow(Fin.at(i+1)-2.0*Fin.at(i+2)+Fin.at(i+3),2)
-               + 1.0/4.0*pow(3.0*Fin.at(i+1)-4.0*Fin.at(i+2)+Fin.at(i+3),2);
-            b1 = 13.0/12.0*pow(Fin.at(i)-2.0*Fin.at(i+1)+Fin.at(i+2),2)
-               + 1.0/4.0*pow(Fin.at(i)-Fin.at(i+2),2);
-            b2 = 13.0/12.0*pow(Fin.at(i-1)-2.0*Fin.at(i)+Fin.at(i+1),2)
-               + 1.0/4.0*pow(Fin.at(i-1)-4.0*Fin.at(i)+3.0*Fin.at(i+1),2);
+            b0 = 13.0/12.0*pow(Fin.at(j+1)-2.0*Fin.at(j+2)+Fin.at(j+3),2)
+               + 1.0/4.0*pow(3.0*Fin.at(j+1)-4.0*Fin.at(j+2)+Fin.at(j+3),2);
+            b1 = 13.0/12.0*pow(Fin.at(j)-2.0*Fin.at(j+1)+Fin.at(j+2),2)
+               + 1.0/4.0*pow(Fin.at(j)-Fin.at(j+2),2);
+            b2 = 13.0/12.0*pow(Fin.at(j-1)-2.0*Fin.at(j)+Fin.at(j+1),2)
+               + 1.0/4.0*pow(Fin.at(j-1)-4.0*Fin.at(j)+3.0*Fin.at(j+1),2);
 	 }
 
 	 w0b = d0/pow(ep+b0,2);
@@ -1134,104 +945,12 @@ void domainGrid::InterpToCellEdges(vector<double> &Fout,
 } // end function InterpToCellEdges
 
 
-void domainGrid::InterpToCellEdges(vector<vector<double>> &Fout, 
-                             const vector<vector<double>> &Fin,
-                             const vector<vector<double>> &upC,
-                             const string& METHOD,
-			     const int dir) const {
-
-   // this function interpolates cell-center Fin to cell
-   // to Fout, defined at cell edges
-   // upC is the local maximum characteristic speed
-   // METHOD referes to interpolation scheme
-
-
-   // check that vectors in call are proper size
-   //
-   const int Nout0 = Fout.size();
-   const int Nout1 = Fout[0].size();
-   const int Nin0  = Fin.size();
-   const int Nin1  = Fin[0].size();
-   if(dir==0) {
-      assert(Nin0==nXcc);  // input cell-center in X 
-      assert(Nout0==nXce); // output cell-edge in X
-      assert(Nin1==Nout1); // input and output same size in Z
-   }   
-   else if(dir==1) {
-      assert(Nin1==nZcc);  // input cell-center in Z 
-      assert(Nout1==nZce); // output cell-edge in Z
-      assert(Nin0==Nout0); // input and output same size in X
-   }   
-   else {
-      cout << "dir in call to InterpToCellEdges most be 0 or 1" << endl;
-      exit (EXIT_FAILURE);
-   }
-
-   //  interpolate using specified method
-   //
-   if(METHOD == "C2") { // 2nd order central
-   
-      if(dir==0) { // interp to X-faces
-         for (auto i=0; i<Nout0; i++) {
-            for (auto j=0; j<Nout1; j++) {
-               Fout[i][j] = (Fin[i+1][j] + Fin[i][j])/2.0;
-            }
-         }
-      }
-      else {       // interp to Z-faces
-         for (auto i=0; i<Nout0; i++) {
-            for (auto j=0; j<Nout1; j++) {
-               Fout[i][j] = (Fin[i][j+1] + Fin[i][j])/2.0;
-            }
-         }
-      }
-
-   } // end METHOD=C2
-
-   else if(METHOD == "U1") { // first order upwind
-  
-      if(dir==0) { // interp to X-faces
-         for (auto i=0; i<Nout0; i++) {
-            for (auto j=0; j<Nout1; j++) {
-      
-               if(upC[i][j]<0.0) {
-                  Fout[i][j] = Fin[i+1][j];
-               } else {
-                  Fout[i][j] = Fin[i][j];
-               }
-
-	    }
-         }
-      }
-      else { // interp to Z-faces
-         for (auto i=0; i<Nout0; i++) {
-            for (auto j=0; j<Nout1; j++) {
-      
-               if(upC[i][j]<0.0) {
-                  Fout[i][j] = Fin[i][j+1];
-               } else {
-                  Fout[i][j] = Fin[i][j];
-               }
-
-	    }
-         }
-      }
-   
-   } // end METHOD=U1
-   
-   else {
-      cout << "advection scheme not valid," << endl;
-      cout << "should be caught on initilization!" << endl;
-      exit (EXIT_FAILURE);
-   }
-
-}
-
-void domainGrid::InterpToCellEdges(matrix2D<double> &Fout, 
-                             const matrix2D<double> &Fin,
-                             const matrix2D<double> &upC,
-                             const string& METHOD,
-			     const int dir) const {
+void domainGrid::InterpToCellEdges( matrix2D<double>&  Fout, 
+                              const matrix2D<double>&  Fin,
+                              const matrix2D<double>&  upC,
+                              const string&            METHOD,
+			      const int                dir) const 
+{
 
    // this function interpolates cell-center Fin to cell
    // to Fout, defined at cell edges
@@ -1247,34 +966,49 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
    const int Nin1  = Fin.size1();
    if(dir==0) {
       assert(Nin0==nXcc);  // input cell-center in X 
-      assert(Nout0==nXce); // output cell-edge in X
+      assert(Nout0==nXce || Nout0==nXce2); // output cell-edge in X
       assert(Nin1==Nout1); // input and output same size in Z
    }   
    else if(dir==1) {
       assert(Nin1==nZcc);  // input cell-center in Z 
-      assert(Nout1==nZce); // output cell-edge in Z
+      assert(Nout1==nZce || Nout1==nZce2); // output cell-edge in Z
       assert(Nin0==Nout0); // input and output same size in X
    }   
    else {
       cout << "dir in call to InterpToCellEdges most be 0 or 1" << endl;
       exit (EXIT_FAILURE);
    }
+   cout << "JRA: InterpCellToEdges 2 " << endl;
+   
+   //int iup=1, jup=0;
+   //if(dir==1) iup=0, jup=1;
+   
+   double Uface;
+   int shift0 = 0;
+   if(dir==0 && Nout0==nXce2) shift0 = 1;
+   if(dir==1 && Nout1==nZce2) shift0 = 1;
 
    //  interpolate using specified method
    //
    if(METHOD == "C2") { // 2nd order central
-   
+      /*
+      for (auto i=nXg; i<Nout0-1; i++) {
+         for (auto j=0; j<Nout1; j++) {
+            Fout(i,j) = (Fin(i,j) + Fin(i+iup,j+jup))/2.0;
+         }
+      }
+      */
       if(dir==0) { // interp to X-faces
-         for (auto i=0; i<Nout0; i++) {
+         for (auto i=shift0; i<Nout0-shift0; i++) {
             for (auto j=0; j<Nout1; j++) {
-               Fout(i,j) = (Fin(i+1,j) + Fin(i,j))/2.0;
+               Fout(i,j) = (Fin(i+1-shift0,j) + Fin(i-shift0,j))/2.0;
             }
          }
       }
       else {       // interp to Z-faces
          for (auto i=0; i<Nout0; i++) {
-            for (auto j=0; j<Nout1; j++) {
-               Fout(i,j) = (Fin(i,j+1) + Fin(i,j))/2.0;
+            for (auto j=shift0; j<Nout1-shift0; j++) {
+               Fout(i,j) = (Fin(i,j+1-shift0) + Fin(i,j-shift0))/2.0;
             }
          }
       }
@@ -1284,13 +1018,17 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
    else if(METHOD == "U1") { // first order upwind
   
       if(dir==0) { // interp to X-faces
-         for (auto i=0; i<Nout0; i++) {
+         //for (auto i=0; i<Nout0; i++) {
+         for (auto i=shift0; i<Nout0-shift0; i++) {
             for (auto j=0; j<Nout1; j++) {
       
-               if(upC(i,j)<0.0) {
-                  Fout(i,j) = Fin(i+1,j);
+               Uface = upC(i,j);
+	       if(shift0==1) Uface = (upC(i,j)+upC(i-1,j))/2.0;
+               
+	       if(Uface<0.0) {
+                  Fout(i,j) = Fin(i+1-shift0,j);
                } else {
-                  Fout(i,j) = Fin(i,j);
+                  Fout(i,j) = Fin(i-shift0,j);
                }
 
 	    }
@@ -1298,12 +1036,16 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
       }
       else { // interp to Z-faces
          for (auto i=0; i<Nout0; i++) {
-            for (auto j=0; j<Nout1; j++) {
+            //for (auto j=0; j<Nout1; j++) {
+            for (auto j=shift0; j<Nout1-shift0; j++) {
+               
+               Uface = upC(i,j);
+	       if(shift0==1) Uface = (upC(i,j)+upC(i,j-1))/2.0;
       
-               if(upC(i,j)<0.0) {
-                  Fout(i,j) = Fin(i,j+1);
+               if(Uface<0.0) {
+                  Fout(i,j) = Fin(i,j+1-shift0);
                } else {
-                  Fout(i,j) = Fin(i,j);
+                  Fout(i,j) = Fin(i,j-shift0);
                }
 
 	    }
@@ -1314,31 +1056,28 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
    
    else if(METHOD == "QUICK") { // 2nd? order upwind
       
-      double Ui, ap, am;
+      double ap, am;
       double a0 = 3.0/4.0, a1 = 3.0/8.0, a2 = 1.0/8.0;   
 
       if(dir==0) { // interp to X-faces
          assert(nXg >= 2);
-         for (auto i=0; i<Nout0; i++) {
+         for (auto i=nXg-1+shift0; i<Nout0-nXg; i++) {
             for (auto j=0; j<Nout1; j++) {
-               Ui = upC(i,j);
+               Uface = upC(i,j);
+               if(shift0==1) Uface = (upC(i,j)+upC(i-1,j))/2.0;
                ap = 1.0;
                am = 0.0;
-               if(Ui<0.0) {
+               if(Uface<0.0) {
                    ap = 0.0;
                    am = 1.0;
                }
 
-               if(i==0.0 || i==Nout0-1) {
-                  Fout(i,j) = ap*Fin(i,j) + am*Fin(i+1,j);
-               } else {
-                  Fout(i,j) = ap*( a0*Fin(i,j)
-                                +  a1*Fin(i+1,j)
-                                -  a2*Fin(i-1,j) )
-                            + am*( a0*Fin(i+1,j)
-                                +  a1*Fin(i,j)
-                                -  a2*Fin(i+2,j) );
-               }
+               Fout(i,j) = ap*( a0*Fin(i-shift0,j)
+                             +  a1*Fin(i+1-shift0,j)
+                             -  a2*Fin(i-1-shift0,j) )
+                         + am*( a0*Fin(i+1-shift0,j)
+                             +  a1*Fin(i-shift0,j)
+                             -  a2*Fin(i+2-shift0,j) );
 
 	    }
          }
@@ -1346,25 +1085,22 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
       else { // interp to Z-faces
          assert(nZg >= 2);
          for (auto i=0; i<Nout0; i++) {
-            for (auto j=0; j<Nout1; j++) {
-               Ui = upC(i,j);
+            for (auto j=nZg-1+shift0; j<Nout1-nZg; j++) {
+               Uface = upC(i,j);
+               if(shift0==1) Uface = (upC(i,j)+upC(i,j-1))/2.0;
                ap = 1.0;
                am = 0.0;
-               if(Ui<0.0) {
+               if(Uface<0.0) {
                    ap = 0.0;
                    am = 1.0;
                }
       
-               if(j==0.0 || j==Nout1-1) {
-                  Fout(i,j) = ap*Fin(i,j) + am*Fin(i,j+1);
-               } else {
-                  Fout(i,j) = ap*( a0*Fin(i,j)
-                                +  a1*Fin(i,j+1)
-                                -  a2*Fin(i,j-1) )
-                            + am*( a0*Fin(i,j+1)
-                                +  a1*Fin(i,j)
-                                -  a2*Fin(i,j+2) );
-               }
+               Fout(i,j) = ap*( a0*Fin(i,j-shift0)
+                             +  a1*Fin(i,j+1-shift0)
+                             -  a2*Fin(i,j-1-shift0) )
+                         + am*( a0*Fin(i,j+1-shift0)
+                             +  a1*Fin(i,j-shift0)
+                             -  a2*Fin(i,j+2-shift0) );
 
 	    }
          }
@@ -1375,48 +1111,52 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
    else if(METHOD == "WENO5") {  
       // Use 5th order WENO upwinding (see Ren 2003)
       //
+      int ii, jj;
       double ep, d0, d1, d2, f0, f1, f2, b0, b1, b2;
-      double df, alpha, w0, w1, w2, w0b, w1b, w2b, sumwb;
+      double alpha, w0, w1, w2, w0b, w1b, w2b, sumwb;
+      //double df;
       ep = 1.0e-6;
 
       if(dir==0) { // interp to X-faces
 
          assert(nXg >= 3);
 
-         for (auto i=nXg-1; i<Nout0-nXg+1; i++) {
+         for (auto i=nXg-1+shift0; i<Nout0-nXg+1-shift0; i++) {
             for (auto j=0; j<Nout1; j++) {
                
-               alpha = upC(i+1,j)+upC(i,j);  
+	       ii = i;
+               if(shift0==1) ii = i-1;
+	       alpha = upC(ii,j)+upC(ii-1,j);  
                if(alpha>=0.0) {
                   d0 = 0.3;
                   d1 = 0.6;
                   d2 = 0.1;
                   //
-                  f0 = (2.0*Fin(i,j) + 5.0*Fin(i+1,j) - 1.0*Fin(i+2,j))/6.0;
-                  f1 = (-1.0*Fin(i-1,j) + 5.0*Fin(i,j) + 2.0*Fin(i+1,j))/6.0;
-                  f2 = (2.0*Fin(i-2,j) - 7.0*Fin(i-1,j) + 11.0*Fin(i,j))/6.0;
+                  f0 = (2.0*Fin(ii,j) + 5.0*Fin(ii+1,j) - 1.0*Fin(ii+2,j))/6.0;
+                  f1 = (-1.0*Fin(ii-1,j) + 5.0*Fin(ii,j) + 2.0*Fin(ii+1,j))/6.0;
+                  f2 = (2.0*Fin(ii-2,j) - 7.0*Fin(ii-1,j) + 11.0*Fin(ii,j))/6.0;
                   //
-                  b0 = 13.0/12.0*pow(Fin(i,j)-2.0*Fin(i+1,j)+Fin(i+2,j),2)
-                     + 1.0/4.0*pow(3.0*Fin(i,j)-4.0*Fin(i+1,j)+Fin(i+2,j),2);
-                  b1 = 13.0/12.0*pow(Fin(i-1,j)-2.0*Fin(i,j)+Fin(i+1,j),2)
-                     + 1.0/4.0*pow(Fin(i-1,j)-Fin(i+1,j),2);
-                  b2 = 13.0/12.0*pow(Fin(i-2,j)-2.0*Fin(i-1,j)+Fin(i,j),2)
-                     + 1.0/4.0*pow(Fin(i-2,j)-4.0*Fin(i-1,j)+3.0*Fin(i,j),2);
+                  b0 = 13.0/12.0*pow(Fin(ii,j)-2.0*Fin(ii+1,j)+Fin(ii+2,j),2)
+                     + 1.0/4.0*pow(3.0*Fin(ii,j)-4.0*Fin(ii+1,j)+Fin(ii+2,j),2);
+                  b1 = 13.0/12.0*pow(Fin(ii-1,j)-2.0*Fin(ii,j)+Fin(ii+1,j),2)
+                     + 1.0/4.0*pow(Fin(ii-1,j)-Fin(ii+1,j),2);
+                  b2 = 13.0/12.0*pow(Fin(ii-2,j)-2.0*Fin(ii-1,j)+Fin(ii,j),2)
+                     + 1.0/4.0*pow(Fin(ii-2,j)-4.0*Fin(ii-1,j)+3.0*Fin(ii,j),2);
                } else {
                   d0 = 0.1;
                   d1 = 0.6;
                   d2 = 0.3;
                   //
-                  f0 = (11.0*Fin(i+1,j) - 7.0*Fin(i+2,j) + 2.0*Fin(i+3,j))/6.0;
-                  f1 = (2.0*Fin(i,j) + 5.0*Fin(i+1,j) - 1.0*Fin(i+2,j))/6.0;
-                  f2 = (-1.0*Fin(i-1,j) + 5.0*Fin(i,j) + 2.0*Fin(i+1,j))/6.0;
+                  f0 = (11.0*Fin(ii+1,j) - 7.0*Fin(ii+2,j) + 2.0*Fin(ii+3,j))/6.0;
+                  f1 = (2.0*Fin(ii,j) + 5.0*Fin(ii+1,j) - 1.0*Fin(ii+2,j))/6.0;
+                  f2 = (-1.0*Fin(ii-1,j) + 5.0*Fin(ii,j) + 2.0*Fin(ii+1,j))/6.0;
                   //
-                  b0 = 13.0/12.0*pow(Fin(i+1,j)-2.0*Fin(i+2,j)+Fin(i+3,j),2)
-                     + 1.0/4.0*pow(3.0*Fin(i+1,j)-4.0*Fin(i+2,j)+Fin(i+3,j),2);
-                  b1 = 13.0/12.0*pow(Fin(i,j)-2.0*Fin(i+1,j)+Fin(i+2,j),2)
-                     + 1.0/4.0*pow(Fin(i,j)-Fin(i+2,j),2);
-                  b2 = 13.0/12.0*pow(Fin(i-1,j)-2.0*Fin(i,j)+Fin(i+1,j),2)
-                     + 1.0/4.0*pow(Fin(i-1,j)-4.0*Fin(i,j)+3.0*Fin(i+1,j),2);
+                  b0 = 13.0/12.0*pow(Fin(ii+1,j)-2.0*Fin(ii+2,j)+Fin(ii+3,j),2)
+                     + 1.0/4.0*pow(3.0*Fin(ii+1,j)-4.0*Fin(ii+2,j)+Fin(ii+3,j),2);
+                  b1 = 13.0/12.0*pow(Fin(ii,j)-2.0*Fin(ii+1,j)+Fin(ii+2,j),2)
+                     + 1.0/4.0*pow(Fin(ii,j)-Fin(ii+2,j),2);
+                  b2 = 13.0/12.0*pow(Fin(ii-1,j)-2.0*Fin(ii,j)+Fin(ii+1,j),2)
+                     + 1.0/4.0*pow(Fin(ii-1,j)-4.0*Fin(ii,j)+3.0*Fin(ii+1,j),2);
                }
 
                w0b = d0/pow(ep+b0,2);
@@ -1438,40 +1178,42 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
 
          assert(nZg >= 3);
 
-         for (auto j=nZg-1; j<Nout1-nZg+1; j++) {
+         for (auto j=nZg-1+shift0; j<Nout1-nZg+1-shift0; j++) {
             for (auto i=0; i<Nout0; i++) {
 
-               alpha = upC(i,j+1)+upC(i,j);  
+	       jj = j;
+               if(shift0==1) jj = j-1;
+	       alpha = upC(i,jj)+upC(i,jj-1);  
                if(alpha>=0.0) {
                   d0 = 0.3;
                   d1 = 0.6;
                   d2 = 0.1;
                   //
-                  f0 = (2.0*Fin(i,j) + 5.0*Fin(i,j+1) - 1.0*Fin(i,j+2))/6.0;
-                  f1 = (-1.0*Fin(i,j-1) + 5.0*Fin(i,j) + 2.0*Fin(i,j+1))/6.0;
-                  f2 = (2.0*Fin(i,j-2) - 7.0*Fin(i,j-1) + 11.0*Fin(i,j))/6.0;
+                  f0 = (2.0*Fin(i,jj) + 5.0*Fin(i,jj+1) - 1.0*Fin(i,jj+2))/6.0;
+                  f1 = (-1.0*Fin(i,jj-1) + 5.0*Fin(i,jj) + 2.0*Fin(i,jj+1))/6.0;
+                  f2 = (2.0*Fin(i,jj-2) - 7.0*Fin(i,jj-1) + 11.0*Fin(i,jj))/6.0;
                   //
-                  b0 = 13.0/12.0*pow(Fin(i,j)-2.0*Fin(i,j+1)+Fin(i,j+2),2)
-                     + 1.0/4.0*pow(3.0*Fin(i,j)-4.0*Fin(i,j+1)+Fin(i,j+2),2);
-                  b1 = 13.0/12.0*pow(Fin(i,j-1)-2.0*Fin(i,j)+Fin(i,j+1),2)
-                     + 1.0/4.0*pow(Fin(i,j-1)-Fin(i,j+1),2);
-                  b2 = 13.0/12.0*pow(Fin(i,j-2)-2.0*Fin(i,j-1)+Fin(i,j),2)
-                     + 1.0/4.0*pow(Fin(i,j-2)-4.0*Fin(i,j-1)+3.0*Fin(i,j),2);
+                  b0 = 13.0/12.0*pow(Fin(i,jj)-2.0*Fin(i,jj+1)+Fin(i,jj+2),2)
+                     + 1.0/4.0*pow(3.0*Fin(i,jj)-4.0*Fin(i,jj+1)+Fin(i,jj+2),2);
+                  b1 = 13.0/12.0*pow(Fin(i,jj-1)-2.0*Fin(i,jj)+Fin(i,jj+1),2)
+                     + 1.0/4.0*pow(Fin(i,jj-1)-Fin(i,jj+1),2);
+                  b2 = 13.0/12.0*pow(Fin(i,jj-2)-2.0*Fin(i,jj-1)+Fin(i,jj),2)
+                     + 1.0/4.0*pow(Fin(i,jj-2)-4.0*Fin(i,jj-1)+3.0*Fin(i,jj),2);
                } else {
                   d0 = 0.1;
                   d1 = 0.6;
                   d2 = 0.3;
                   //
-                  f0 = (11.0*Fin(i,j+1) - 7.0*Fin(i,j+2) + 2.0*Fin(i,j+3))/6.0;
-                  f1 = (2.0*Fin(i,j) + 5.0*Fin(i,j+1) - 1.0*Fin(i,j+2))/6.0;
-                  f2 = (-1.0*Fin(i,j-1) + 5.0*Fin(i,j) + 2.0*Fin(i,j+1))/6.0;
+                  f0 = (11.0*Fin(i,jj+1) - 7.0*Fin(i,jj+2) + 2.0*Fin(i,jj+3))/6.0;
+                  f1 = (2.0*Fin(i,jj) + 5.0*Fin(i,jj+1) - 1.0*Fin(i,jj+2))/6.0;
+                  f2 = (-1.0*Fin(i,jj-1) + 5.0*Fin(i,jj) + 2.0*Fin(i,jj+1))/6.0;
                   //
-                  b0 = 13.0/12.0*pow(Fin(i,j+1)-2.0*Fin(i,j+2)+Fin(i,j+3),2)
-                     + 1.0/4.0*pow(3.0*Fin(i,j+1)-4.0*Fin(i,j+2)+Fin(i,j+3),2);
-                  b1 = 13.0/12.0*pow(Fin(i,j)-2.0*Fin(i,j+1)+Fin(i,j+2),2)
-                     + 1.0/4.0*pow(Fin(i,j)-Fin(i,j+2),2);
-                  b2 = 13.0/12.0*pow(Fin(i,j-1)-2.0*Fin(i,j)+Fin(i,j+1),2)
-                     + 1.0/4.0*pow(Fin(i,j-1)-4.0*Fin(i,j)+3.0*Fin(i,j+1),2);
+                  b0 = 13.0/12.0*pow(Fin(i,jj+1)-2.0*Fin(i,jj+2)+Fin(i,jj+3),2)
+                     + 1.0/4.0*pow(3.0*Fin(i,jj+1)-4.0*Fin(i,jj+2)+Fin(i,jj+3),2);
+                  b1 = 13.0/12.0*pow(Fin(i,jj)-2.0*Fin(i,jj+1)+Fin(i,jj+2),2)
+                     + 1.0/4.0*pow(Fin(i,jj)-Fin(i,jj+2),2);
+                  b2 = 13.0/12.0*pow(Fin(i,jj-1)-2.0*Fin(i,jj)+Fin(i,jj+1),2)
+                     + 1.0/4.0*pow(Fin(i,jj-1)-4.0*Fin(i,jj)+3.0*Fin(i,jj+1),2);
                }
 
                w0b = d0/pow(ep+b0,2);
@@ -1500,6 +1242,170 @@ void domainGrid::InterpToCellEdges(matrix2D<double> &Fout,
 
 }
 
+void domainGrid::InterpCellToEdges( matrix2D<double>&  Fout, 
+                              const matrix2D<double>&  Fin,
+                              const matrix2D<double>&  a_V,
+                              const string&            METHOD,
+			      const int                dir ) const 
+{
+   // this function interpolates cell-center Fin to
+   // Fout defined at cell edges
+   // a_V is the velocity on cell edges used for upwinding
+   // METHOD referes to interpolation scheme
+   // All methods here are flux-limited schemes right now
+   
+   int procID;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+
+
+   // check that vectors in call are proper size
+   //
+   const int Nout0 = Fout.size0();
+   const int Nout1 = Fout.size1();
+   const int Nin0  = Fin.size0();
+   const int Nin1  = Fin.size1();
+   const int NV0   = a_V.size0();
+   const int NV1   = a_V.size1();
+   assert(NV0==Nout0);  // velocity lives with Fout
+   assert(NV1==Nout1);  // velocity lives with Fout
+   if(dir==0) {
+      assert(Nin0==nXcc);  // input cell-center in X 
+      assert(Nout0==nXce); // output cell-edge in X
+      assert(Nin1==Nout1); // input and output same size in Z
+   }   
+   else if(dir==1) {
+      assert(Nin1==nZcc);  // input cell-center in Z 
+      assert(Nout1==nZce); // output cell-edge in Z
+      assert(Nin0==Nout0); // input and output same size in X
+   }   
+   else {
+      cout << "dir in call to InterpToCellEdges most be 0 or 1" << endl;
+      exit (EXIT_FAILURE);
+   }
+
+   //  interpolate to edge using C2 and U1
+   //
+   double rlim, limiter, FoutC2, FoutU1;
+   double numer, denom, lim0, lim1;   
+   int ii=0, jj=0;
+   if(dir==0) ii = 1;
+   if(dir==1) jj = 1;
+
+
+   for (auto i=0+ii; i<Nout0; i++) {
+      for (auto j=0+jj; j<Nout1; j++) {
+           
+         // set argument for flux limiter
+         //
+         numer = Fin(i,j) - Fin(i-ii,j-jj);
+         denom = Fin(i+ii,j+jj) - Fin(i,j);
+         rlim = numer/denom;
+         if(denom==0.0) {
+            rlim = 10000.0;
+         } 
+         else {       
+            rlim = numer/denom;
+         }
+
+         // 2nd order central
+         //
+         FoutC2 = (Fin(i+ii,j+jj) + Fin(i,j))/2.0;
+            
+         // 1st order upwind
+         //
+         if(a_V(i,j)<0.0) {
+            FoutU1 = Fin(i+ii,j+jj);
+         } else {
+            FoutU1 = Fin(i,j);
+         }
+         
+         // set limiter value
+         //
+         if( METHOD=="uw1" ) {
+            limiter = 0.0;
+         } 
+         else if( METHOD=="vanLeer" ) {
+            limiter = (rlim + abs(rlim))/(1.0 + abs(rlim));
+            //cout << "JRA: vanLeer with rlim    = " << rlim << endl;
+            //cout << "JRA: vanLeer with limiter = " << limiter << endl;
+         }
+         else if( METHOD=="minmod" ) {
+            limiter = min(1.0,rlim);
+         }
+         else if( METHOD=="superbee" ) {
+              lim0 = min(rlim,2.0);
+              lim1 = min(2.0*rlim,1.0);
+              limiter = max(lim0,lim1);
+         }
+         else if( METHOD=="vanAlbada1" ) {
+              limiter = (rlim*rlim + rlim)/(rlim*rlim + 1.0);
+         }
+         else if( METHOD=="vanAlbada2" ) {
+              limiter = (2.0*rlim)/(rlim*rlim + 1.0);
+         }
+         else if (METHOD=="C2" ) { // no upwind => c2 scheme
+           limiter = 1.0;
+         }
+         else {
+            if(!procID) {
+               cout << "limiter = " << METHOD << endl;
+               printf("ERROR: upwind method (limiter) not recognized \n");
+            }
+         }
+         limiter = max(0.0,limiter);
+
+         // set edge value using limiter
+         //
+         Fout(i,j) = FoutU1 + limiter*(FoutC2 - FoutU1);
+      }
+   }
+   
+}
+
+void domainGrid::InterpEdgesToEdges( matrix2D<double>&  Fout, 
+                               const matrix2D<double>&  Fin ) const 
+{
+   // this function interpolates Fin defined on one edge
+   // to the oposite edge using central scheme
+
+   // check that vectors in call are proper size
+   //
+   const int Nout0 = Fout.size0();
+   const int Nout1 = Fout.size1();
+   const int Nin0  = Fin.size0();
+   const int Nin1  = Fin.size1();
+   if(Nin0==nXce) { // going from x-edges to z-edges
+      assert(Nin1==nZcc);
+      assert(Nout0==nXcc);
+      assert(Nout1==nZce);
+   }   
+   else {           // going from z-edges to x-edges
+      assert(Nin1==nZce);
+      assert(Nout0==nXce);
+      assert(Nout1==nZcc);
+   }   
+
+   //  interpolate to edge using C2 and U1
+   //
+   double Fup, Fdown; 
+
+   for (auto i=1; i<Nout0; i++) {
+      for (auto j=1; j<Nout1; j++) {
+   
+         if(Nin0==nXce) {        
+            Fup   = (Fin(i+1,j+1) + Fin(i+0,j+1))/2.0;
+            Fdown = (Fin(i,j)     + Fin(i-1,j-0))/2.0;
+         }
+         else {
+            Fup   = (Fin(i+1,j+1) + Fin(i+1,j+0))/2.0;
+            Fdown = (Fin(i,j)     + Fin(i-0,j-1))/2.0; 
+         }
+         Fout(i,j) = ( Fup + Fdown )/2.0;
+
+      }
+   }
+
+}
 
 
 void domainGrid::InterpToCellCenter(vector<double> &Fout, 
@@ -1513,54 +1419,21 @@ void domainGrid::InterpToCellCenter(vector<double> &Fout,
    const int Nout = Fout.size();
    const int Nin  = Fin.size();
    assert(Nout == nXcc);
-   assert(Nin  == nXce);
+   assert(Nin==nXce || Nin==nXce2);
 
+   int ishift0 = 0;
+   if (Nout==nXce2) ishift0 = 1;
 
-   for (auto i=1; i<Nout-1; i++) {
-      Fout.at(i) = (Fin.at(i)+Fin.at(i-1))/2.0;
+   for (auto i=1-ishift0; i<Nout-1+ishift0; i++) {
+      Fout.at(i) = (Fin.at(i+ishift0)+Fin.at(i-1+ishift0))/2.0;
    }
+   //for (auto i=1; i<Nout-1; i++) {
+   //   Fout.at(i) = (Fin.at(i)+Fin.at(i-1))/2.0;
+   //}
 
 
 } // end InterpToCellCenter
 
-
-void domainGrid::InterpToCellCenter(vector<vector<double>> &Fout, 
-                                    const vector<vector<double>> &Fin) const {
-
-   // this function interpolates cell-edge Fin
-   // to Fout, defined at cell center
-
-   // check that vectors in call are proper size
-   //
-   const int Nout0 = Fout.size();
-   const int Nout1 = Fout[0].size();
-   const int Nin0  = Fin.size();
-   const int Nin1  = Fin[0].size();
-   assert(Nout0 == nXcc);
-   assert(Nout1 == nZcc);
-   assert(Nin0==nXce || Nin1==nZce); // at least one direction stag
-
-   if(Nin0==nXce) { // input stag in X-direction
-   
-      for (auto i=1; i<Nout0-1; i++) {
-         for (auto j=0; j<Nout1; j++) {
-            Fout[i][j] = (Fin[i][j] + Fin[i-1][j])/2.0;
-         }
-      }
-
-   }
-   else {  // input stag in Z-direction
-      
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=1; j<Nout1-1; j++) {
-            Fout[i][j] = (Fin[i][j] + Fin[i][j-1])/2.0;
-         }
-      }
-
-   }
-
-
-} // end InterpToCellCenter
 
 void domainGrid::InterpToCellCenter(matrix2D<double> &Fout, 
                                     const matrix2D<double> &Fin) const {
@@ -1632,11 +1505,11 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
    
    
    const int Nout = Flout.size();
-   assert(Nout == nXce);
-   assert(FloutL.size()  == Xce.size());
-   assert(FloutR.size()  == Xce.size());
-   assert(Flratio.size() == Xce.size());
-   assert(FlLimR.size()   == Xce.size());
+   assert(Nout == nXce || nXce2);
+   //assert(FloutL.size()  == Xce.size());
+   //assert(FloutR.size()  == Xce.size());
+   //assert(Flratio.size() == Xce.size());
+   //assert(FlLimR.size()   == Xce.size());
    assert(Flin.size() == Xcc.size());
    assert(upC.size()  == Xcc.size());
    assert(fin.size()  == Xcc.size());
@@ -1659,27 +1532,30 @@ void domainGrid::computeFluxTVD(vector<double> &Flout,
 
    // compute first order left and right fluxes
    //
-   for (auto i=0; i<Nout; i++) {
-      FluxR1st.at(i) = FlinR.at(i);
-      FluxL1st.at(i) = FlinL.at(i+1);
+   int ishift = 0;
+   if(Nout==nXce2) ishift = 1;
+
+   for (auto i=ishift; i<Nout-ishift; i++) {
+      FluxR1st.at(i) = FlinR.at(i-ishift);
+      FluxL1st.at(i) = FlinL.at(i+1-ishift);
    }
 
    // compute 2nd order left and right flux corrections 
    // using flux limiter
    //
-   for (auto i=1; i<Nout-1; i++) {
+   for (auto i=1+ishift; i<Nout-1-ishift; i++) {
     
       assert(nXg >= 2);
 
       // calculate flux corrections for right going wave
       //
-      DeltaFluxRL = 0.5*(FlinR.at(i)   - FlinR.at(i-1)); // B2 scheme 
-      DeltaFluxRR = 0.5*(FlinR.at(i+1) - FlinR.at(i));   // C2 scheme
+      DeltaFluxRL = 0.5*(FlinR.at(i-ishift)   - FlinR.at(i-1-ishift)); // B2 scheme 
+      DeltaFluxRR = 0.5*(FlinR.at(i+1-ishift) - FlinR.at(i-ishift));   // C2 scheme
 
       // calculate flux corrections for left going wave
       //
-      DeltaFluxLL = -0.5*(FlinL.at(i+1) - FlinL.at(i));   // C2 scheme 
-      DeltaFluxLR = -0.5*(FlinL.at(i+2) - FlinL.at(i+1)); // F2 scheme
+      DeltaFluxLL = -0.5*(FlinL.at(i+1-ishift) - FlinL.at(i-ishift));   // C2 scheme 
+      DeltaFluxLR = -0.5*(FlinL.at(i+2-ishift) - FlinL.at(i+1-ishift)); // F2 scheme
       
       // vanleer(a,b)  = 2*a*b/(a+b) (a and b same sign) 
       //               = 0 otherwise
@@ -1729,9 +1605,9 @@ void domainGrid::computeFluxTVDsimple(vector<double> &Flout,
    
    
    const int Nout = Flout.size();
-   assert(Nout == nXce);
-   assert(FloutL.size()  == Xce.size());
-   assert(FloutR.size()  == Xce.size());
+   assert(Nout == nXce || nXce2);
+   //assert(FloutL.size()  == Xce.size());
+   //assert(FloutR.size()  == Xce.size());
    assert(Flin.size() == Xcc.size());
    assert(upC.size()  == Xcc.size());
    assert(fin.size()  == Xcc.size());
@@ -1878,14 +1754,15 @@ void domainGrid::computeFluxTVDnew(matrix2D<double> &Flout,
 } // end TVD flux new calculation
 
 
-void domainGrid::computeFluxTVDsimple(matrix2D<double> &Flout, 
-                                matrix2D<double> &FloutL,
-				matrix2D<double> &FloutR, 
-                                const matrix2D<double> &Flin,
-                                const matrix2D<double> &upC,
-                                const matrix2D<double> &fin,
-                                const string& METHOD,
-				const int dir) const {
+void domainGrid::computeFluxTVDsimple( matrix2D<double>&  Flout, 
+                                       matrix2D<double>&  FloutL,
+				       matrix2D<double>&  FloutR, 
+                                 const matrix2D<double>&  Flin,
+                                 const matrix2D<double>&  upC,
+                                 const matrix2D<double>&  fin,
+                                 const string&            METHOD,
+				 const int                dir ) const 
+{
 
    // similar to computeFluxTVD, but uses METHOD to compute
    // left and right going fluxes rather than MUSCL
@@ -1906,10 +1783,12 @@ void domainGrid::computeFluxTVDsimple(matrix2D<double> &Flout,
    const int Nin1 = Flin.size1();
 
    if(dir==0) {
-      assert(Nout0 == nXce && Nin0 == nXcc);
+      assert(Nin0 == nXcc);
+      assert(Nout0 == nXce || Nout0 == nXce2);
    }
    else if(dir==1) {
-      assert(Nout1 == nZce && Nin1 == nZcc);
+      assert(Nin1 == nZcc);
+      assert(Nout1 == nZce || Nout1 == nZce2);
    }
    else {
       cout << "dir in call to computeFluxTVD most be 0 or 1" << endl;
@@ -1928,25 +1807,30 @@ void domainGrid::computeFluxTVDsimple(matrix2D<double> &Flout,
    FlinR = 0.5*(Flin + upC*fin);
    FlinL = 0.5*(Flin - upC*fin);
   
+   cout << "JRA: coputeFluxTVDsimple 1 " << endl;
+
    InterpToCellEdges(FloutR,FlinR,upC,METHOD,dir);
    InterpToCellEdges(FloutL,FlinL,-upC,METHOD,dir);
+   
+   cout << "JRA: coputeFluxTVDsimple 2 " << endl;
   
    Flout = FloutR+FloutL;
 
 }  // end TVD flux simple calculation
 
 
-void domainGrid::computeFluxTVD(matrix2D<double> &Flout, 
-                                matrix2D<double> &FloutL,
-				matrix2D<double> &FloutR, 
-                                matrix2D<double> &FlLimL, 
-                                matrix2D<double> &FlLimR, 
-                                const matrix2D<double> &Flin,
-                                const matrix2D<double> &upC,
-                                const matrix2D<double> &fin,
-			        const string &LIMITER,
-			 	const int dir, 
-				const int order) const {
+void domainGrid::computeFluxTVD( matrix2D<double>&  Flout, 
+                                 matrix2D<double>&  FloutL,
+				 matrix2D<double>&  FloutR, 
+                                 matrix2D<double>&  FlLimL, 
+                                 matrix2D<double>&  FlLimR, 
+                           const matrix2D<double>&  Flin,
+                           const matrix2D<double>&  upC,
+                           const matrix2D<double>&  fin,
+ 	                   const string&            LIMITER,
+			   const int                dir, 
+			   const int                order ) const 
+{
 
    // this function interpolates cell-center flux Flin
    // to Flout, defined at cell edges, using TVD scheme 
@@ -1963,10 +1847,12 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
    const int Nin1 = Flin.size1();
 
    if(dir==0) {
-      assert(Nout0 == nXce && Nin0 == nXcc);
+      assert(Nin0 == nXcc);
+      assert(Nout0 == nXce || Nout0 == nXce2);
    }
    else if(dir==1) {
-      assert(Nout1 == nZce && Nin1 == nZcc);
+      assert(Nin1 == nZcc);
+      assert(Nout1 == nZce || Nout1 == nZce2);
    }
    else {
       cout << "dir in call to computeFluxTVD most be 0 or 1" << endl;
@@ -1977,7 +1863,6 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
    assert(upC.size1() == Flin.size1());
    assert(fin.size1() == Flin.size1());
 
-  
    //  define some additional matrix values for calculation
    //
    matrix2D<double> FluxL1st(Nout0,Nout1,0.0); 
@@ -1995,36 +1880,38 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
    //FlinL = Flin - fin;
    int iup=1, jup=0;
    if(dir==1) iup=0, jup=1;
-
+   
+   int ishift0 = 0, jshift0 = 0;
+   if(dir==0 && Nout0==nXce2) ishift0 = 1;
+   if(dir==1 && Nout1==nZce2) jshift0 = 1;
+   
    //  compute U1 and C2 left and right fluxes
    //
-   for (auto i=0; i<Nout0; i++) {
-      for (auto j=0; j<Nout1; j++) {
-         FluxR1st(i,j) = FlinR(i,j);
-         FluxL1st(i,j) = FlinL(i+iup,j+jup);
-         //if(dir==0) FluxL1st(i,j) = FlinL(i+1,j);
-         //if(dir==1) FluxL1st(i,j) = FlinL(i,j+1);
+   for (auto i=ishift0; i<Nout0-ishift0; i++) {
+      for (auto j=jshift0; j<Nout1-jshift0; j++) {
+         FluxR1st(i,j) = FlinR(i-ishift0,j-jshift0);
+         FluxL1st(i,j) = FlinL(i+iup-ishift0,j+jup-jshift0);
       }
    }
-
+   
    //  compute second order left and right flux corrections
    //  using flux limiter
    //
-   for (auto i=1; i<Nout0-1; i++) {
-      for (auto j=1; j<Nout1-1; j++) {
+   for (auto i=1+ishift0; i<Nout0-1-ishift0; i++) {
+      for (auto j=1+jshift0; j<Nout1-1-jshift0; j++) {
          if(dir==0) { // X-Flux
 
             assert(nXg >= 2);
 
             // calculate flux correction for right going wave
 	    //
-            DeltaFluxRL = 0.5*(FlinR(i,j)   - FlinR(i-1,j)); // B2 scheme
-            DeltaFluxRR = 0.5*(FlinR(i+1,j) - FlinR(i,j));   // C2 scheme
+            DeltaFluxRL = 0.5*(FlinR(i-ishift0,j)   - FlinR(i-1-ishift0,j)); // B2 scheme
+            DeltaFluxRR = 0.5*(FlinR(i+1-ishift0,j) - FlinR(i-ishift0,j));   // C2 scheme
 
 	    // calculate flux correction for left going wave
 	    //
-	    DeltaFluxLL = -0.5*(FlinL(i+1,j) - FlinL(i,j));    // C2 scheme
-            DeltaFluxLR = -0.5*(FlinL(i+2,j) - FlinL(i+1,j));  // F2 scheme
+	    DeltaFluxLL = -0.5*(FlinL(i+1-ishift0,j) - FlinL(i-ishift0,j));    // C2 scheme
+            DeltaFluxLR = -0.5*(FlinL(i+2-ishift0,j) - FlinL(i+1-ishift0,j));  // F2 scheme
 
             //  calculate 2nd order flux correction using limiter
 	    //
@@ -2046,13 +1933,13 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
 
 	    // calculate flux correction for right going wave
 	    //
-	    DeltaFluxRL = 0.5*(FlinR(i,j)   - FlinR(i,j-1)); // B2 scheme 
-            DeltaFluxRR = 0.5*(FlinR(i,j+1) - FlinR(i,j));   // C2 scheme
+	    DeltaFluxRL = 0.5*(FlinR(i,j-jshift0)   - FlinR(i,j-1-jshift0)); // B2 scheme 
+            DeltaFluxRR = 0.5*(FlinR(i,j+1-jshift0) - FlinR(i,j-jshift0));   // C2 scheme
             
 	    // calculate flux correction for left going wave
 	    //
-	    DeltaFluxLL = -0.5*(FlinL(i,j+1) - FlinL(i,j));    // C2 scheme
-            DeltaFluxLR = -0.5*(FlinL(i,j+2) - FlinL(i,j+1));  // F2 scheme
+	    DeltaFluxLL = -0.5*(FlinL(i,j+1-jshift0) - FlinL(i,j-jshift0));    // C2 scheme
+            DeltaFluxLR = -0.5*(FlinL(i,j+2-jshift0) - FlinL(i,j+1-jshift0));  // F2 scheme
 
             //  calculate 2nd order flux correction using limiter
 	    //
@@ -2085,35 +1972,245 @@ void domainGrid::computeFluxTVD(matrix2D<double> &Flout,
    }
    Flout = FloutR+FloutL;
 
-
 } // end TVD flux calculation
 
 
 ///////////////////////////////////////////////////////
 //
-//    boundary condition functions
+//     boundary condition functions for vectors
+//
 //
 
-void setXminBoundary( vector<double>&  var, 
-		const double           C0, 
-		const double           C1 ) const
+void domainGrid::setXminFluxBC( vector<double>&  var,
+                          const double           C0,
+                          const double           C1 ) const
 {
+   const int nXvar = var.size();
+   assert(nXvar==nXce2);
+   var.at(nXg) = C0;
+   //for (auto i=0; i<nXg; i++) {
+   //   var.at(nXg-1-i) = C1*var.at(nXg+1+i);
+   //}
+}
+
+void domainGrid::setXmaxFluxBC( vector<double>&  var,
+                          const double           C0,
+                          const double           C1 ) const
+{
+   const int nXvar = var.size();
+   assert(nXvar==nXce2);
+   var.at(nXvar-nXg-1) = C0;
+}
+
+void domainGrid::setXminBoundary( vector<double>&  var,
+                            const double           C0,
+                            const double           C1 ) const
+{
+   const int nXvar = var.size();
+   int ishift = 0;
+   if(nXvar==nXce2) ishift = 1;
    for (auto i=0; i<nXg; i++) {
-      var.at(nXg-i-1) = C0 + C1*var.at(nXg+i);
+      var.at(nXg-i-1) = C0 + C1*var.at(nXg+i+ishift);
    }
 }
 
-void setXmaxBoundary( vector<double>&  var, 
-		const double           C0, 
-		const double           C1 ) const
+void domainGrid::setXmaxBoundary( vector<double>&  var,
+                            const double           C0,
+                            const double           C1 ) const
 {
-   const int thisnX = var.size();
+   const int nXvar = var.size();
+   int ishift0 = 0;
+   if(nXvar==nXce2) ishift0 = 1;
+   const int ishift = nXvar-nXg;
+
+   for (auto i=ishift; i<nXvar; i++) {
+      var.at(i) = C0 + C1*var.at(2*ishift-i-1-ishift0);
+   }
+}
+
+void domainGrid::setXminBoundary_J( vector<double>&  var,
+                              const double           C0,
+                              const double           C1 ) const
+{
+   const int nXvar = var.size();
+   assert(nXvar==nXcc);
+   for (auto i=0; i<nXg; i++) {
+      var.at(nXg-i-1) = (C0 + C1*var.at(nXg+i)*Xcc.at(nXg+i))/Xcc.at(nXg-i-1);
+   }
+}
+
+void domainGrid::setXmaxBoundary_J( vector<double>&  var,
+                              const double           C0,
+                              const double           C1 ) const
+{
+   const int nXvar = var.size();
+   assert(nXvar==nXcc);
+   const int ishift = nXvar-nXg;
+
+   for (auto i=ishift; i<nXvar; i++) {
+      var.at(i) = (C0 + C1*var.at(2*ishift-i-1)*Xcc.at(2*ishift-i-1))/Xcc.at(i);
+   }
+}
+
+
+///////////////////////////////////////////////////////
+//
+//     boundary condition functions for matrix2D
+//
+//
+
+void domainGrid::setXminFluxBC( matrix2D<double>&  var,
+                          const double           C0,
+                          const double           C1 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nXvar==nXce2);
+   for (auto j=0; j<nZvar; j++) {
+      var(nXg,j) = C0;
+   }
+   //for (auto i=0; i<nXg; i++) {
+   //   var.at(nXg-1-i) = C1*var.at(nXg+1+i);
+   //}
+}
+
+void domainGrid::setXmaxFluxBC( matrix2D<double>&  var,
+                          const double           C0,
+                          const double           C1 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nXvar==nXce2);
+   for (auto j=0; j<nZvar; j++) {
+      var(nXvar-nXg-1,j) = C0;
+   }
+
+}
+
+void domainGrid::setXminBoundary( matrix2D<double>&  var,
+                            const vector<double>&    C0 ) const
+{
+   const int nZvar = var.size1();
+   const int C0size = C0.size();
+   assert(nZvar==C0size);
+   const int ishift = nXg;
+
+   for (auto i=0; i<ishift; i++) {
+      for (auto j=0; j<nZvar; j++) {
+         var(ishift-i-1,j) = C0.at(j);
+      }
+   }
+
+}
+
+void domainGrid::setXminBoundary( matrix2D<double>&  var,
+                            const double             C0,
+                            const double             C1 ) const
+{
+   const int nXvar = var.size0();
+   int ishift = 0;
+   if(nXvar==nXce2) ishift = 1;
+   const int nZvar = var.size1();
+
+   for (auto i=0; i<nXg; i++) {
+      for (auto j=0; j<nZvar; j++) {
+         var(nXg-i-1,j) = C0 + C1*var(nXg+i+ishift,j);
+      }
+   }
+
+}
+
+void domainGrid::setXmaxBoundary( matrix2D<double>&  var,
+                            const vector<double>&    C0 ) const
+{
+   const int thisnX = var.size0();
+   const int thisnZ = var.size1();
+   const int C0size = C0.size();
+   assert( thisnZ==C0size );
    const int ishift = thisnX-nXg;
 
    for (auto i=ishift; i<thisnX; i++) {
-      var.at(i) = C0 + C1*var.at(2*ishift-i-1);
+      for (auto j=0; j<thisnZ; j++) {
+         var(i,j) = C0.at(j);
+      }
+   }
+
+}
+
+void domainGrid::setXmaxBoundary( matrix2D<double>&  var,
+                            const double             C0,
+                            const double             C1 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   int ishift0 = 0;
+   if(nXvar==nXce2) ishift0 = 1;
+   const int ishift = nXvar-nXg;
+
+   for (auto i=ishift; i<nXvar; i++) {
+      for (auto j=0; j<nZvar; j++) {
+         var(i,j) = C0 + C1*var(2*ishift-i-1-ishift0,j);
+      }
+   }
+
+}
+
+void domainGrid::setXminBoundary_J( matrix2D<double>&  var,
+                              const double             C0,
+                              const double             C1 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nXvar==nXcc);
+
+   for (auto i=0; i<nXg; i++) {
+      for (auto j=0; j<nZvar; j++) {
+         var(nXg-i-1,j) = (C0 + C1*var(nXg+i,j)*Xcc.at(nXg+i))/Xcc.at(nXg-i-1);
+      }
    }
 }
 
+void domainGrid::setXmaxBoundary_J( matrix2D<double>&  var,
+                              const double             C0,
+                              const double             C1 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nXvar==nXcc);
+   const int ishift = nXvar-nXg;
 
+   for (auto i=ishift; i<nXvar; i++) {
+      for (auto j=0; j<nZvar; j++) {
+         var(i,j) = (C0 + C1*var(2*ishift-i-1,j)*Xcc.at(2*ishift-i-1))/Xcc.at(i);
+      }
+   } 
+}
+
+void domainGrid::setZboundaryPeriodic( matrix2D<double>&  var ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   int ishift = 0;
+   if(nZvar==nZce2) ishift = 1;
+
+   //assert(nZg==2 || nZg==1);
+   if(nZg==2) {
+      for (auto i=0; i<nXvar; i++) {
+	 var(i,1) = var(i,nZvar-3-ishift);
+	 var(i,0) = var(i,nZvar-4-ishift);
+
+	 if(nZvar==nZce2) var(i,nZvar-3) = var(i,1+ishift);
+	 var(i,nZvar-2) = var(i,2+ishift);
+	 var(i,nZvar-1) = var(i,3+ishift);
+      }
+   }
+   if(nZg==1) {
+      for (auto i=0; i<nXvar; i++) {
+	 var(i,0) = var(i,nZvar-2-ishift);
+	 if(nZvar==nZce2) var(i,nZvar-2) = var(i,1);
+	 var(i,nZvar-1) = var(i,1+ishift);
+      }
+   }
+
+}
 

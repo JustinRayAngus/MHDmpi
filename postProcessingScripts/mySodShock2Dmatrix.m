@@ -12,8 +12,11 @@
 clear all;
 
 numProcs = 4;
-filePath = '../physicsMods/sodShock2Dmatrix/';
-filePath = '../physicsMods/sodShock2Dmatrix/data_weno5_refined/';
+%filePath = '../physicsMods/sodShock2Dmatrix/';
+%filePath = '../physicsMods/sodShock2Dmatrix/data_weno5_refined/';
+filePath = '../../myMHDworkSpace/sodShock2Dmatrix/data_quick/';
+%filePath = '../../myMHDworkSpace/sodShock2Dmatrix/data_weno5_refined/';
+%filePath = '../../myMHDworkSpace/sodShock2Dmatrix/';
 
 fluxDir = 0; % 0 for x and 1 for z
 
@@ -33,6 +36,10 @@ Cs = loadData(filePath,numProcs,'Cs');
 gamma0 = loadData(filePath,numProcs,'gamma0');
 
 
+%Xce2 = loadData(filePath,numProcs,'Xce2');
+%Zce2 = loadData(filePath,numProcs,'Zce2');
+FluxN_x = loadData(filePath,numProcs,'FluxN_x');
+FluxN_z = loadData(filePath,numProcs,'FluxN_z');
 
 %fileName = ['output',num2str(i-1),'.h5'];
 %thisFile = [filePath,fileName];
@@ -40,8 +47,8 @@ gamma0 = loadData(filePath,numProcs,'gamma0');
 %fileinfo = hdf5info(thisFile);
 
 
-f11=figure(11); 
-set(f11,'position',[1100 400 900 800]);
+f1=figure(1); 
+set(f1,'position',[1100 400 900 800]);
 %set(f1,'position',[341 436 900 840]);
 
 if(fluxDir==0)

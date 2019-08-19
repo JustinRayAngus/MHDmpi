@@ -114,6 +114,8 @@ public:
   void setXminBoundary_J( vector<double>&, const double, const double ) const;
   void setXmaxBoundary_J( vector<double>&, const double, const double ) const;
 
+  void setXminFluxBC( matrix2D<double>&, const double, const double ) const;
+  void setXmaxFluxBC( matrix2D<double>&, const double, const double ) const;
   void setXminBoundary( matrix2D<double>&, const vector<double>& ) const;
   void setXmaxBoundary( matrix2D<double>&, const vector<double>& ) const;
   void setXminBoundary( matrix2D<double>&, const double, const double ) const;

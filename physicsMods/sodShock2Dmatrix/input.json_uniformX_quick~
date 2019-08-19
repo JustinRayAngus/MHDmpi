@@ -8,7 +8,7 @@
 "Zgrid":{
          "Zmin":-0.5,
          "Zmax":0.5,
-         "nZ":100,
+         "nZ":200,
          "nZg":2 // number of guard cells each end
         },
 "Time":{

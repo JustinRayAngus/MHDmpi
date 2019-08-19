@@ -2,14 +2,14 @@
 "Xgrid":{
          "Xmin":-0.5,
          "Xmax":0.5,
-         "nX":2,
-         "nXg":2 // number of guard cells each end
+         "nX":4,
+         "nXg":3 // number of guard cells each end
         },
 "Zgrid":{
          "Zmin":-0.5,
          "Zmax":0.5,
-         "nZ":100,
-         "nZg":2 // number of guard cells each end
+         "nZ":400,
+         "nZg":3 // number of guard cells each end
         },
 "Time":{
         "dtOut":0.02,     // output time intervals
@@ -17,7 +17,7 @@
         "dtFrac":2.0     // dtSim = dtMax/dtFrac
        },
 "Physics":{
-           "advScheme":"QUICK", // "U1", "C2", "QUICK", "TVD"
+           "advScheme":"WENO5", // "U1", "C2", "QUICK", "TVD"
            "Nsub":2, // time solver order (1 or 2)
            "gammaC":1.4, // adiabatic coefficient
            "N":{

@@ -90,6 +90,9 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    const int nZcc = Xgrid.Zcc.size();
    const int nZce = Xgrid.Zce.size();
    
+   const int nXce2 = Xgrid.nXce2;
+   const int nZce2 = Xgrid.nZce2;
+   
 
    F0.initialize(nXcc,nZcc,0.0);
    F0old.initialize(nXcc,nZcc,0.0);
@@ -106,25 +109,25 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    Vx.initialize(nXcc,nZcc,0.0);
    Vz.initialize(nXcc,nZcc,0.0);
    //
-   FluxRx.initialize(nXce,nZcc,0.0);
-   FluxLx.initialize(nXce,nZcc,0.0);
-   FluxLimLx.initialize(nXce,nZcc,0.0);
-   FluxLimRx.initialize(nXce,nZcc,0.0);
+   FluxRx.initialize(nXce2,nZcc,0.0);
+   FluxLx.initialize(nXce2,nZcc,0.0);
+   FluxLimLx.initialize(nXce2,nZcc,0.0);
+   FluxLimRx.initialize(nXce2,nZcc,0.0);
    //
-   FluxRz.initialize(nXcc,nZce,0.0);
-   FluxLz.initialize(nXcc,nZce,0.0);
-   FluxLimLz.initialize(nXcc,nZce,0.0);
-   FluxLimRz.initialize(nXcc,nZce,0.0);
+   FluxRz.initialize(nXcc,nZce2,0.0);
+   FluxLz.initialize(nXcc,nZce2,0.0);
+   FluxLimLz.initialize(nXcc,nZce2,0.0);
+   FluxLimRz.initialize(nXcc,nZce2,0.0);
    //
-   FluxN_x.initialize(nXce,nZcc,0.0);
-   FluxMx_x.initialize(nXce,nZcc,0.0);
-   FluxMz_x.initialize(nXce,nZcc,0.0);
-   FluxE_x.initialize(nXce,nZcc,0.0);
+   FluxN_x.initialize(nXce2,nZcc,0.0);
+   FluxMx_x.initialize(nXce2,nZcc,0.0);
+   FluxMz_x.initialize(nXce2,nZcc,0.0);
+   FluxE_x.initialize(nXce2,nZcc,0.0);
    //
-   FluxN_z.initialize(nXcc,nZce,0.0);
-   FluxMx_z.initialize(nXcc,nZce,0.0);
-   FluxMz_z.initialize(nXcc,nZce,0.0);
-   FluxE_z.initialize(nXcc,nZce,0.0);
+   FluxN_z.initialize(nXcc,nZce2,0.0);
+   FluxMx_z.initialize(nXcc,nZce2,0.0);
+   FluxMz_z.initialize(nXcc,nZce2,0.0);
+   FluxE_z.initialize(nXcc,nZce2,0.0);
    //
    //
    const Json::Value defValue; // used for default reference
@@ -280,14 +283,14 @@ void Physics::advance(const domainGrid& Xgrid, const double dt)
 
       for (auto i=nXg; i<nXcc-nXg; i++) {
          for (auto j=nZg; j<nZcc-nZg; j++) {
-            N(i,j) = Nold(i,j) - thisdt*(FluxN_x(i,j) - FluxN_x(i-1,j))/Xgrid.dX
-                               - thisdt*(FluxN_z(i,j) - FluxN_z(i,j-1))/Xgrid.dZ;
-            Mx(i,j)= Mxold(i,j)- thisdt*(FluxMx_x(i,j)-FluxMx_x(i-1,j))/Xgrid.dX
-                               - thisdt*(FluxMx_z(i,j)-FluxMx_z(i,j-1))/Xgrid.dZ;
-            Mz(i,j)= Mzold(i,j)- thisdt*(FluxMz_x(i,j)-FluxMz_x(i-1,j))/Xgrid.dX
-                               - thisdt*(FluxMz_z(i,j)-FluxMz_z(i,j-1))/Xgrid.dZ;
-            E(i,j) = Eold(i,j) - thisdt*(FluxE_x(i,j) - FluxE_x(i-1,j))/Xgrid.dX
-                               - thisdt*(FluxE_z(i,j) - FluxE_z(i,j-1))/Xgrid.dZ;
+            N(i,j) = Nold(i,j) - thisdt*(FluxN_x(i+1,j) - FluxN_x(i,j))/Xgrid.dX
+                               - thisdt*(FluxN_z(i,j+1) - FluxN_z(i,j))/Xgrid.dZ;
+            Mx(i,j)= Mxold(i,j)- thisdt*(FluxMx_x(i+1,j)-FluxMx_x(i,j))/Xgrid.dX
+                               - thisdt*(FluxMx_z(i,j+1)-FluxMx_z(i,j))/Xgrid.dZ;
+            Mz(i,j)= Mzold(i,j)- thisdt*(FluxMz_x(i+1,j)-FluxMz_x(i,j))/Xgrid.dX
+                               - thisdt*(FluxMz_z(i,j+1)-FluxMz_z(i,j))/Xgrid.dZ;
+            E(i,j) = Eold(i,j) - thisdt*(FluxE_x(i+1,j) - FluxE_x(i,j))/Xgrid.dX
+                               - thisdt*(FluxE_z(i,j+1) - FluxE_z(i,j))/Xgrid.dZ;
          }
       }
 
@@ -339,8 +342,6 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
 {
 
 
-   //const int nXce = FluxN_x.size0();
-   //const int nZce = FluxN_z.size1();
    const int nXcc = N.size0();
    const int nZcc = N.size1();
 

@@ -55,27 +55,6 @@ fileName = ['output',num2str(i-1),'.h5'];
 thisFile = [filePath,fileName];
 procID  = hdf5read(thisFile,'procID');
 fileinfo = hdf5info(thisFile);
-%Xcc = hdf5read(thisFile,'Xcc');
-%Xce = hdf5read(thisFile,'Xce');
-% N  = hdf5read(thisFile,'N');
-% M  = hdf5read(thisFile,'M');
-% E  = hdf5read(thisFile,'E');
-% P  = hdf5read(thisFile,'P');
-% V  = hdf5read(thisFile,'V');
-% Cs  = hdf5read(thisFile,'Cs');
-% gamma0 = hdf5read(thisFile,'gamma0');
-% FluxRatio  = hdf5read(thisFile,'FluxRatio');
-% FluxLim    = hdf5read(thisFile,'FluxLim');
-% FluxL    = hdf5read(thisFile,'FluxL');
-% FluxR    = hdf5read(thisFile,'FluxR');
-% FluxN  = hdf5read(thisFile,'FluxN');
-% FluxM  = hdf5read(thisFile,'FluxM');
-% FluxE  = hdf5read(thisFile,'FluxE');
-% tout= hdf5read(thisFile,'tout');
-
-
-%%%
-%
 end
 
 f2=figure(2); 

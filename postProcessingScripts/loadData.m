@@ -53,7 +53,7 @@ end
 %
 
 if(Rank==0 || strcmp(thisVar,'Zcc') || strcmp(thisVar,'Zce') ...
-           || strcmp(thisVar,'tout')) % scalar
+           || strcmp(thisVar,'Zce2') || strcmp(thisVar,'tout')) % scalar
     
    varData = hdf5read(thisFile,thisVar);
    
@@ -61,18 +61,30 @@ elseif(Rank==1) % grid vector
     
    varData = hdf5read(thisFile,thisVar);
    Xce = hdf5read(thisFile,'Xce');
+   Xce2 = 100;
+   try Xce2 = hdf5read(thisFile,'Xce2');
+   end
    offset_ce = 0;
    if(length(varData)==length(Xce))
        offset_ce = 1;
+   end
+   if(length(varData)==length(Xce2))
+       offset_ce = -1;
    end
    for j=1:numProcs-1
       fileName = ['output',num2str(j),'.h5'];
       thisFile = [dataPath,fileName];
       thisProcData = hdf5read(thisFile,thisVar);
     
-      max0 = length(varData)-2*nXg+offset_ce;
+      %max0 = length(varData)-2*nXg+offset_ce;
+      %thisLength = length(thisProcData);
+      %varData(max0+1:max0+thisLength) = thisProcData;
+      
+      max0 = length(varData)-nXg+offset_ce;
       thisLength = length(thisProcData);
-      varData(max0+1:max0+thisLength) = thisProcData;
+      varData(max0+1:max0+thisLength-nXg) = thisProcData(nXg+1:end);
+     
+      
    end
    
 elseif(Rank==2) % matrix Data not growing in time
@@ -97,18 +109,29 @@ elseif(Rank==3) % matrix Data growing in time
     
    varData = hdf5read(thisFile,thisVar);
    Xce = hdf5read(thisFile,'Xce');
+   Xce2 = 100;
+   try Xce2 = hdf5read(thisFile,'Xce2');
+   end
    offset_ce = 0;
    if(length(varData(1,:,1))==length(Xce))
        offset_ce = 1;
+   end
+   if(length(varData(1,:,1))==length(Xce2))
+       offset_ce = -1;
    end
    for j=1:numProcs-1
       fileName = ['output',num2str(j),'.h5'];
       thisFile = [dataPath,fileName];
       thisProcData = hdf5read(thisFile,thisVar);
     
-      max0 = length(varData(1,:,1))-2*nXg+offset_ce;
+      %max0 = length(varData(1,:,1))-2*nXg+offset_ce;
+      %thisLength = length(thisProcData(1,:,1));
+      %varData(:,max0+1:max0+thisLength,:) = thisProcData;
+      
+      max0 = length(varData(1,:,1))-nXg+offset_ce;
       thisLength = length(thisProcData(1,:,1));
-      varData(:,max0+1:max0+thisLength,:) = thisProcData;
+      varData(:,max0+1:max0+thisLength-nXg,:) = thisProcData(:,nXg+1:end,:);
+      
    end
    
 end
