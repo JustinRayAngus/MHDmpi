@@ -690,7 +690,7 @@ void advanceSemiImplicitVars(const domainGrid& Xgrid, const int stage,
       for (auto j=0; j<Ez.size1(); j++) {
          Ez(nXcc-nXg,j) = Ez(nXcc-nXg-1,j);
       }
-      Xgrid.setXminBoundary(Pii_xz, 0.0, -1.0);   
+      Xgrid.setXmaxBoundary(Pii_xz, 0.0, -1.0);   
    }  
    Xgrid.setZboundaryPeriodic(Ez); 
    Xgrid.setZboundaryPeriodic(Jz); 
