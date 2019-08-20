@@ -30,6 +30,7 @@ instructions given below.
 Fortunately, gcc, cmake and mpi are already setup on quartz. So nothing
 needs to be done for these.
 
+OLD HDF5 NOTES:
 hdf5 is also on quartz, but I need it to be configured with 
 --ennable-cxx and I'm not sure if that is a default configuration 
 for hdf5 on quartz. So I just downloaded the .tar file and used the 
@@ -39,6 +40,11 @@ environment variable in ./src/CMakeLists.txt.
 
 i.e 
 set(ENV{HDF5_HOME} "/g/g19/angus1/MHDwithMPI/HDF5/hdf5-1.10.0-patch1/hdf5")
+
+NEW HDF5 NOTES: 
+on quartz, do "module load hdf5-serial". Then do "printenv | grep "HDF5"", which will show you the path set by module load. Copy this path into the CMakeLists.txt file
+for the path to hdf5 libraires. Note that there is incompatibility with hdf5-parallel
+and --enable-cxx. But not using parallel hdf5 options anyway.
 
 That is it for the prerequisites. 
 The rest of the instructions for building the code and running

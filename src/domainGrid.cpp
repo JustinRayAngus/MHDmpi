@@ -683,8 +683,34 @@ void domainGrid::DDX( matrix2D<double>&  Fout,
    const int Nout1 = Fout.size1();
    const int Nin0  = Fin.size0();
    const int Nin1  = Fin.size1();
-   //assert(Nin0 == nXcc);
    assert(Nin1 == Nout1);
+
+   if(Nout0 == nXce2 || Nin0 == nXce2) { 
+
+      if(Nout0==nXce2 && Nin0==nXcc) {
+         for (auto i=1; i<Nout0-1; i++) {
+           for (auto j=0; j<Nout1; j++) {
+               Fout(i,j) = (Fin(i,j)-Fin(i-1,j))/dX;
+	    }
+         }   
+      }
+      else if(Nout0==nXcc && Nin0==nXce2) {
+         for (auto i=0; i<Nout0; i++) {
+           for (auto j=0; j<Nout1; j++) {
+               Fout(i,j) = (Fin(i+1,j)-Fin(i,j))/dX;
+	    }
+         }   
+      }
+      else { //(Nout0==Nin0) {
+         for (auto i=1; i<Nout0-1; i++) {
+           for (auto j=0; j<Nout1; j++) {
+               Fout(i,j) = (Fin(i+1,j)-Fin(i-1,j))/(2.0*dX);
+	    }
+         }   
+      }
+
+   }
+   else { 
 
    if(Nout0 == nXce && Nin0 == nXcc) { // Fout is at cell edges in X-direction
       for (auto i=0; i<Nout0; i++) {
@@ -712,12 +738,13 @@ void domainGrid::DDX( matrix2D<double>&  Fout,
       exit (EXIT_FAILURE);
    }
 
+   }
 
 }
 
 
-void domainGrid::DDZ(matrix2D<double>& Fout, 
-		const matrix2D<double>& Fin) const {
+void domainGrid::DDZ( matrix2D<double>&  Fout, 
+		const matrix2D<double>&  Fin ) const {
 
    // check that Fin (at cell center) and 
    // use Fout size to determine how to take DDZ
@@ -727,34 +754,64 @@ void domainGrid::DDZ(matrix2D<double>& Fout,
    const int Nin0  = Fin.size0();
    const int Nin1  = Fin.size1();
    assert(Nout0 == Nin0);
-   //assert(Nin1 == nZcc);
+   if(Nout1 == nZce2 || Nin1 == nZce2) { 
 
-   if(Nout1 == nZce && Nin1 == nZcc) { // Fout is at cell edges in Z-direction
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=0; j<Nout1; j++) {
-            Fout(i,j) = (Fin(i,j+1)-Fin(i,j))/dZ;
-	 }
-      }   
-   } 
-   else if(Nout1 == nZcc && Nin1 == nZcc) {  // Fout is at cell center in Z-direction
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=1; j<Nout1-1; j++) {
-            Fout(i,j) = (Fin(i,j+1)-Fin(i,j-1))/2.0/dZ;
-         }
-      }	 
-   }
-   else if (Nout1 == nZcc && Nin1 == nZce) {
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=1; j<Nout1-1; j++) {
-            Fout(i,j) = (Fin(i,j)-Fin(i,j-1))/dZ;
+      if(Nout1==nZce2 && Nin1==nZcc) {
+         for (auto i=0; i<Nout0; i++) {
+           for (auto j=1; j<Nin1; j++) {
+               Fout(i,j) = (Fin(i,j)-Fin(i,j-1))/dZ;
+	    }
          }   
       }
+      else if(Nout1==nZcc && Nin1==nZce2) {
+         for (auto i=0; i<Nout0; i++) {
+           for (auto j=0; j<Nout1; j++) {
+               Fout(i,j) = (Fin(i,j+1)-Fin(i,j))/dZ;
+	    }
+         }   
+      }
+      else if(Nout1==Nin1) {
+         for (auto i=0; i<Nout0; i++) {
+           for (auto j=1; j<Nout1-1; j++) {
+               Fout(i,j) = (Fin(i,j+1)-Fin(i,j-1))/(2.0*dZ);
+	    }
+         }   
+      }
+      else {
+         printf("ERROR: Nout and Nin combo failed for DDZ");
+         exit (EXIT_FAILURE);
+      }
+
    }
    else {
-      printf("ERROR: Nout and Nin combo failed for DDZ");
-      exit (EXIT_FAILURE);
-   }
 
+      if(Nout1 == nZce && Nin1 == nZcc) { // Fout is at cell edges in Z-direction
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=0; j<Nout1; j++) {
+               Fout(i,j) = (Fin(i,j+1)-Fin(i,j))/dZ;
+	    }
+         }   
+      } 
+      else if(Nout1 == nZcc && Nin1 == nZcc) {  // Fout is at cell center in Z-direction
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=1; j<Nout1-1; j++) {
+               Fout(i,j) = (Fin(i,j+1)-Fin(i,j-1))/2.0/dZ;
+            }
+         }	 
+      }
+      else if (Nout1 == nZcc && Nin1 == nZce) {
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=1; j<Nout1-1; j++) {
+               Fout(i,j) = (Fin(i,j)-Fin(i,j-1))/dZ;
+            }    
+         }
+      }
+      else {
+         printf("ERROR: Nout and Nin combo failed for DDZ");
+         exit (EXIT_FAILURE);
+      }
+
+   }
 
 }
 
@@ -990,13 +1047,7 @@ void domainGrid::InterpToCellEdges( matrix2D<double>&  Fout,
    //  interpolate using specified method
    //
    if(METHOD == "C2") { // 2nd order central
-      /*
-      for (auto i=nXg; i<Nout0-1; i++) {
-         for (auto j=0; j<Nout1; j++) {
-            Fout(i,j) = (Fin(i,j) + Fin(i+iup,j+jup))/2.0;
-         }
-      }
-      */
+
       if(dir==0) { // interp to X-faces
          for (auto i=shift0; i<Nout0-shift0; i++) {
             for (auto j=0; j<Nout1; j++) {
@@ -1269,16 +1320,16 @@ void domainGrid::InterpCellToEdges( matrix2D<double>&  Fout,
    assert(NV1==Nout1);  // velocity lives with Fout
    if(dir==0) {
       assert(Nin0==nXcc);  // input cell-center in X 
-      assert(Nout0==nXce); // output cell-edge in X
+      assert(Nout0==nXce2); // output cell-edge in X
       assert(Nin1==Nout1); // input and output same size in Z
    }   
    else if(dir==1) {
       assert(Nin1==nZcc);  // input cell-center in Z 
-      assert(Nout1==nZce); // output cell-edge in Z
+      assert(Nout1==nZce2); // output cell-edge in Z
       assert(Nin0==Nout0); // input and output same size in X
    }   
    else {
-      cout << "dir in call to InterpToCellEdges most be 0 or 1" << endl;
+      cout << "dir in call to InterpCellToEdges most be 0 or 1" << endl;
       exit (EXIT_FAILURE);
    }
 
@@ -1291,13 +1342,15 @@ void domainGrid::InterpCellToEdges( matrix2D<double>&  Fout,
    if(dir==1) jj = 1;
 
 
-   for (auto i=0+ii; i<Nout0; i++) {
-      for (auto j=0+jj; j<Nout1; j++) {
+   //for (auto i=0+ii; i<Nout0; i++) {
+   //   for (auto j=0+jj; j<Nout1; j++) {
+   for (auto i=nXg; i<Nout0-nXg; i++) {
+      for (auto j=nZg; j<Nout1-nZg; j++) {
            
          // set argument for flux limiter
          //
-         numer = Fin(i,j) - Fin(i-ii,j-jj);
-         denom = Fin(i+ii,j+jj) - Fin(i,j);
+         numer = Fin(i-ii,j-jj) - Fin(i-2*ii,j-2*jj);
+         denom = Fin(i,j) - Fin(i-ii,j-jj);
          rlim = numer/denom;
          if(denom==0.0) {
             rlim = 10000.0;
@@ -1308,14 +1361,14 @@ void domainGrid::InterpCellToEdges( matrix2D<double>&  Fout,
 
          // 2nd order central
          //
-         FoutC2 = (Fin(i+ii,j+jj) + Fin(i,j))/2.0;
+         FoutC2 = (Fin(i,j) + Fin(i-ii,j-jj))/2.0;
             
          // 1st order upwind
          //
          if(a_V(i,j)<0.0) {
-            FoutU1 = Fin(i+ii,j+jj);
-         } else {
             FoutU1 = Fin(i,j);
+         } else {
+            FoutU1 = Fin(i-ii,j-jj);
          }
          
          // set limiter value
@@ -1406,6 +1459,41 @@ void domainGrid::InterpEdgesToEdges( matrix2D<double>&  Fout,
 
 }
 
+void domainGrid::InterpNodesToEdges( matrix2D<double>&  Fout, 
+                               const matrix2D<double>&  Fin,
+                               const int                dir ) const 
+{
+   // this function interpolates Fin defined on cell nodes
+   // to the dir edge where Fout lives
+
+   // check that vectors in call are proper size
+   //
+   const int Nout0 = Fout.size0();
+   const int Nout1 = Fout.size1();
+   const int Nin0  = Fin.size0();
+   const int Nin1  = Fin.size1();
+   assert(Nin0==nXce2 && Nin1==nZce2);
+   
+   int ii=0, jj=0;
+   if(dir==0) { // going from nodes to x-edges
+      assert(Nout0==nXce2);
+      assert(Nout1==nZcc);
+      ii = 1;
+   }   
+   if(dir==1) { // going from nodes to z-edges
+      assert(Nout0==nXcc);
+      assert(Nout1==nZce2);
+      jj = 1;
+   }   
+
+   for (auto i=nXg; i<Nout0-nXg; i++) {
+      for (auto j=nZg; j<Nout1-nXg; j++) {
+         Fout(i,j) = (Fin(i+ii,j+jj) + Fin(i,j))/2.0; 
+      }
+   }
+
+}
+
 
 void domainGrid::InterpToCellCenter(vector<double> &Fout, 
                                    const vector<double> &Fin) const {
@@ -1452,9 +1540,26 @@ void domainGrid::InterpToCellCenter(matrix2D<double> &Fout,
    //cout << " nZcc = " << nZcc << endl;
    assert(Nout0 == nXcc);
    assert(Nout1 == nZcc);
-   assert(Nin0==nXce || Nin1==nZce); // at least one direction stag
+   assert(Nin0!=nXcc || Nin1!=nZcc); // at least one direction stag
+      
+   if(Nin0==nXce2 || Nin1==nZce2) {
+    
+      int ii=0, jj=0;
+      if(Nin0==nXce2) ii=1;
+      if(Nin1==nZce2) jj=1;
+      for (auto i=0; i<Nout0; i++) {
+         for (auto j=0; j<Nout1; j++) {
+            if(Nin0==nXce2 && Nin1==nZce2) {
+               Fout(i,j) = (Fin(i+ii,j+jj) + Fin(i+ii,j) + Fin(i,j+jj) + Fin(i,j))/4.0;
+            }
+            else {
+               Fout(i,j) = (Fin(i+ii,j+jj) + Fin(i,j))/2.0;
+            }
+         }
+      }
 
-   if(Nin0==nXce && Nin1==nZcc) { // input stag in X-direction
+   }
+   else if(Nin1==nZcc) { // input old stag in X-direction
    
       for (auto i=1; i<Nout0-1; i++) {
          for (auto j=0; j<Nout1; j++) {
@@ -1463,8 +1568,7 @@ void domainGrid::InterpToCellCenter(matrix2D<double> &Fout,
       }
 
    }
-   if(Nin0==nXcc && Nin1==nZce) { // input stag in Z-direction
-   //else {  // input stag in Z-direction
+   else if(Nin0==nXcc) { // input old stag in Z-direction
       
       for (auto i=0; i<Nout0; i++) {
          for (auto j=1; j<Nout1-1; j++) {
@@ -1473,7 +1577,7 @@ void domainGrid::InterpToCellCenter(matrix2D<double> &Fout,
       }
 
    }
-   if(Nin0==nXce && Nin1==nZce) { // input stag in both directions
+   else if(Nin0!=nXcc && Nin1!=nZcc) { // input old stag in both directions
    
       for (auto i=1; i<Nout0-1; i++) {
          for (auto j=1; j<Nout1-1; j++) {
@@ -1481,6 +1585,10 @@ void domainGrid::InterpToCellCenter(matrix2D<double> &Fout,
          }
       }
 
+   }
+   else {
+      cout << "JRA, failing in InterpToCellCenter()" << endl;
+      exit (EXIT_FAILURE);
    }
 
 
@@ -1882,8 +1990,10 @@ void domainGrid::computeFluxTVD( matrix2D<double>&  Flout,
    
    //  compute U1 and C2 left and right fluxes
    //
-   for (auto i=ishift0; i<Nout0-ishift0; i++) {
-      for (auto j=jshift0; j<Nout1-jshift0; j++) {
+   //for (auto i=nXg-1+ishift0; i<Nout0-nXg; i++) {
+   //   for (auto j=nZg-1+jshift0; j<Nout1-nZg; j++) {
+   for (auto i=nXg-1+ishift0; i<Nout0-1-ishift0; i++) {
+      for (auto j=nZg-1+jshift0; j<Nout1-1-jshift0; j++) {
          FluxR1st(i,j) = FlinR(i-ishift0,j-jshift0);
          FluxL1st(i,j) = FlinL(i+iup-ishift0,j+jup-jshift0);
       }
@@ -1892,8 +2002,10 @@ void domainGrid::computeFluxTVD( matrix2D<double>&  Flout,
    //  compute second order left and right flux corrections
    //  using flux limiter
    //
-   for (auto i=1+ishift0; i<Nout0-1-ishift0; i++) {
-      for (auto j=1+jshift0; j<Nout1-1-jshift0; j++) {
+   //for (auto i=nXg-1+ishift0; i<Nout0-nXg; i++) {
+   //   for (auto j=nZg-1+jshift0; j<Nout1-nZg; j++) {
+   for (auto i=nXg-1+ishift0; i<Nout0-1-ishift0; i++) {
+      for (auto j=nZg-1+jshift0; j<Nout1-1-jshift0; j++) {
          if(dir==0) { // X-Flux
 
             assert(nXg >= 2);
@@ -2079,7 +2191,28 @@ void domainGrid::setXmaxFluxBC( matrix2D<double>&  var,
    for (auto j=0; j<nZvar; j++) {
       var(nXvar-nXg-1,j) = C0;
    }
+}
 
+void domainGrid::setXminFluxBC( matrix2D<double>&  var,
+                          const vector<double>&    C0 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nXvar==nXce2);
+   for (auto j=0; j<nZvar; j++) {
+      var(nXg,j) = C0.at(j);
+   }
+}
+
+void domainGrid::setXmaxFluxBC( matrix2D<double>&  var,
+                          const vector<double>&    C0 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nXvar==nXce2);
+   for (auto j=0; j<nZvar; j++) {
+      var(nXvar-nXg-1,j) = C0.at(j);
+   }
 }
 
 void domainGrid::setXminBoundary( matrix2D<double>&  var,
@@ -2115,6 +2248,19 @@ void domainGrid::setXminBoundary( matrix2D<double>&  var,
 
 }
 
+void domainGrid::setXminBoundaryExtrap( matrix2D<double>&  var ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+
+   for (auto i=0; i<nXg; i++) {
+      for (auto j=0; j<nZvar; j++) {
+         var(nXg-1-i,j) = 2.0*var(nXg-i,j) - var(nXg+1-i,j);
+      }
+   }
+
+}
+
 void domainGrid::setXmaxBoundary( matrix2D<double>&  var,
                             const vector<double>&    C0 ) const
 {
@@ -2145,6 +2291,20 @@ void domainGrid::setXmaxBoundary( matrix2D<double>&  var,
    for (auto i=ishift; i<nXvar; i++) {
       for (auto j=0; j<nZvar; j++) {
          var(i,j) = C0 + C1*var(2*ishift-i-1-ishift0,j);
+      }
+   }
+
+}
+
+void domainGrid::setXmaxBoundaryExtrap( matrix2D<double>&  var ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   const int ishift = nXvar-nXg;
+
+   for (auto i=0; i<nXg; i++) {
+      for (auto j=0; j<nZvar; j++) {
+         var(ishift+i,j) = 2.0*var(ishift+i-1,j) - var(ishift+i-2,j);
       }
    }
 
