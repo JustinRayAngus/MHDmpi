@@ -53,10 +53,6 @@ matrix2D<double> FluxN_x, FluxMx_x, FluxMz_x, FluxE_x;
 matrix2D<double> FluxN_z, FluxMx_z, FluxMz_z, FluxE_z;
 
 void computeFluxes(const domainGrid&, const int);
-void setXminBoundary(vector<vector<double>>&, const double, const double);
-void setXmaxBoundary(vector<vector<double>>&, const double, const double);
-void setZminBoundary(vector<vector<double>>&, const double, const double);
-void setZmaxBoundary(vector<vector<double>>&, const double, const double);
 
 void setXminBoundary(matrix2D<double>&, const double, const double);
 void setXmaxBoundary(matrix2D<double>&, const double, const double);
@@ -434,22 +430,6 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
 } // end computeFluxes
 
 
-void setXminBoundary(vector<vector<double>>& var,
-		     const double C0, const double C1)
-{
-   const int thisnZ = var[0].size();
-
-   domainGrid* mesh = domainGrid::mesh;
-   const int ishift = mesh->nXg;
-
-   for (auto i=0; i<ishift; i++) {  
-      for (auto j=0; j<thisnZ; j++) {
-	 var[ishift-i-1][j] = C0 + C1*var[ishift+i][j];
-      }
-   }
-
-}
-
 void setXminBoundary(matrix2D<double>& var,
 		     const double C0, const double C1)
 {
@@ -461,23 +441,6 @@ void setXminBoundary(matrix2D<double>& var,
    for (auto i=0; i<ishift; i++) {  
       for (auto j=0; j<thisnZ; j++) {
 	 var(ishift-i-1,j) = C0 + C1*var(ishift+i,j);
-      }
-   }
-
-}
-
-void setXmaxBoundary(vector<vector<double>>& var,
-		     const double C0, const double C1)
-{
-   const int thisnX = var.size();
-   const int thisnZ = var[0].size();
-
-   domainGrid* mesh = domainGrid::mesh;
-   const int ishift = thisnX-mesh->nXg;
-
-   for (auto i=ishift; i<thisnX; i++) {  
-      for (auto j=0; j<thisnZ; j++) {
-	 var[i][j] = C0 + C1*var[2*ishift-i-1][j];
       }
    }
 
@@ -500,22 +463,6 @@ void setXmaxBoundary(matrix2D<double>& var,
 
 }
 
-void setZminBoundary(vector<vector<double>>& var,
-		     const double C0, const double C1)
-{
-   const int thisnX = var.size();
-
-   domainGrid* mesh = domainGrid::mesh;
-   const int jshift = mesh->nZg;
-
-   for (auto i=0; i<thisnX; i++) {  
-      for (auto j=0; j<jshift; j++) {
-	 var[i][jshift-j-1] = C0 + C1*var[i][jshift+j];
-      }
-   }
-
-}
-
 void setZminBoundary(matrix2D<double>& var,
 		     const double C0, const double C1)
 {
@@ -527,23 +474,6 @@ void setZminBoundary(matrix2D<double>& var,
    for (auto i=0; i<thisnX; i++) {  
       for (auto j=0; j<jshift; j++) {
 	 var(i,jshift-j-1) = C0 + C1*var(i,jshift+j);
-      }
-   }
-
-}
-
-void setZmaxBoundary(vector<vector<double>>& var,
-		     const double C0, const double C1)
-{
-   const int thisnX = var.size();
-   const int thisnZ = var[0].size();
-
-   domainGrid* mesh = domainGrid::mesh;
-   const int jshift = thisnZ-mesh->nZg;
-
-   for (auto i=0; i<thisnX; i++) {  
-      for (auto j=jshift; j<thisnZ; j++) {
-	 var[i][j] = C0 + C1*var[i][2*jshift-j-1];
       }
    }
 

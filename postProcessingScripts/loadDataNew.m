@@ -1,4 +1,4 @@
-function[varData]=loadData(dataPath,numProcs,thisVar)
+function[varData]=loadDataNew(dataPath,thisVar)
 
 
 fileName = 'output0.h5';
@@ -7,10 +7,11 @@ procID  = hdf5read(thisFile,'procID');
 fileinfo = hdf5info(thisFile);
 dsets=fileinfo.GroupHierarchy.Datasets;
 
+
 %%%   get the number of processors
 %
-%fileNames = dir([dataPath,'output*.h5']);
-%numProcs = length(fileNames);
+fileNames = dir([dataPath,'output*.h5']);
+numProcs = length(fileNames);
 
 
 %%%   get the data size
@@ -35,19 +36,6 @@ Nx_ce = Nx_cc-1;
 Nx_ce2 = Nx_cc+1;
 
 varData0 = hdf5read(thisFile,thisVar);
-
-% offset_ce = 0;
-% Nxvar = Nx_cc;
-% if(length(varData0)==Nxsub_ce)
-%    offset_ce = 1;
-%    Nxvar = Nx_ce;
-% end
-% if(length(varData0)==Nxsub_ce2)
-%    offset_ce = -1;
-%    Nxvar = Nx_ce2;
-% end
-
-
 
 %Name1 = fileinfo.GroupHierarchy.Datasets(1).Name
 
@@ -148,6 +136,7 @@ elseif(Rank==3) % matrix Data growing in time
        Nxvar = Nx_ce2;
        Nxsub = Nxsub_ce2;
    end
+   
    varData = zeros(length(varData0(:,1,1)),Nxvar,length(varData0(1,1,:)));
    varData(:,1:length(varData0(1,:,1)),:) = varData0;
    
