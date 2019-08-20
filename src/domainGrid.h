@@ -55,8 +55,13 @@ public:
                    const  matrix2D<double>&, 
 		   const  string&, 
                    const  int ) const;
+
   void InterpEdgesToEdges( matrix2D<double>&, 
-                     const matrix2D<double>&  ) const; 
+                     const matrix2D<double>&  ) const;
+ 
+  void InterpNodesToEdges( matrix2D<double>&, 
+                     const matrix2D<double>&,
+                     const int                ) const; 
   
   
   void InterpToCellCenter(vector<double>&, const vector<double>&) const;
@@ -116,10 +121,14 @@ public:
 
   void setXminFluxBC( matrix2D<double>&, const double, const double ) const;
   void setXmaxFluxBC( matrix2D<double>&, const double, const double ) const;
+  void setXminFluxBC( matrix2D<double>&, const vector<double>& ) const;
+  void setXmaxFluxBC( matrix2D<double>&, const vector<double>& ) const;
   void setXminBoundary( matrix2D<double>&, const vector<double>& ) const;
   void setXmaxBoundary( matrix2D<double>&, const vector<double>& ) const;
   void setXminBoundary( matrix2D<double>&, const double, const double ) const;
   void setXmaxBoundary( matrix2D<double>&, const double, const double ) const;
+  void setXminBoundaryExtrap( matrix2D<double>& ) const;
+  void setXmaxBoundaryExtrap( matrix2D<double>& ) const;
   void setXminBoundary_J( matrix2D<double>&, const double, const double ) const;
   void setXmaxBoundary_J( matrix2D<double>&, const double, const double ) const;
  
