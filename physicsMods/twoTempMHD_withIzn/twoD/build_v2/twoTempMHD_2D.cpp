@@ -89,7 +89,7 @@ using namespace std;
 
 
 domainGrid m_Xgrid;
-double m_dX, m_dZ, m_nXce2, m_nZce2, m_nXcc, m_nZcc;
+double m_dX, m_dZ, m_nXce, m_nZce, m_nXcc, m_nZcc;
 int m_nXg, m_nZg;
 
 string advScheme0, advSchemeHall0;  // advection differencing scheme
@@ -241,9 +241,9 @@ void Physics::initialize(const domainGrid& Xgrid, const Json::Value& root,
    m_nXg   = Xgrid.nXg;
    m_nZg   = Xgrid.nZg;
    m_nXcc  = Xgrid.nXcc;
-   m_nXce2  = Xgrid.nXce2;
+   m_nXce  = Xgrid.nXce2;
    m_nZcc  = Xgrid.nZcc;
-   m_nZce2  = Xgrid.nZce2;
+   m_nZce  = Xgrid.nZce2;
    m_dX    = Xgrid.dX;
    m_dZ    = Xgrid.dZ;
 
@@ -570,8 +570,8 @@ void advanceElectronViscFluxes(const int stage, const double thisdt, const doubl
    
    
    double d0Pie;
-   for (auto j=m_nZg; j<m_nZce2-m_nZg; j++) {
-      for (auto i=m_nXg; i<m_nXce2-m_nXg; i++) {
+   for (auto j=m_nZg; j<m_nZce-m_nZg; j++) {
+      for (auto i=m_nXg; i<m_nXce-m_nXg; i++) {
          d0Pie = thisdt/delta0*Ne_xz(i,j)/etaVis_ele_xz(i,j)*mM;
          Pie_xx(i,j) = (Pie_xxold(i,j) + d0Pie*Pie_xx0(i,j))/(1.0 + d0Pie);
          Pie_zz(i,j) = (Pie_zzold(i,j) + d0Pie*Pie_zz0(i,j))/(1.0 + d0Pie);
@@ -630,7 +630,7 @@ void advanceSemiImplicitVars(const domainGrid& Xgrid, const int stage,
    double d0qex, d0qez, d0Pii;
    d0 = delta0/thisdt;	   
    for (auto j=m_nZg; j<m_nZcc-m_nZg; j++) {
-      for (auto i=m_nXg; i<m_nXce2-m_nXg; i++) {
+      for (auto i=m_nXg; i<m_nXce-m_nXg; i++) {
          E0z  = Eidealz(i,j) + Ehallz(i,j) + Egradz(i,j);
          E0z += divJzstress(i,j)/Ne_x(i,j);
          E0z -= Li0*divPiez_x(i,j)/Ne_x(i,j);
@@ -822,11 +822,9 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
    P0.assign(nZcc,0.0);
    if(procID==0) {
       Xgrid.setXminFluxBC(FluxN_x, 0.0, 0.0);
-      //cout << "hy_ce.at(1)" << hy_ce.at(1) << endl;
       for (auto j=0; j<nZcc; j++) {
          P0.at(j) = hy_ce(nXg,j)*(P(nXg,j)+P(nXg-1,j))/2.0;
       }   
-      //Xgrid.setXminBoundary(FluxMx_x, P0);   
       Xgrid.setXminFluxBC(FluxMx_x, P0);   
       Xgrid.setXminFluxBC(FluxMz_x, 0.0, 0.0);   
       Xgrid.setXminFluxBC(FluxEi_x, 0.0, 0.0);
@@ -838,22 +836,19 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       Xgrid.setXmaxFluxBC(FluxEi_x, 0.0, 0.0);
       Xgrid.setXmaxFluxBC(FluxEe_x, 0.0, 0.0);
       const int thisnX = P.size0();
-      //cout << "hy_ce.at(thisnX-3)" << hy_ce.at(thisnX-3) << endl;   
-      //double P0 = hy_ce.at(thisnX-nXg-1)*(P.at(thisnX-nXg-1)+P.at(thisnX-nXg))/2.0;
       for (auto j=0; j<nZcc; j++) {
          P0.at(j) = hy_ce(thisnX-nXg,j)*(P(thisnX-nXg-1,j)+P(thisnX-nXg,j))/2.0;
       }   
-      //Xgrid.setXmaxBoundary(FluxMx_x, P0);   
       Xgrid.setXmaxFluxBC(FluxMx_x, P0);   
       Xgrid.setXmaxFluxBC(FluxMz_x, 0.0, 0.0);   
       Xgrid.setXmaxFluxBC(FluxNe_x, 0.0, 0.0);
    }   
-   Xgrid.communicate(FluxN_x);   
-   Xgrid.communicate(FluxMx_x);   
-   Xgrid.communicate(FluxMz_x);   
-   Xgrid.communicate(FluxEi_x);   
-   Xgrid.communicate(FluxEe_x);   
-   Xgrid.communicate(FluxNe_x);   
+   //Xgrid.communicate(FluxN_x);   
+   //Xgrid.communicate(FluxMx_x);   
+   //Xgrid.communicate(FluxMz_x);   
+   //Xgrid.communicate(FluxEi_x);   
+   //Xgrid.communicate(FluxEe_x);   
+   //Xgrid.communicate(FluxNe_x);   
    
 }
 
@@ -896,13 +891,16 @@ void updatePhysicalVars( const domainGrid&  Xgrid )
    Xgrid.InterpToCellEdges(Ne_x,Ne,Ne,"C2",0);
    Xgrid.communicate(Ne_x);
    Xgrid.InterpToCellEdges(Ne_z,Ne,Ne,"C2",1);
-   Xgrid.InterpToCellEdges(Ne_xz,Ne_x,Ne_x,"C2",1);
-   
+   Xgrid.InterpToCellEdges(Ne_xz,Ne_x,Ne_x,"C2",1);   
+   Xgrid.setZboundaryPeriodic(Ne_z);
+   Xgrid.setZboundaryPeriodic(Ne_xz);
+
    // interp density to edges
    //
    Xgrid.InterpToCellEdges(N_x,N,N,"C2",0);
    Xgrid.InterpToCellEdges(N_z,N,N,"C2",1);
    Xgrid.communicate(N_x);
+   Xgrid.setZboundaryPeriodic(N_z);
 
    // compute Hall and electron velocity at cell center
    //
@@ -944,6 +942,7 @@ void updateJccAndEcc( const domainGrid&  Xgrid )
    Xgrid.InterpToCellCenter(Ezcc,Ez);
    Xgrid.InterpToCellCenter(Excc,Ex);
    Xgrid.communicate(Ezcc);
+   Xgrid.communicate(Excc);
    
 }
 
@@ -1002,6 +1001,7 @@ void updateCollisionTerms( const domainGrid&  Xgrid )
    Xgrid.InterpToCellEdges(eta_x,eta,eta,"C2",0);
    Xgrid.InterpToCellEdges(eta_z,eta,eta,"C2",1);
    Xgrid.communicate(eta_x);
+   Xgrid.setZboundaryPeriodic(eta_z);
 
 
    // set heat flux coefficients
@@ -1014,8 +1014,8 @@ void computeJ0( matrix2D<double>&  a_Jx0_z,
           const matrix2D<double>&  a_By_cc,
           const domainGrid&        Xgrid )
 {
-   assert(a_Jx0_z.size1()==m_nZce2);
-   assert(a_Jz0_x.size0()==m_nXce2);
+   assert(a_Jx0_z.size1()==m_nZce);
+   assert(a_Jz0_x.size0()==m_nXce);
    
    const int nXcc = Xgrid.nXcc;
    const int nZcc = Xgrid.nZcc;
@@ -1026,8 +1026,8 @@ void computeJ0( matrix2D<double>&  a_Jx0_z,
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
       
    Xgrid.DDZ(a_Jx0_z,a_By_cc);
-   a_Jx0_z = -1.0*a_Jx0_z;
-   
+   a_Jx0_z = -1.0*a_Jx0_z;  
+ 
    Xgrid.DDX(a_Jz0_x,hy_cc*a_By_cc);
    a_Jz0_x = a_Jz0_x/hy_ce;
    
@@ -1040,13 +1040,14 @@ void computeJ0( matrix2D<double>&  a_Jx0_z,
       //Xgrid.setXminBoundary(a_Jz0_x,J00);
       Xgrid.setXminFluxBC(a_Jz0_x,J00);
    } 
+   Xgrid.setZboundaryPeriodic(a_Jx0_z);
    Xgrid.communicate(a_Jz0_x);
-   Xgrid.communicate(a_Jx0_z);
 
 }
 
 void setJ0( const domainGrid&  Xgrid )
 {
+
    // compute each component of J0=curlB on each edge
    //
 
@@ -1227,7 +1228,7 @@ void computeStrainTensor( matrix2D<double>&  a_Pi_xx,
    // compute Vx derivatives
    //
    matrix2D<double> dVxdx_x, dVxdz;
-   dVxdx_x.initialize(m_nXce2,nZcc,0.0); 
+   dVxdx_x.initialize(m_nXce,nZcc,0.0); 
    dVxdz.initialize(nXcc,nZcc,0.0); 
    //
    Xgrid.DDX(dVxdx_x,a_Vx);
@@ -1237,7 +1238,7 @@ void computeStrainTensor( matrix2D<double>&  a_Pi_xx,
    // compute Vz derivatives
    //
    matrix2D<double> dVzdz_z, dVzdx;
-   dVzdz_z.initialize(nXcc,m_nZce2,0.0); 
+   dVzdz_z.initialize(nXcc,m_nZce,0.0); 
    dVzdx.initialize(nXcc,nZcc,0.0); 
    //
    Xgrid.DDZ(dVzdz_z,a_Vz);
@@ -1251,9 +1252,9 @@ void computeStrainTensor( matrix2D<double>&  a_Pi_xx,
    divUz.initialize(nXcc,nZcc,0.0); 
    divUx.initialize(nXcc,nZcc,0.0); 
    divU.initialize(nXcc,nZcc,0.0); 
-   divUx_x.initialize(m_nXce2,nZcc,0.0); 
-   divU_x.initialize(m_nXce2,nZcc,0.0); 
-   divU_z.initialize(nXcc,m_nZce2,0.0); 
+   divUx_x.initialize(m_nXce,nZcc,0.0); 
+   divU_x.initialize(m_nXce,nZcc,0.0); 
+   divU_z.initialize(nXcc,m_nZce,0.0); 
 
    // div at cell center
    //
@@ -1306,10 +1307,10 @@ void computeStrainTensorStag( matrix2D<double>&  a_Pi_xx,
    // compute strain tensor for viscosity
    // with input velocities defined on cell-edges
    //
-   assert(a_Pi_xx.size0()==m_nXce2 && a_Pi_xx.size1()==m_nZce2);
-   assert(a_Pi_zz.size0()==m_nXce2 && a_Pi_zz.size1()==m_nZce2);
-   assert(a_Vx.size1()==m_nZce2);
-   assert(a_Vz.size0()==m_nXce2);
+   assert(a_Pi_xx.size0()==m_nXce && a_Pi_xx.size1()==m_nZce);
+   assert(a_Pi_zz.size0()==m_nXce && a_Pi_zz.size1()==m_nZce);
+   assert(a_Vx.size1()==m_nZce);
+   assert(a_Vz.size0()==m_nXce);
 
    const int nXcc = m_Xgrid.nXcc;
    const int nZcc = m_Xgrid.nZcc;
@@ -1321,7 +1322,7 @@ void computeStrainTensorStag( matrix2D<double>&  a_Pi_xx,
    // compute Vx derivatives
    //
    matrix2D<double> dVxdx_xz, dVxdz;
-   dVxdx_xz.initialize(m_nXce2,m_nZce2,0.0); 
+   dVxdx_xz.initialize(m_nXce,m_nZce,0.0); 
    dVxdz.initialize(nXcc,nZcc,0.0); 
    //
    m_Xgrid.DDX(dVxdx_xz,a_Vx);
@@ -1333,7 +1334,7 @@ void computeStrainTensorStag( matrix2D<double>&  a_Pi_xx,
    // compute Vz derivatives
    //
    matrix2D<double> dVzdz_xz, dVzdx;
-   dVzdz_xz.initialize(m_nXce2,m_nZce2,0.0); 
+   dVzdz_xz.initialize(m_nXce,m_nZce,0.0); 
    dVzdx.initialize(nXcc,nZcc,0.0); 
    //
    m_Xgrid.DDZ(dVzdz_xz,a_Vz);
@@ -1345,16 +1346,16 @@ void computeStrainTensorStag( matrix2D<double>&  a_Pi_xx,
    // compute divU on nodes
    //
    matrix2D<double> divUx_xz, divU_xz;
-   divUx_xz.initialize(m_nXce2,m_nZce2,0.0); 
-   divU_xz.initialize( m_nXce2,m_nZce2,0.0); 
+   divUx_xz.initialize(m_nXce,m_nZce,0.0); 
+   divU_xz.initialize( m_nXce,m_nZce,0.0); 
    m_Xgrid.DDZ(divU_xz,a_Vz);
    m_Xgrid.setZboundaryPeriodic(divU_xz);
    m_Xgrid.DDX(divUx_xz,hy_z*a_Vx);
    divUx_xz /= hy_xz;
    vector<double> divUx0;
-   divUx0.assign(m_nZce2,0.0);
+   divUx0.assign(m_nZce,0.0);
    if(procID==0 && geometry0=="CYL" && XlowBC.compare("axis") == 0) {
-      for (auto j=0; j<m_nZce2; j++) {
+      for (auto j=0; j<m_nZce; j++) {
          divUx0.at(j) = 2.0*a_Vx(m_nXg,j)/hy_z(m_nXg,j);
       }
       m_Xgrid.setXminFluxBC(divUx_xz,divUx0);
@@ -1366,7 +1367,7 @@ void computeStrainTensorStag( matrix2D<double>&  a_Pi_xx,
    // compute divU on z-edge
    //
    matrix2D<double> divU_z;
-   divU_z.initialize(nXcc,m_nZce2,0.0); 
+   divU_z.initialize(nXcc,m_nZce,0.0); 
    m_Xgrid.InterpNodesToEdges(divU_z,divU_xz,1);
    
 
@@ -1438,8 +1439,8 @@ void computeHallEatEdges( const domainGrid&  Xgrid )
    // get Hall velocity on opposite edges for upwinding
    //
    matrix2D<double> Vhallx_x, Vhallz_z;
-   Vhallx_x.initialize(m_nXce2,m_nZcc,0.0);
-   Vhallz_z.initialize(m_nXcc,m_nZce2,0.0);
+   Vhallx_x.initialize(m_nXce,m_nZcc,0.0);
+   Vhallz_z.initialize(m_nXcc,m_nZce,0.0);
    
    Xgrid.InterpToCellEdges(Vhallx_x,Vhallx,Vhallx,"C2",0);
    Xgrid.InterpToCellEdges(Vhallz_z,Vhallz,Vhallz,"C2",1);
@@ -1654,8 +1655,8 @@ void computeJouleHeatingTerms( const domainGrid&  Xgrid )
       // interp Pii_xz to cell edges in x and z
       //
       matrix2D<double> Pii_xz_x, Pii_xz_z;
-      Pii_xz_x.initialize(m_nXce2,nZcc,0.0);
-      Pii_xz_z.initialize(nXcc,m_nZce2,0.0);
+      Pii_xz_x.initialize(m_nXce,nZcc,0.0);
+      Pii_xz_z.initialize(nXcc,m_nZce,0.0);
       Xgrid.InterpToCellEdges(Pii_xz_x,Pii_xz,Pii_xz,"C2",0);
       Xgrid.InterpToCellEdges(Pii_xz_z,Pii_xz,Pii_xz,"C2",1);
 
@@ -1689,10 +1690,10 @@ void computeJouleHeatingTerms( const domainGrid&  Xgrid )
       // in energy equation
       //
       matrix2D<double> Vx_x, Vx_z, Vz_x, Vz_z;
-      Vx_x.initialize(m_nXce2,nZcc,0.0); 
-      Vz_x.initialize(m_nXce2,nZcc,0.0); 
-      Vx_z.initialize(nXcc,m_nZce2,0.0); 
-      Vz_z.initialize(nXcc,m_nZce2,0.0); 
+      Vx_x.initialize(m_nXce,nZcc,0.0); 
+      Vz_x.initialize(m_nXce,nZcc,0.0); 
+      Vx_z.initialize(nXcc,m_nZce,0.0); 
+      Vz_z.initialize(nXcc,m_nZce,0.0); 
       Xgrid.InterpToCellEdges(Vx_x,Vx,Vx,"C2",0);
       Xgrid.InterpToCellEdges(Vz_x,Vz,Vz,"C2",0);
       Xgrid.InterpToCellEdges(Vx_z,Vx,Vx,"C2",1);
@@ -1726,8 +1727,8 @@ void computeDivOfElectronViscosity( const domainGrid&  Xgrid )
    // interp Pie_xz to cell edges in x and z
    //
    matrix2D<double> dummy_onx, dummy_onz;
-   dummy_onx.initialize(m_nXce2,m_nZcc,0.0);
-   dummy_onz.initialize(m_nXcc,m_nZce2,0.0);
+   dummy_onx.initialize(m_nXce,m_nZcc,0.0);
+   dummy_onz.initialize(m_nXcc,m_nZce,0.0);
 
    // compute divergence of viscous stress tensor for Jx equation
    //
@@ -1866,30 +1867,30 @@ void initializeMemberVars( const domainGrid& Xgrid )
    
    // Ez and Jz are defined on x-edges
    //
-   Ez.initialize(m_nXce2,nZcc,0.0);
-   Ezold.initialize(m_nXce2,nZcc,0.0);
-   Jz.initialize(m_nXce2,nZcc,0.0);
-   Jzold.initialize(m_nXce2,nZcc,0.0);
-   Jz0.initialize(m_nXce2,nZcc,0.0);
-   Jz0stagTime.initialize(m_nXce2,nZcc,0.0);
-   eta_x.initialize(m_nXce2,nZcc,0.0);
-   Ne_x.initialize(m_nXce2,nZcc,0.0);
-   N_x.initialize(m_nXce2,nZcc,0.0);
-   Eidealz.initialize(m_nXce2,nZcc,0.0);
+   Ez.initialize(m_nXce,nZcc,0.0);
+   Ezold.initialize(m_nXce,nZcc,0.0);
+   Jz.initialize(m_nXce,nZcc,0.0);
+   Jzold.initialize(m_nXce,nZcc,0.0);
+   Jz0.initialize(m_nXce,nZcc,0.0);
+   Jz0stagTime.initialize(m_nXce,nZcc,0.0);
+   eta_x.initialize(m_nXce,nZcc,0.0);
+   Ne_x.initialize(m_nXce,nZcc,0.0);
+   N_x.initialize(m_nXce,nZcc,0.0);
+   Eidealz.initialize(m_nXce,nZcc,0.0);
    
    // Ex and Jx are defined on z-edges
    //
-   Ex.initialize(nXcc,m_nZce2,0.0);
-   Exold.initialize(nXcc,m_nZce2,0.0);
-   Jx.initialize(nXcc,m_nZce2,0.0);
-   Jxold.initialize(nXcc,m_nZce2,0.0);
-   Jx0.initialize(nXcc,m_nZce2,0.0);
-   Jx0stagTime.initialize(nXcc,m_nZce2,0.0);
-   eta_z.initialize(nXcc,m_nZce2,0.0);
-   Ne_z.initialize(nXcc,m_nZce2,0.0);
-   Ne_xz.initialize(m_nXce2,m_nZce2,0.0);
-   N_z.initialize(nXcc,m_nZce2,0.0);
-   Eidealx.initialize(nXcc,m_nZce2,0.0);
+   Ex.initialize(nXcc,m_nZce,0.0);
+   Exold.initialize(nXcc,m_nZce,0.0);
+   Jx.initialize(nXcc,m_nZce,0.0);
+   Jxold.initialize(nXcc,m_nZce,0.0);
+   Jx0.initialize(nXcc,m_nZce,0.0);
+   Jx0stagTime.initialize(nXcc,m_nZce,0.0);
+   eta_z.initialize(nXcc,m_nZce,0.0);
+   Ne_z.initialize(nXcc,m_nZce,0.0);
+   Ne_xz.initialize(m_nXce,m_nZce,0.0);
+   N_z.initialize(nXcc,m_nZce,0.0);
+   Eidealx.initialize(nXcc,m_nZce,0.0);
  
 
  
@@ -1897,42 +1898,42 @@ void initializeMemberVars( const domainGrid& Xgrid )
    //
    J0x.initialize(nXcc,nZcc,0.0);
    J0z.initialize(nXcc,nZcc,0.0);
-   J0x_x.initialize(m_nXce2,nZcc,0.0);
-   J0z_x.initialize(m_nXce2,nZcc,0.0);
-   J0x_z.initialize(nXcc,m_nZce2,0.0);
-   J0z_z.initialize(nXcc,m_nZce2,0.0);
+   J0x_x.initialize(m_nXce,nZcc,0.0);
+   J0z_x.initialize(m_nXce,nZcc,0.0);
+   J0x_z.initialize(nXcc,m_nZce,0.0);
+   J0z_z.initialize(nXcc,m_nZce,0.0);
     
 
 
    //
-   FluxN_x.initialize(m_nXce2,nZcc,0.0);
-   FluxMx_x.initialize(m_nXce2,nZcc,0.0);
-   FluxMz_x.initialize(m_nXce2,nZcc,0.0);
-   FluxEe_x.initialize(m_nXce2,nZcc,0.0);
-   FluxEi_x.initialize(m_nXce2,nZcc,0.0);
-   FluxNe_x.initialize(m_nXce2,nZcc,0.0);
-   FluxRatio_x.initialize(m_nXce2,nZcc,0.0);
-   FluxLim_x.initialize(m_nXce2,nZcc,0.0);
-   FluxR_x.initialize(m_nXce2,nZcc,0.0);
-   FluxL_x.initialize(m_nXce2,nZcc,0.0);
+   FluxN_x.initialize(m_nXce,nZcc,0.0);
+   FluxMx_x.initialize(m_nXce,nZcc,0.0);
+   FluxMz_x.initialize(m_nXce,nZcc,0.0);
+   FluxEe_x.initialize(m_nXce,nZcc,0.0);
+   FluxEi_x.initialize(m_nXce,nZcc,0.0);
+   FluxNe_x.initialize(m_nXce,nZcc,0.0);
+   FluxRatio_x.initialize(m_nXce,nZcc,0.0);
+   FluxLim_x.initialize(m_nXce,nZcc,0.0);
+   FluxR_x.initialize(m_nXce,nZcc,0.0);
+   FluxL_x.initialize(m_nXce,nZcc,0.0);
    //
    hy_cc.initialize(nXcc,nZcc,1.0);
-   hy_ce.initialize(m_nXce2,nZcc,1.0);
-   hy_z.initialize( m_nXcc,m_nZce2,1.0);
-   hy_xz.initialize(m_nXce2,m_nZce2,1.0);
+   hy_ce.initialize(m_nXce,nZcc,1.0);
+   hy_z.initialize( m_nXcc,m_nZce,1.0);
+   hy_xz.initialize(m_nXce,m_nZce,1.0);
    
 
-   FluxN_z.initialize(nXcc, m_nZce2,0.0);
-   FluxMx_z.initialize(nXcc,m_nZce2,0.0);
-   FluxMz_z.initialize(nXcc,m_nZce2,0.0);
-   FluxEe_z.initialize(nXcc,m_nZce2,0.0);
-   FluxEi_z.initialize(nXcc,m_nZce2,0.0);
-   FluxNe_z.initialize(nXcc,m_nZce2,0.0);
+   FluxN_z.initialize(nXcc, m_nZce,0.0);
+   FluxMx_z.initialize(nXcc,m_nZce,0.0);
+   FluxMz_z.initialize(nXcc,m_nZce,0.0);
+   FluxEe_z.initialize(nXcc,m_nZce,0.0);
+   FluxEi_z.initialize(nXcc,m_nZce,0.0);
+   FluxNe_z.initialize(nXcc,m_nZce,0.0);
    //
-   FluxRatio_z.initialize(nXcc,m_nZce2,0.0);
-   FluxLim_z.initialize(nXcc,m_nZce2,0.0);
-   FluxR_z.initialize(nXcc,m_nZce2,0.0);
-   FluxL_z.initialize(nXcc,m_nZce2,0.0);
+   FluxRatio_z.initialize(nXcc,m_nZce,0.0);
+   FluxLim_z.initialize(nXcc,m_nZce,0.0);
+   FluxR_z.initialize(nXcc,m_nZce,0.0);
+   FluxL_z.initialize(nXcc,m_nZce,0.0);
 
    // ionization terms
    //
@@ -1947,36 +1948,36 @@ void initializeMemberVars( const domainGrid& Xgrid )
 
    // finite ion and electron inertial length terms
    //
-   Ehallx.initialize(nXcc,m_nZce2,0.0); 
-   Ehallz.initialize(m_nXce2,nZcc,0.0); 
-   Egradx.initialize(nXcc,m_nZce2,0.0); 
-   Egradz.initialize(m_nXce2,nZcc,0.0); 
+   Ehallx.initialize(nXcc,m_nZce,0.0); 
+   Ehallz.initialize(m_nXce,nZcc,0.0); 
+   Egradx.initialize(nXcc,m_nZce,0.0); 
+   Egradz.initialize(m_nXce,nZcc,0.0); 
    Vhallx.initialize(nXcc,nZcc,0.0); 
    Vhallz.initialize(nXcc,nZcc,0.0); 
-   Vhallx_z.initialize(nXcc,m_nZce2,0.0);
-   Vhallz_x.initialize(m_nXce2,nZcc,0.0);
+   Vhallx_z.initialize(nXcc,m_nZce,0.0);
+   Vhallz_x.initialize(m_nXce,nZcc,0.0);
    Vex.initialize(nXcc,nZcc,0.0); 
    Vez.initialize(nXcc,nZcc,0.0); 
-   divJxstress.initialize(nXcc,m_nZce2,0.0); 
-   divJzstress.initialize(m_nXce2,nZcc,0.0); 
+   divJxstress.initialize(nXcc,m_nZce,0.0); 
+   divJzstress.initialize(m_nXce,nZcc,0.0); 
    Pe_eff.initialize(nXcc,nZcc,0.0); 
    curlJ0.initialize(nXcc,nZcc,0.0); 
    curlVe.initialize(nXcc,nZcc,0.0); 
-   eJxFlux_x.initialize(m_nXce2,nZcc,0.0); 
-   eJzFlux_x.initialize(m_nXce2,nZcc,0.0); 
-   eJxFlux_z.initialize(nXcc,m_nZce2,0.0); 
-   eJzFlux_z.initialize(nXcc,m_nZce2,0.0); 
+   eJxFlux_x.initialize(m_nXce,nZcc,0.0); 
+   eJzFlux_x.initialize(m_nXce,nZcc,0.0); 
+   eJxFlux_z.initialize(nXcc,m_nZce,0.0); 
+   eJzFlux_z.initialize(nXcc,m_nZce,0.0); 
 
    // electron heat flux
    //
-   qex.initialize(m_nXce2,nZcc,0.0);
-   qexold.initialize(m_nXce2,nZcc,0.0);
-   qex0.initialize(m_nXce2,nZcc,0.0);
-   kappae_x.initialize(m_nXce2,nZcc,0.0);
-   qez.initialize(nXcc,m_nZce2,0.0);
-   qezold.initialize(nXcc,m_nZce2,0.0);
-   qez0.initialize(nXcc,m_nZce2,0.0);
-   kappae_z.initialize(nXcc,m_nZce2,0.0);
+   qex.initialize(m_nXce,nZcc,0.0);
+   qexold.initialize(m_nXce,nZcc,0.0);
+   qex0.initialize(m_nXce,nZcc,0.0);
+   kappae_x.initialize(m_nXce,nZcc,0.0);
+   qez.initialize(nXcc,m_nZce,0.0);
+   qezold.initialize(nXcc,m_nZce,0.0);
+   qez0.initialize(nXcc,m_nZce,0.0);
+   kappae_z.initialize(nXcc,m_nZce,0.0);
    //
    divqe.initialize(nXcc,nZcc,0.0);
    kappae.initialize(nXcc,nZcc,0.0);
@@ -1985,48 +1986,48 @@ void initializeMemberVars( const domainGrid& Xgrid )
    
    // ion viscosity
    //
-   Pii_xxold.initialize(m_nXce2,nZcc,0.0);
-   Pii_xx0.initialize(m_nXce2,nZcc,0.0);
-   Pii_xx.initialize(m_nXce2,nZcc,0.0);
+   Pii_xxold.initialize(m_nXce,nZcc,0.0);
+   Pii_xx0.initialize(m_nXce,nZcc,0.0);
+   Pii_xx.initialize(m_nXce,nZcc,0.0);
    Pii_xzold.initialize(nXcc,nZcc,0.0);
    Pii_xz0.initialize(nXcc,nZcc,0.0);
    Pii_xz.initialize(nXcc,nZcc,0.0);
-   Pii_zzold.initialize(nXcc,m_nZce2,0.0);
-   Pii_zz0.initialize(nXcc,m_nZce2,0.0);
-   Pii_zz.initialize(nXcc,m_nZce2,0.0);
+   Pii_zzold.initialize(nXcc,m_nZce,0.0);
+   Pii_zz0.initialize(nXcc,m_nZce,0.0);
+   Pii_zz.initialize(nXcc,m_nZce,0.0);
    Pii_yy.initialize(nXcc,nZcc,0.0);
 
    divPii_x.initialize(nXcc,nZcc,0.0);
    divPii_z.initialize(nXcc,nZcc,0.0);
    divUidotPii.initialize(nXcc,nZcc,0.0);
    etaVis_ion.initialize(nXcc,nZcc,0.0);
-   etaVis_ion_x.initialize(m_nXce2,nZcc,0.0); 
-   etaVis_ion_z.initialize(nXcc,m_nZce2,0.0); 
-   UidotPii_x.initialize(m_nXce2,nZcc,0.0);
-   UidotPii_z.initialize(nXcc,m_nZce2,0.0);
+   etaVis_ion_x.initialize(m_nXce,nZcc,0.0); 
+   etaVis_ion_z.initialize(nXcc,m_nZce,0.0); 
+   UidotPii_x.initialize(m_nXce,nZcc,0.0);
+   UidotPii_z.initialize(nXcc,m_nZce,0.0);
    
 
    // ele viscosity
    //
-   Pie_xxold.initialize(m_nXce2,m_nZce2,0.0);
-   Pie_xx0.initialize(  m_nXce2,m_nZce2,0.0);
-   Pie_xx.initialize(   m_nXce2,m_nZce2,0.0);
+   Pie_xxold.initialize(m_nXce,m_nZce,0.0);
+   Pie_xx0.initialize(  m_nXce,m_nZce,0.0);
+   Pie_xx.initialize(   m_nXce,m_nZce,0.0);
     
    Pie_xzold.initialize(nXcc,nZcc,0.0);
    Pie_xz0.initialize(  nXcc,nZcc,0.0);
    Pie_xz.initialize(   nXcc,nZcc,0.0);
    
-   Pie_zzold.initialize(m_nXce2,m_nZce2,0.0);
-   Pie_zz0.initialize(  m_nXce2,m_nZce2,0.0);
-   Pie_zz.initialize(   m_nXce2,m_nZce2,0.0);
-   Pie_yy.initialize(   nXcc,m_nZce2,0.0);
+   Pie_zzold.initialize(m_nXce,m_nZce,0.0);
+   Pie_zz0.initialize(  m_nXce,m_nZce,0.0);
+   Pie_zz.initialize(   m_nXce,m_nZce,0.0);
+   Pie_yy.initialize(   nXcc,m_nZce,0.0);
 
    etaVis_ele.initialize(nXcc,nZcc,0.0);
-   etaVis_ele_x.initialize(m_nXce2,m_nZcc,0.0); 
-   etaVis_ele_z.initialize(m_nXcc,m_nZce2,0.0); 
-   etaVis_ele_xz.initialize(m_nXce2,m_nZce2,0.0); 
-   divPiex_z.initialize(nXcc,m_nZce2,0.0);
-   divPiez_x.initialize(m_nXce2,nZcc,0.0);
+   etaVis_ele_x.initialize(m_nXce,m_nZcc,0.0); 
+   etaVis_ele_z.initialize(m_nXcc,m_nZce,0.0); 
+   etaVis_ele_xz.initialize(m_nXce,m_nZce,0.0); 
+   divPiex_z.initialize(nXcc,m_nZce,0.0);
+   divPiez_x.initialize(m_nXce,nZcc,0.0);
 
 
 }
@@ -2435,8 +2436,8 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
             cout << "geometry is " << geometry0 << endl;
          }
 	 if(geometry0=="CYL") {
-            for (auto i=0; i<m_nXce2; i++) {
-               for (auto j=0; j<m_nZce2; j++) {
+            for (auto i=0; i<m_nXce; i++) {
+               for (auto j=0; j<m_nZce; j++) {
                   if(i<nXcc && j<nZcc) hy_cc(i,j) = Xgrid.Xcc.at(i);
                   if(j<nZcc) hy_ce(i,j)  = Xgrid.Xce2.at(i);
                   if(i<nXcc) hy_z(i,j) = Xgrid.Xcc.at(i);

@@ -754,12 +754,11 @@ void domainGrid::DDZ( matrix2D<double>&  Fout,
    const int Nin0  = Fin.size0();
    const int Nin1  = Fin.size1();
    assert(Nout0 == Nin0);
-   
    if(Nout1 == nZce2 || Nin1 == nZce2) { 
 
       if(Nout1==nZce2 && Nin1==nZcc) {
          for (auto i=0; i<Nout0; i++) {
-           for (auto j=1; j<Nout1-1; j++) {
+           for (auto j=1; j<Nin1; j++) {
                Fout(i,j) = (Fin(i,j)-Fin(i,j-1))/dZ;
 	    }
          }   
@@ -767,46 +766,50 @@ void domainGrid::DDZ( matrix2D<double>&  Fout,
       else if(Nout1==nZcc && Nin1==nZce2) {
          for (auto i=0; i<Nout0; i++) {
            for (auto j=0; j<Nout1; j++) {
-               Fout(i,j) = (Fin(i,j)-Fin(i,j+1))/dZ;
+               Fout(i,j) = (Fin(i,j+1)-Fin(i,j))/dZ;
 	    }
          }   
       }
-      else { //(Nout1==Nin1) {
+      else if(Nout1==Nin1) {
          for (auto i=0; i<Nout0; i++) {
            for (auto j=1; j<Nout1-1; j++) {
                Fout(i,j) = (Fin(i,j+1)-Fin(i,j-1))/(2.0*dZ);
 	    }
          }   
       }
-
-   }
-   else {
-
-   if(Nout1 == nZce && Nin1 == nZcc) { // Fout is at cell edges in Z-direction
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=0; j<Nout1; j++) {
-            Fout(i,j) = (Fin(i,j+1)-Fin(i,j))/dZ;
-	 }
-      }   
-   } 
-   else if(Nout1 == nZcc && Nin1 == nZcc) {  // Fout is at cell center in Z-direction
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=1; j<Nout1-1; j++) {
-            Fout(i,j) = (Fin(i,j+1)-Fin(i,j-1))/2.0/dZ;
-         }
-      }	 
-   }
-   else if (Nout1 == nZcc && Nin1 == nZce) {
-      for (auto i=0; i<Nout0; i++) {
-         for (auto j=1; j<Nout1-1; j++) {
-            Fout(i,j) = (Fin(i,j)-Fin(i,j-1))/dZ;
-         }   
+      else {
+         printf("ERROR: Nout and Nin combo failed for DDZ");
+         exit (EXIT_FAILURE);
       }
+
    }
    else {
-      printf("ERROR: Nout and Nin combo failed for DDZ");
-      exit (EXIT_FAILURE);
-   }
+
+      if(Nout1 == nZce && Nin1 == nZcc) { // Fout is at cell edges in Z-direction
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=0; j<Nout1; j++) {
+               Fout(i,j) = (Fin(i,j+1)-Fin(i,j))/dZ;
+	    }
+         }   
+      } 
+      else if(Nout1 == nZcc && Nin1 == nZcc) {  // Fout is at cell center in Z-direction
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=1; j<Nout1-1; j++) {
+               Fout(i,j) = (Fin(i,j+1)-Fin(i,j-1))/2.0/dZ;
+            }
+         }	 
+      }
+      else if (Nout1 == nZcc && Nin1 == nZce) {
+         for (auto i=0; i<Nout0; i++) {
+            for (auto j=1; j<Nout1-1; j++) {
+               Fout(i,j) = (Fin(i,j)-Fin(i,j-1))/dZ;
+            }    
+         }
+      }
+      else {
+         printf("ERROR: Nout and Nin combo failed for DDZ");
+         exit (EXIT_FAILURE);
+      }
 
    }
 
@@ -1044,13 +1047,7 @@ void domainGrid::InterpToCellEdges( matrix2D<double>&  Fout,
    //  interpolate using specified method
    //
    if(METHOD == "C2") { // 2nd order central
-      /*
-      for (auto i=nXg; i<Nout0-1; i++) {
-         for (auto j=0; j<Nout1; j++) {
-            Fout(i,j) = (Fin(i,j) + Fin(i+iup,j+jup))/2.0;
-         }
-      }
-      */
+
       if(dir==0) { // interp to X-faces
          for (auto i=shift0; i<Nout0-shift0; i++) {
             for (auto j=0; j<Nout1; j++) {
@@ -1332,7 +1329,7 @@ void domainGrid::InterpCellToEdges( matrix2D<double>&  Fout,
       assert(Nin0==Nout0); // input and output same size in X
    }   
    else {
-      cout << "dir in call to InterpToCellEdges most be 0 or 1" << endl;
+      cout << "dir in call to InterpCellToEdges most be 0 or 1" << endl;
       exit (EXIT_FAILURE);
    }
 
@@ -1553,10 +1550,10 @@ void domainGrid::InterpToCellCenter(matrix2D<double> &Fout,
       for (auto i=0; i<Nout0; i++) {
          for (auto j=0; j<Nout1; j++) {
             if(Nin0==nXce2 && Nin1==nZce2) {
-               Fout(i,j) = (Fin(i+ii,jj) + Fin(i+ii,j) + Fin(i,j+jj) + Fin(i,j))/4.0;
+               Fout(i,j) = (Fin(i+ii,j+jj) + Fin(i+ii,j) + Fin(i,j+jj) + Fin(i,j))/4.0;
             }
             else {
-               Fout(i,j) = (Fin(i+ii,jj) + Fin(i,j))/2.0;
+               Fout(i,j) = (Fin(i+ii,j+jj) + Fin(i,j))/2.0;
             }
          }
       }
