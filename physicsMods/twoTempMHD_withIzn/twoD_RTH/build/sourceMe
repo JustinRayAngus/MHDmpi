@@ -1,0 +1,2 @@
+export PHYScpp=twoTempMHD_2DRTH.cpp
+export PHYS_HOME="/p/lscratchh/angus1/myMHD/twoTempMHD_withIzn/twoD_RTH/build/"

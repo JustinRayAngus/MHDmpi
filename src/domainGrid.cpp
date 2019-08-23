@@ -309,6 +309,15 @@ void domainGrid::setInitialProfile(matrix2D<double> &var,
       Zvec.clear();
       Zvec = Zce;
    }
+   if(Nvar0==nXce2) { 
+      Xvec.clear();
+      Xvec = Xce2;
+      //Xvec.swap(Xce);
+   }   
+   if(Nvar1==nZce2) {
+      Zvec.clear();
+      Zvec = Zce2;
+   }
 
    //  get X-direction stuff
    //
@@ -2339,6 +2348,7 @@ void domainGrid::setXmaxBoundary_J( matrix2D<double>&  var,
          var(i,j) = (C0 + C1*var(2*ishift-i-1,j)*Xcc.at(2*ishift-i-1))/Xcc.at(i);
       }
    } 
+
 }
 
 void domainGrid::setZboundaryPeriodic( matrix2D<double>&  var ) const
