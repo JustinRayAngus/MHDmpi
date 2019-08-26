@@ -969,7 +969,7 @@ void updateCollisionTerms( const domainGrid&  Xgrid )
    setNeutralInteractionRates(Xgrid,Te_eV,Ne,Nn);
 
    nue_spi = pow(Tscale,1.5)/taue0*Ne*( 1.0/pow(Te_eV,1.5) );
-   nue_vac = pow(Tscale,1.5)/taue0*Ne*( 0.01*pow(NvacC/N,NvacP) );
+   nue_vac = pow(Tscale,1.5)/taue0*Ne*( 0.01*pow(NvacC/Ne,NvacP) );
    nue = nue_spi + nue_neu + nue_vac;
    
    double nueR_min0 = pow(Tscale,1.5)/taue0*(1.0/pow(0.1,1.5));
