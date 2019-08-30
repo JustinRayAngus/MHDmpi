@@ -1053,7 +1053,7 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
       //
       Json::Value etaVal = Phys.get("eta0",defValue);
       if(etaVal == defValue) {
-         eta0   = 1.03e-4/10.0/pow(Tscale,1.5)/(Xscale*Xscale*mu0/tscale); // norm res
+         eta0   = 1.03e-4*10.0/pow(Tscale,1.5)/(Xscale*Xscale*mu0/tscale); // norm res
       } else {
 	 eta0 = etaVal.asDouble();
       } 

@@ -1435,14 +1435,14 @@ void domainGrid::InterpEdgesToEdges( matrix2D<double>&  Fout,
    const int Nout1 = Fout.size1();
    const int Nin0  = Fin.size0();
    const int Nin1  = Fin.size1();
-   if(Nin0==nXce) { // going from x-edges to z-edges
+   if(Nin0==nXce2) { // going from x-edges to z-edges
       assert(Nin1==nZcc);
       assert(Nout0==nXcc);
-      assert(Nout1==nZce);
+      assert(Nout1==nZce2);
    }   
    else {           // going from z-edges to x-edges
-      assert(Nin1==nZce);
-      assert(Nout0==nXce);
+      assert(Nin1==nZce2);
+      assert(Nout0==nXce2);
       assert(Nout1==nZcc);
    }   
 
@@ -1450,16 +1450,16 @@ void domainGrid::InterpEdgesToEdges( matrix2D<double>&  Fout,
    //
    double Fup, Fdown; 
 
-   for (auto i=1; i<Nout0; i++) {
-      for (auto j=1; j<Nout1; j++) {
+   for (auto i=1; i<Nin0-1; i++) {
+      for (auto j=1; j<Nin1-1; j++) {
    
-         if(Nin0==nXce) {        
-            Fup   = (Fin(i+1,j+1) + Fin(i+0,j+1))/2.0;
-            Fdown = (Fin(i,j)     + Fin(i-1,j-0))/2.0;
+         if(Nin0==nXce2) {        
+            Fup   = (Fin(i,j+1) + Fin(i+1,j+1))/2.0;
+            Fdown = (Fin(i,j)   + Fin(i+1,j))/2.0;
          }
          else {
-            Fup   = (Fin(i+1,j+1) + Fin(i+1,j+0))/2.0;
-            Fdown = (Fin(i,j)     + Fin(i-0,j-1))/2.0; 
+            Fup   = (Fin(i+1,j) + Fin(i+1,j+1))/2.0;
+            Fdown = (Fin(i,j)   + Fin(i,j+1))/2.0;
          }
          Fout(i,j) = ( Fup + Fdown )/2.0;
 
