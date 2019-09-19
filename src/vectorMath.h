@@ -524,6 +524,34 @@ vector<T> operator/(const T &b, const vector<T> &a)
    return result;
 }
 
+template <typename T>
+vector<T> min(const vector<T> &A, const T a0)
+{
+   vector<T> result(A);
+   T  thisval;
+   const int imax = A.size();
+
+   for (auto i=0; i<imax; i++) {
+      result.at(i) = min(A.at(i),a0);
+   }
+
+   return result;
+}
+
+template <typename T>
+vector<T> max(const vector<T> &A, const T a0)
+{
+   vector<T> result(A);
+   T  thisval;
+   const int imax = A.size();
+
+   for (auto i=0; i<imax; i++) {
+      result.at(i) = max(A.at(i),a0);
+   }
+
+   return result;
+}
+
 
 ////////////////////////////////////////////////////////////////
 //

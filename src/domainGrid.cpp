@@ -1450,19 +1450,22 @@ void domainGrid::InterpEdgesToEdges( matrix2D<double>&  Fout,
    //
    double Fup, Fdown; 
 
-   for (auto i=1; i<Nin0-1; i++) {
-      for (auto j=1; j<Nin1-1; j++) {
-   
-         if(Nin0==nXce2) {        
-            Fup   = (Fin(i,j+1) + Fin(i+1,j+1))/2.0;
-            Fdown = (Fin(i,j)   + Fin(i+1,j))/2.0;
+   if(Nin1==nZce2) { // from z edge to x edge       
+      for (auto i=1; i<Nout0-1; i++) {
+         for (auto j=0; j<Nout1; j++) {
+            Fup   = (Fin(i,j+1) + Fin(i-1,j+1))/2.0;
+            Fdown = (Fin(i,j)   + Fin(i-1,j))/2.0;
+            Fout(i,j) = ( Fup + Fdown )/2.0;
          }
-         else {
-            Fup   = (Fin(i+1,j) + Fin(i+1,j+1))/2.0;
-            Fdown = (Fin(i,j)   + Fin(i,j+1))/2.0;
+      }
+   }
+   else {   // from z to x edges
+      for (auto i=0; i<Nout0; i++) {
+         for (auto j=1; j<Nout1-1; j++) {
+            Fup   = (Fin(i+1,j) + Fin(i+1,j-1))/2.0;
+            Fdown = (Fin(i,j)   + Fin(i,j-1))/2.0;
+            Fout(i,j) = ( Fup + Fdown )/2.0;
          }
-         Fout(i,j) = ( Fup + Fdown )/2.0;
-
       }
    }
 
@@ -1518,9 +1521,13 @@ void domainGrid::InterpToCellCenter(vector<double> &Fout,
    assert(Nin==nXce || Nin==nXce2);
 
    int ishift0 = 0;
-   if (Nout==nXce2) ishift0 = 1;
+   if (Nin==nXce2) ishift0 = 1;
 
    for (auto i=1-ishift0; i<Nout-1+ishift0; i++) {
+      //cout << "JRA: ishift0 = " << ishift0 << endl;
+      //cout << "JRA: i = " << i << endl;
+      //cout << "JRA: Fin.at(i+ishift0) = " << Fin.at(i+ishift0) << endl;
+      //cout << "JRA: Fin.at(i-1+ishift0) = " << Fin.at(i-1+ishift0) << endl;
       Fout.at(i) = (Fin.at(i+ishift0)+Fin.at(i-1+ishift0))/2.0;
    }
    //for (auto i=1; i<Nout-1; i++) {
@@ -2349,6 +2356,22 @@ void domainGrid::setXmaxBoundary_J( matrix2D<double>&  var,
       }
    } 
 
+}
+
+void domainGrid::setXminBoundary_J( matrix2D<double>&  var,
+                              const vector<double>&    C0 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   const int nC0 = C0.size();
+   assert(nXvar==nXcc);
+   assert(nC0==nZvar);
+
+   for (auto i=0; i<nXg; i++) {
+      for (auto j=0; j<nZvar; j++) {
+         var(nXg-i-1,j) = C0.at(j)/Xcc.at(nXg-i-1);
+      }
+   }
 }
 
 void domainGrid::setZboundaryPeriodic( matrix2D<double>&  var ) const

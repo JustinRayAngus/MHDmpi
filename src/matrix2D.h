@@ -346,6 +346,26 @@ matrix2D<T> min(const matrix2D<T> &thisMat, const T a0)
    return result;
 }
 
+template <typename T>
+T norm(const matrix2D<T> &thisMat, const int nXg, const int nZg)
+{
+   T localresult, result;
+   const int thisNx = thisMat.size0();
+   const int thisNz = thisMat.size1();
+
+   localresult = 0.0;
+   for (auto i=nXg; i<thisNx-nXg; i++) {
+      for (auto j=nZg; j<thisNz-nZg; j++) {
+	 localresult += thisMat(i,j)*thisMat(i,j);
+      }
+   }
+
+   //cout << "localresult = " << localresult << endl;
+   MPI_Allreduce(&localresult, &result, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+   result = sqrt(result);  
+
+   return result;
+}
 
 
 #include "matrix2D.cpp"

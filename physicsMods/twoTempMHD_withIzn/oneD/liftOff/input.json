@@ -45,14 +45,14 @@
                 "c":0.0,  // width
                 "d":0.1   // y-shift
                },
-           "V":{
+           "Vx":{
                 "type":"const", // initial profile
                 "a":0.0,  // amplitude
                 "b":0.0,  // x-shift
                 "c":0.0,  // width
                 "d":0.0   // y-shift
                },
-           "B":{
+           "By":{
                 "type":"const", // initial profile
                 "a":0.0, // amplitude
                 "b":0.0,  // x-shift

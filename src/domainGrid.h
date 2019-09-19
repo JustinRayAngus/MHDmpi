@@ -131,6 +131,7 @@ public:
   void setXmaxBoundaryExtrap( matrix2D<double>& ) const;
   void setXminBoundary_J( matrix2D<double>&, const double, const double ) const;
   void setXmaxBoundary_J( matrix2D<double>&, const double, const double ) const;
+  void setXminBoundary_J( matrix2D<double>&, const vector<double>& ) const;
  
   void setZboundaryPeriodic( matrix2D<double>& ) const;
 
