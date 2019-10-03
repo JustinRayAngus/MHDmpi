@@ -105,7 +105,7 @@ vector<double> Nold, Mxold, Eiold, Eeold, Byold, Ezold, Jzold;
 vector<double> FluxRatio, FluxLim;
 vector<double> FluxR, FluxL;  // flux at cell-edges   
 vector<double> FluxN, FluxMx, FluxEi, FluxEe;
-vector<double> Qie, NUdotE, JdotE, taue, nue_spi, nue_vac;
+vector<double> Qie, NUdotE, JdotE, taue, Clog, nue_spi, nue_vac;
 
 // new stuff for ionization
 //
@@ -115,7 +115,7 @@ double Zmin = 1.0;
 vector<double> Zbar, Neold, Se, SEe, Ne, Nn, nue_neu, nue_izn;
 vector<double> FluxNe;
 
-double Nscale, Xscale, Amass, Iscale, dtIscale;
+double Nscale, Xscale, Amass, Iscale, dtIscale, dtIdecay;
 double Pscale, Tscale, Bscale, Jscale, Ezscale, Vscale, tscale, Mi;
 double epsilonRel, meRel;
 
@@ -129,6 +129,12 @@ double NvacC=0.01, NvacP = 4;
 
 void initializeMemberVars(const domainGrid& );
 void computeFluxes(const domainGrid&, const int);
+void computeClog(vector<double>&, 
+           const double,
+           const vector<double>&, 
+           const vector<double>&, 
+           const vector<double>&, 
+           const vector<double>& );
 void computeJ0(vector<double>&, const vector<double>&, const domainGrid& );
 void updatePhysicalVars(const domainGrid& );
 void updateCollisionTerms(const domainGrid& );
@@ -257,10 +263,10 @@ void Physics::advance(const domainGrid& Xgrid, const double a_dt)
 	 
 	 if(N.at(i)<=Nthresh) N.at(i) = Nthresh;
 	 if(N.at(i)!=N.at(i)) cout << "bout to go bad: N.at(i) = " << N.at(i) << endl;
-	 Ethresh = Pthresh/(gamma0-1.0) + 0.5*Mx.at(i)*Mx.at(i)/N.at(i);
-	 if(Ei.at(i)<=Ethresh) Ei.at(i) =Ethresh;
-	 Ethresh = Pthresh/(gamma0-1.0);
-	 if(Ee.at(i)<=Ethresh) Ee.at(i) =Ethresh;
+	 Ethresh = N.at(i)/Nthresh*Pthresh/(gamma0-1.0) + 0.5*Mx.at(i)*Mx.at(i)/N.at(i);
+	 if(Ei.at(i)<=Ethresh) Ei.at(i) = Ethresh;
+	 Ethresh = Pthresh/(gamma0-1.0)*N.at(i)/Nthresh;
+	 if(Ee.at(i)<=Ethresh) Ee.at(i) = Ethresh;
 	 
          Ne.at(i) = Neold.at(i) - thisdt*(FluxNe.at(i+1)-FluxNe.at(i))/hy_cc.at(i)/dX
                   + thisdt*Se.at(i);
@@ -275,7 +281,7 @@ void Physics::advance(const domainGrid& Xgrid, const double a_dt)
       //  apply boundary conditions and communicate
       //
       B0 = thist/dtIscale*B00;
-      if(B0>B00) B0 = B00;
+      if(B0>B00) B0 = B00*(1.0-dtIdecay*(thist-dtIscale)/(1.0-dtIscale));
       //if(thist>=0.03) B0 = B00*pow(0.03/thist,2);
 
       if(procID==0) {
@@ -491,7 +497,7 @@ void computeFluxes(const domainGrid& Xgrid, const int order)
       Xgrid.setXmaxFluxBC(FluxEe, 0.0, 0.0);
       const int thisnX = P.size();
       //cout << "hy_ce.at(thisnX-3)" << hy_ce.at(thisnX-3) << endl;   
-      double P0 = hy_ce.at(thisnX-nXg)*(P.at(thisnX-nXg-1)+P.at(thisnX-nXg))/2.0;
+      double P0 = hy_ce.at(thisnX-nXg-1)*(P.at(thisnX-nXg-1)+P.at(thisnX-nXg-2))/2.0;
       Xgrid.setXmaxFluxBC(FluxMx, P0, 0.0);   
       Xgrid.setXmaxFluxBC(FluxNe, 0.0, 0.0);
    }   
@@ -554,46 +560,93 @@ void updateCollisionTerms( const domainGrid&  Xgrid )
    MPI_Comm_rank (MPI_COMM_WORLD, &procID);
    MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
    
-   vector<double> nue, taue_spi, Te_eV;
+   vector<double> nue, taue_spi, Te_eV, Ti_eV;
    nue.assign(nXcc,0.0);
    taue_spi.assign(nXcc,0.0);
    Te_eV.assign(nXcc,0.0);
+   Ti_eV.assign(nXcc,0.0);
    
-
    //  set collision times and resistivity
    //
    Te_eV = Te*Tscale; 
+   Ti_eV = Ti*Tscale; 
    setNeutralInteractionRates(Xgrid,Te_eV,Ne,Nn);
+   
+   computeClog(Clog,mM,Ne*Nscale/1.0e6,Ne*Nscale/1.06,Te_eV,Ti_eV);
+   //Clog = 23.0 - 0.5*log(Ne*Nscale/1.0e6/pow(Te_eV,3.0));
+   //Clog = max(Clog,2.0);
 
-   nue_spi = pow(Tscale,1.5)/taue0*Ne*( 1.0/pow(Te_eV,1.5) );
-   nue_vac = pow(Tscale,1.5)/taue0*Ne*( 0.01*pow(NvacC/N,NvacP) );
+   nue_spi = pow(Tscale,1.5)/(taue0*10.0/Clog)*Ne*( 1.0/pow(Te_eV,1.5) );
+   nue_vac = pow(Tscale,1.5)/(taue0*10.0/Clog)*Ne*( 0.01*pow(NvacC/N,NvacP) );
    nue = nue_spi + nue_neu + nue_vac;
-   double nueR_min = pow(Tscale,1.5)/taue0*(1.0/pow(0.1,1.5));
+   
+   double Clog_ins = 23.0 - 0.5*log(Nscale/1.0e6/0.001);
+   double nueR_min = pow(Tscale,1.5)/(taue0*10.0/Clog_ins)*(1.0/pow(0.1,1.5));
    const int thisnX = nue.size();
-   if(procID==0 && XlowBC.compare("insulator") == 0) { // set resistivity at insulator boundary
+   if(procID==0 && XlowBC.compare("insulator") == 0) {
       if(nue.at(1) < nueR_min) Xgrid.setXminBoundary(nue, nueR_min, 0.0);
    }
-   if(procID==numProcs-1 && XhiBC.compare("insulator") == 0) { // set resistivity at insulator boundary
+   if(procID==numProcs-1 && XhiBC.compare("insulator") == 0) {
       if(nue.at(thisnX-nXg+1) < nueR_min) Xgrid.setXmaxBoundary(nue, nueR_min, 0.0);
    }
-   /*  // trying different vac res method
-   nue = nue_spi;
-   for (auto i=0; i<thisnX; i++) {
-      if(N.at(i)<=0.01) {
-         nue.at(i) = nueR_min;
-      }
-   }
-   */
+   
    //eta = eta0*taue0*nue/Ne;   
    eta = Le0sq*nue/Ne;   
    taue = 1.0/nue; // dont use vac taue for thermalization...too small time step needed
-   taue_spi = taue0*pow(Te,1.5)/Ne;
-   Qie   = 2.0/(gamma0-1.0)*mM*(1.0/taue_spi + nue_neu)*Ne*(Te-Ti); // use taue_spi here for time-step
+   taue_spi = 1.0/nue_spi; //taue0*10.0/Clog*pow(Te,1.5)/Ne;
+   Qie   = 2.0/(gamma0-1.0)*mM*(1.0/taue_spi + nue_neu)*Ne*(Te-Ti);
 
    Xgrid.InterpToCellEdges(etace,eta,eta,"C2");
    Xgrid.InterpToCellEdges(Nece,Ne,Ne,"C2");
    Xgrid.communicate(etace);
    Xgrid.communicate(eta);
+
+}
+
+void computeClog( vector<double>&  a_Clog,
+            const double           a_mM,
+            const vector<double>&  a_Ne_cc,
+            const vector<double>&  a_Ni_cc,
+            const vector<double>&  a_Te_eV,
+            const vector<double>&  a_Ti_eV )
+{
+
+   // compute Coulomb Logarithm for electron-ion collisions
+   //
+
+   const int nX = a_Clog.size();
+   int procID, numProcs;
+   MPI_Comm_rank (MPI_COMM_WORLD, &procID);
+   MPI_Comm_size (MPI_COMM_WORLD, &numProcs);
+      
+   double thisNe, thisNi, thisTe, thisTi, thisZ, thisZ4, thisTe3, thisTi3;
+   double mu; 
+   double Clogmin = 2.0;
+
+   for (auto i=0; i<nX; i++) {
+      thisNe = a_Ne_cc.at(i);
+      thisNi = a_Ni_cc.at(i);
+      thisTe = a_Te_eV.at(i);
+      thisTi = a_Ti_eV.at(i);
+      thisZ  = thisNe/thisNi;
+
+      if(thisTi*a_mM <= thisTe) {
+         if(thisTe <= 10.0*thisZ*thisZ) {
+            thisTe3 = thisTe*thisTe*thisTe;
+            a_Clog.at(i) = 23.0-0.5*log(thisNe*thisZ*thisZ/thisTe3);
+         }  
+         else {
+            a_Clog.at(i) = 24.0-0.5*log(thisNe/thisTe/thisTe);
+         }
+      }
+      else {
+         mu = 9.1094e-31/a_mM/1.6726e-27; // mu=Mi/Mp
+         thisZ4 = thisZ*thisZ*thisZ*thisZ;
+         a_Clog.at(i) = 16.0-0.5*log(thisNi/thisTi3*thisZ4*mu*mu);
+      }
+   
+   }
+   a_Clog = max(a_Clog,Clogmin);
 
 }
 
@@ -760,6 +813,7 @@ void initializeMemberVars( const domainGrid& Xgrid )
    NUdotE.assign(nXcc,0.0);
    JdotE.assign(nXcc,0.0);
    taue.assign(nXcc,0.0);
+   Clog.assign(nXcc,0.0);
    nue_spi.assign(nXcc,0.0);
    nue_vac.assign(nXcc,0.0);
    
@@ -815,6 +869,7 @@ void addMembersToDataFile( HDF5dataFile&  dataFile )
    dataFile.add(Te, "Te", 1);    // ele temperature
    dataFile.add(eta, "eta", 1);  // resistivity
    dataFile.add(taue, "taue", 1);  // collision time
+   dataFile.add(Clog, "Clog", 1);  // Coulomb logarithm
    dataFile.add(nue_spi, "nue_spi", 1);  // spitzer coll freq
    dataFile.add(nue_vac, "nue_vac", 1);  // vac coll freq
    
@@ -882,8 +937,6 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
       Json::Value gammaVal  = Phys.get("gammaC",defValue);
       Json::Value ZminVal   = Phys.get("Zmin",defValue);
       Json::Value NsubVal   = Phys.get("Nsub",defValue);
-      //Json::Value etaVal    = Phys.get("eta0",defValue);
-      //Json::Value etaVal    = Phys.get("eta0",defValue);
       Json::Value etaVisVal   = Phys.get("etaVis0",defValue);
      
   
@@ -910,6 +963,7 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
       Json::Value XscaleVal   = Phys.get("SpatScale_m",    defValue);
       Json::Value IscaleVal   = Phys.get("CurrScale_Amps", defValue);
       Json::Value dtIscaleVal = Phys.get("dtCurrScale",    defValue);
+      Json::Value dtIdecayVal = Phys.get("dtCurrDecay",    defValue);
       Json::Value riseTime_unitsVal = Phys.get("riseTime_units", defValue);
       Json::Value AmassVal    = Phys.get("Amass",          defValue);
       Json::Value NthreshVal  = Phys.get("Nthresh",        defValue);
@@ -947,11 +1001,18 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
       }
       //
       if(dtIscaleVal == defValue) {
-         cout << "input ERROR: did not set dtCurrScale_norm correctly" << endl;
+         cout << "input ERROR: did not set dtCurrScale correctly" << endl;
 	 exit (EXIT_FAILURE);
       } else {
          dtIscale = dtIscaleVal.asDouble();
          if(procID==0) cout << "current rise time = " << dtIscale << endl;
+      }
+      if(dtIdecayVal == defValue) {
+         cout << "input ERROR: did not set dtCurrDecay correctly" << endl;
+	 exit (EXIT_FAILURE);
+      } else {
+         dtIdecay = dtIdecayVal.asDouble();
+         if(procID==0) cout << "current decay time = " << dtIdecay << endl;
       }
       //
       string riseTime_units;
@@ -1136,7 +1197,7 @@ void parseInputFile( const domainGrid& Xgrid, const Json::Value& a_root )
          printf("ERROR: Nsub must be int >= 1\n");
          exit (EXIT_FAILURE);
       }
-      Pthresh = Nthresh*Tthresh;
+      Pthresh = Nthresh*Tthresh/Tscale;
       Ethresh = Pthresh/(gamma0-1.0);
 
       etaVis0 = etaVisVal.asDouble();
