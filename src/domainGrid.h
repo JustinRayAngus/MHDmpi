@@ -134,6 +134,16 @@ public:
   void setXminBoundary_J( matrix2D<double>&, const vector<double>& ) const;
  
   void setZboundaryPeriodic( matrix2D<double>& ) const;
+  void setZboundaryInlet( matrix2D<double>&, 
+                    const int,
+                    const double, 
+                    const double ) const;
+  void setZminBoundary( matrix2D<double>&, const double, const double ) const;
+  void setZmaxBoundary( matrix2D<double>&, const double, const double ) const;
+  void setZminFluxBC( matrix2D<double>&, const double ) const;
+  void setZmaxFluxBC( matrix2D<double>&, const double ) const;
+  void setZminFluxBC( matrix2D<double>&, const matrix2D<double>& ) const;
+  void setZmaxFluxBC( matrix2D<double>&, const matrix2D<double>& ) const;
 
 //domainGrid() {};
 

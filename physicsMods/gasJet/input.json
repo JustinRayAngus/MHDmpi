@@ -1,0 +1,80 @@
+{
+"Xgrid":{
+         "Xmin":0.0,
+         "Xmax":10.0,
+         "nX":1000,
+         "nXg":2 // number of guard cells each end
+        },
+"Zgrid":{
+         "Zmin":0.0,
+         "Zmax":10.0,
+         "nZ":1000,
+         "nZg":2 // number of guard cells each end
+        },
+"Time":{
+        "dtOut":0.1,     // output time intervals
+        "tOutSteps":100,   // number of output setps
+        "dtFrac":2.0     // dtSim = dtMax/dtFrac
+       },
+"Physics":{
+           "geometry":"CYL", // "CAR", "CYL"
+           "advScheme":"TVD", // "U1", "C2", "QUICK", "TVD"
+           "Nsub":2, // time solver order (1 or 2)
+           "gammaC":1.4, // adiabatic coefficient
+           "Inlet":{
+                "Radius":1.0, 
+                "Pressure":1.0,
+                "Mach":5.0,
+                "Tplenum":1.0
+               },
+           "N":{
+                "Xtype":"constant", // initial profile
+                "Xa":0.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.0,  // width
+                "Xd":1.0,  // y-shift
+                "Ztype":"constant", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0  // y-shift
+               },
+           "P":{
+                "Xtype":"constant", // initial profile
+                "Xa":0.0,  // left value
+                "Xb":0.0,  // x-shift
+                "Xc":0.0,  // right value
+                "Xd":1.0,     // nothing
+                "Ztype":"constant", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":1.0  // y-shift
+               },
+           "Vx":{
+                "Xtype":"const", // initial profile
+                "Xa":0.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.0,  // width
+                "Xd":0.0,  // y-shift
+                "Ztype":"constant", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":0.0  // y-shift
+               },
+           "Vz":{
+                "Xtype":"const", // initial profile
+                "Xa":0.0,  // amplitude
+                "Xb":0.0,  // x-shift
+                "Xc":0.0,  // width
+                "Xd":0.0,  // y-shift
+                "Ztype":"constant", // initial profile
+                "Za":0.0,  // amplitude
+                "Zb":0.0,  // x-shift
+                "Zc":0.0,  // width
+                "Zd":0.0  // y-shift
+               }
+          }
+}
+

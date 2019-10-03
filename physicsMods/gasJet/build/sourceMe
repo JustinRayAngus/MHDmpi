@@ -1,0 +1,2 @@
+export PHYScpp=gasJet.cpp
+export PHYS_HOME="/p/lustre1/angus1/myMHDsims/gasJet/build/"

@@ -2402,3 +2402,123 @@ void domainGrid::setZboundaryPeriodic( matrix2D<double>&  var ) const
 
 }
 
+void domainGrid::setZboundaryInlet( matrix2D<double>&  var, 
+                              const int                jside,
+                              const double             R0, 
+                              const double             var0 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   double thisR;
+   int j0 = 0;
+   int j1 = nZg;
+
+   if(jside==1) {
+      j0 = nZvar-nZg;
+      j1 = nZvar;
+   }
+
+   for (auto i=0; i<nXvar; i++) {
+      thisR = Xcc.at(i);
+      if(thisR<=R0) {
+         for (auto j=j0; j<j1; j++) {
+            var(i,j) = var0;
+         }
+      }
+   }
+
+}
+
+void domainGrid::setZminBoundary( matrix2D<double>&  var,
+                            const double             C0,
+                            const double             C1 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nZvar==nZcc);
+
+   for (auto j=0; j<nZg; j++) {
+      for (auto i=0; i<nXvar; i++) {
+         var(i,nZg-j-1) = (C0 + C1*var(i,nZg+j));
+      }
+   }
+
+}
+
+void domainGrid::setZmaxBoundary( matrix2D<double>&  var,
+                            const double             C0,
+                            const double             C1 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nZvar==nZcc);
+   const int jshift = nZvar-nZg;
+
+   for (auto j=jshift; j<nZvar; j++) {
+      for (auto i=0; i<nXvar; i++) {
+         var(i,j) = C0 + C1*var(i,2*jshift-j-1);
+      }
+   }
+
+}
+
+void domainGrid::setZminFluxBC( matrix2D<double>&  var,
+                          const double             C0 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nZvar==nZce2);
+   for (auto i=0; i<nXvar; i++) {
+      var(i,nZg) = C0;
+   }
+}
+
+void domainGrid::setZmaxFluxBC( matrix2D<double>&  var,
+                          const double             C0 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   assert(nZvar==nZce2);
+   for (auto i=0; i<nXvar; i++) {
+      var(i,nZvar-nZg-1) = C0;
+   }
+}
+
+void domainGrid::setZminFluxBC( matrix2D<double>&  var,
+                          const matrix2D<double>&  C0 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   const int nXC0  = C0.size0();
+   const int nZC0  = C0.size1();
+   assert(nZvar==nZce2);
+   assert(nXC0==nXvar);
+   if(nZC0==nZcc) {
+      for (auto i=0; i<nXvar; i++) {
+         var(i,nZg) = (C0(i,nZg) + C0(i,nZg-1))/2.0;
+      }
+   }
+   if(nZC0==nZvar){
+      for (auto i=0; i<nXvar; i++) {
+         var(i,nZg) = C0(i,nZg);
+      }
+   }
+}
+
+void domainGrid::setZmaxFluxBC( matrix2D<double>&  var,
+                          const matrix2D<double>&   C0 ) const
+{
+   const int nXvar = var.size0();
+   const int nZvar = var.size1();
+   const int nXC0  = C0.size0();
+   const int nZC0  = C0.size1();
+   assert(nZvar==nZce2);
+   assert(nXC0==nXvar);
+   assert(nZC0==nZcc);
+   for (auto i=0; i<nXvar; i++) {
+      var(i,nZvar-nZg-1) = (C0(i,nZvar-nZg-1)+C0(i,nZvar-nZg-2))/2.0;
+   }
+}
+
+
+
