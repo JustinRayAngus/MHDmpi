@@ -1,18 +1,14 @@
 /***
  * 
- * 2D physics module for testing shock capturing schemes
+ * 2D physics module for gas jet using Euler equations
  *
- * see G.A. Sod, J. of Comp. Phys. 27, 1-31 (1978)
+ * drho/dt + div(mom)         = 0,
+ * dmom/dt + div(mom*u + I*P) = 0,
+ * dene/dt + div((ene+P)*u)   = 0
  *
- * upwding (U1) scheme seems to fail at really high
- * grid resolution (fine at nx=3000, fails at nx=4000)
- * I think this is result of how pressure term in 
- * momentum equation is handled
- *
- * QUICK doesn't work well at all
- *
- * TVD works very well, and no problem at high resolution
- * (nx=6000 is fine)
+ * rho = M*N
+ * mom = rho*u
+ * ene = mom*u/2 + P/(gamma-1)
  *
 ***/
 
